@@ -80,4 +80,16 @@ public class User implements UserInterface{
     public String toString() {
         return  login + ":" + name + "<" + email + ">";
     }
+
+    @Override
+    public boolean equals(@NotNull final Object obj) {
+        if ( (obj == null) ) return false;
+        User other = (User) obj;
+        return login.equals(other.login);
+    }
+
+    @Override
+    public int hashCode() {
+        return login.hashCode();
+    }
 }

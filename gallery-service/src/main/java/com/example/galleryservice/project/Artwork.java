@@ -13,18 +13,15 @@ public class Artwork {
     private String info;
     @NotNull
     private final Participant artist;
-    private Integer cost;
 
     public Artwork(final Integer id,
                    @NotNull final String name,
                    @NotNull final String info,
-                   @NotNull final Participant artist,
-                   final Integer cost) {
+                   @NotNull final Participant artist) {
         this.id = id;
         this.name = name;
         this.info = info;
         this.artist = artist;
-        this.cost = cost;
     }
 
     public Integer getId() {
@@ -49,13 +46,5 @@ public class Artwork {
 
     public Participant getArtist() {
         return artist;
-    }
-
-    public Integer getCost() {
-        return cost;
-    }
-
-    public void setCost(int cost) {
-        this.cost = cost;
     }
 }

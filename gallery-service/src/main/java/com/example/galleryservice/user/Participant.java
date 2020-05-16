@@ -12,24 +12,29 @@ import java.util.List;
 @Data
 public class Participant extends User {
 
+    @NotNull
+    private final PrivateAccount privateAccount;
     private final List<Artwork> artworks = new ArrayList<>();
 
     public Participant(final int id,
                        @NotNull final String login,
                        @NotNull final String name,
-                       @NotNull final String email) {
+                       @NotNull final String email,
+                       @NotNull final PrivateAccount privateAccount) {
         super(id, login, name, email);
+        this.privateAccount = privateAccount;
     }
 
-    public Participant(@NotNull final User user) {
+    public Participant(@NotNull final User user, @NotNull final PrivateAccount privateAccount) {
         super(user);
+        this.privateAccount = privateAccount;
     }
 
-    public void createListOfArtworks(){
-
+    public void addArtworks(@NotNull final Artwork artwork){
+        artworks.add(artwork);
     }
 
-    public void sendArtworks(Owner owner){
-
+    public List<Artwork> sendArtworks(){
+        return artworks;
     }
 }
