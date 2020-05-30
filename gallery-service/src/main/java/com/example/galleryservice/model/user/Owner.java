@@ -1,46 +1,38 @@
-package com.example.galleryservice.user;
+package com.example.galleryservice.model.user;
 
-import com.example.galleryservice.exceptions.ExpoAlreadyClosedException;
-import com.example.galleryservice.project.Artwork;
-import com.example.galleryservice.project.Expo;
-import com.example.galleryservice.project.Reservation;
-import com.example.galleryservice.project.Ticket;
+import com.example.galleryservice.model.project.Expo;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.SneakyThrows;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
+@Entity
+@Table(name = "owners")
 @Data
 public class Owner extends User {
 
-    @NotNull
-    private final CorporateAccount corporateAccount;
-
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "owners")
     private final List<Expo> expos = new ArrayList<>();
-    private final List<Reservation> reservations = new ArrayList<>();
 
-    public Owner(final int id,
-                 @NotNull final String login,
+    public Owner(@NotNull final String login,
+                 @NotNull final String password,
                  @NotNull final String name,
-                 @NotNull final String email,
-                 @NotNull final CorporateAccount corporateAccount) {
-        super(id, login, name, email);
-        this.corporateAccount = corporateAccount;
+                 @NotNull final String email) {
+        super(login, password, name, email);
     }
 
-    public Owner(@NotNull final User user, @NotNull final CorporateAccount corporateAccount) {
+    public Owner(@NotNull final User user) {
         super(user);
-        this.corporateAccount = corporateAccount;
     }
 
-    @SneakyThrows
+    /*@SneakyThrows
     public List<Ticket> closeReservation(@NotNull final Reservation reservation){
         checkAuthentication();
         if (reservation.isPayed()){
@@ -59,10 +51,10 @@ public class Owner extends User {
                            @NotNull final String info,
                            @NotNull final LocalDateTime startTime,
                            @NotNull final LocalDateTime endTime,
-                           @NotNull final Participant participant){
+                           @NotNull final Artist artist){
         checkAuthentication();
-        List<Artwork> artworksForExpo = participant.sendArtworks();
-        expos.add(new Expo(name, info, participant, startTime, endTime, artworksForExpo));
+        List<Artwork> artworksForExpo = artist.sendArtworks();
+        expos.add(new Expo(name, info, artist, startTime, endTime, artworksForExpo));
     }
 
     @SneakyThrows
@@ -122,12 +114,12 @@ public class Owner extends User {
     }
 
     @SneakyThrows
-    public void sendPayment(final double payment, @NotNull final Participant participant){
+    public void sendPayment(final double payment, @NotNull final Artist artist){
         checkAuthentication();
         for (Expo expo : expos) {
-            if (expo.getArtist().equals(participant) && expo.isClosed()){
-                this.corporateAccount.transfer(expo, payment, participant.getPrivateAccount());
+            if (expo.getArtist().equals(artist) && expo.isClosed()){
+                this.corporateAccount.transfer(expo, payment, artist.getPrivateAccount());
             }
         }
-    }
+    }*/
 }
