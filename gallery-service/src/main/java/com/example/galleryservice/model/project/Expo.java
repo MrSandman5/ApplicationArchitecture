@@ -1,55 +1,35 @@
 package com.example.galleryservice.model.project;
 
-import com.example.galleryservice.model.user.Artist;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
-@Entity
-@Table(name = "expos")
 @Data
 @NoArgsConstructor
 public class Expo {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
-
-    @Column(name = "name", nullable = false, unique = true)
+    private long id;
     private String name;
-
-    @Column(name = "info", nullable = false)
     private String info;
+    private long artist;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "artist_id", nullable = false)
-    private Artist artist;
-
-    @JsonFormat(pattern = "dd/MM/yyyy hh:mm:ss")
-    @Column(name = "startTime")
+    @JsonFormat(pattern = "dd/MM/yyyy hh:mm")
     private LocalDateTime startTime;
 
-    @JsonFormat(pattern = "dd/MM/yyyy hh:mm:ss")
-    @Column(name = "endTime")
+    @JsonFormat(pattern = "dd/MM/yyyy hh:mm")
     private LocalDateTime endTime;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "artworks")
     private List<Artwork> artworks;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status")
     private ExpoStatus status;
 
     public Expo(@NotNull final String name,
                 @NotNull final String info,
-                @NotNull final Artist artist,
+                final long artist,
                 @NotNull final LocalDateTime startTime,
                 @NotNull final LocalDateTime endTime,
                 @NotNull final List<Artwork> artworks) {
@@ -64,15 +44,25 @@ public class Expo {
             this.endTime = startTime;
         }
         this.artworks = artworks;
-        this.status = ExpoStatus.NEW;
+        this.status = ExpoStatus.New;
+    }
+
+    public Expo(@NotNull final Expo expo){
+        this.name = expo.name;
+        this.info = expo.info;
+        this.artist = expo.artist;
+        this.startTime = expo.startTime;
+        this.endTime = expo.endTime;
+        this.artworks = expo.artworks;
+        this.status = expo.status;
     }
 
     public Long getDuration(){
         return ChronoUnit.DAYS.between(startTime, endTime);
     }
 
-    public boolean isNew() {return status.equals(ExpoStatus.NEW);}
-    public boolean isStarted() {return status.equals(ExpoStatus.STARTED);}
-    public boolean isClosed() {return status.equals(ExpoStatus.CLOSED);}
+    public boolean isNew() { return status.equals(ExpoStatus.New); }
+    public boolean isOpened() { return status.equals(ExpoStatus.Opened); }
+    public boolean isClosed() { return status.equals(ExpoStatus.Closed); }
 
 }
