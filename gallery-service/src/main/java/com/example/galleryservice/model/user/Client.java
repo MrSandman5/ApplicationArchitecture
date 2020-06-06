@@ -22,8 +22,6 @@ public class Client extends User {
     private final List<Reservation> reservations = new ArrayList<>();
     private final List<Ticket> tickets = new ArrayList<>();
 
-    private final StorageDAO storageDAO = new StorageDAO();
-
     public Client(@NotNull final String login,
                   @NotNull final String password,
                   @NotNull final String name,
@@ -38,7 +36,7 @@ public class Client extends User {
     @SneakyThrows
     public void addTicket(@NotNull final Ticket ticket){
         this.checkAuthentication();
-        final Expo ticketExpo = storageDAO.getExpo(ticket.getExpo());
+        final Expo ticketExpo = getStorageDAO().getExpo(ticket.getExpo());
         if (ticketExpo == null){
             throw new ExpoNotFoundException(ticket.getExpo());
         }
@@ -53,13 +51,13 @@ public class Client extends User {
             }
         }
         tickets.add(ticket);
-        storageDAO.addTicket(ticket);
+        getStorageDAO().addTicket(ticket);
     }
 
     @SneakyThrows
     public Reservation createReservation(){
         this.checkAuthentication();
-        final Expo ticketExpo = storageDAO.getExpo(this.tickets.get(0).getExpo());
+        final Expo ticketExpo = getStorageDAO().getExpo(this.tickets.get(0).getExpo());
         if (ticketExpo == null){
             throw new ExpoNotFoundException(this.tickets.get(0).getExpo());
         }
@@ -73,7 +71,7 @@ public class Client extends User {
             }
         }
         this.reservations.add(reservation);
-        storageDAO.addReservation(reservation);
+        getStorageDAO().addReservation(reservation);
         this.tickets.clear();
         return reservation;
     }
@@ -82,7 +80,7 @@ public class Client extends User {
     public double payForReservation(@NotNull final Reservation reservation,
                                     @NotNull final Owner owner){
         this.checkAuthentication();
-        final Reservation clientReservation = storageDAO.getReservation(reservation.getId());
+        final Reservation clientReservation = getStorageDAO().getReservation(reservation.getId());
         if (clientReservation == null){
             throw new ReservationNotFoundException(reservation.getId());
         }
@@ -91,7 +89,7 @@ public class Client extends User {
         } else if (this.reservations.contains(clientReservation)){
             throw new ReservationAlreadyExistedException("Reservation with id : " + clientReservation.getId() + " already existed for this client");
         }
-        final Expo ticketExpo = storageDAO.getExpo(clientReservation.getTickets().get(0).getExpo());
+        final Expo ticketExpo = getStorageDAO().getExpo(clientReservation.getTickets().get(0).getExpo());
         if (ticketExpo == null){
             throw new ExpoNotFoundException(clientReservation.getTickets().get(0).getExpo());
         } else if (ticketExpo.isOpened()
@@ -106,9 +104,9 @@ public class Client extends User {
                 .sum();
 
         clientReservation.setStatus(ReservationStatus.Payed);
-        storageDAO.updateReservation(clientReservation);
+        getStorageDAO().updateReservation(clientReservation);
         final ClientOwnerPayment ticketPayment = new ClientOwnerPayment(clientReservation.getId(), this.getId(), owner.getId(), payment);
-        storageDAO.addClientOwnerPayment(ticketPayment);
+        getStorageDAO().addClientOwnerPayment(ticketPayment);
         return ticketPayment.getAmount();
     }
 

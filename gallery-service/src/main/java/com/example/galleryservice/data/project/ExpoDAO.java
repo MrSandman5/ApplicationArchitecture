@@ -2,6 +2,7 @@ package com.example.galleryservice.data.project;
 
 import com.example.galleryservice.data.DAO;
 import com.example.galleryservice.model.project.*;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -9,9 +10,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
-import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
@@ -24,22 +23,23 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Repository
-@Transactional
-public class ExpoDAO extends JdbcDaoSupport implements DAO<Expo> {
+@Data
+public class ExpoDAO implements DAO<Expo> {
 
+    private final DataSource dataSource;
     private JdbcTemplate jdbcTemplate;
     private SimpleJdbcInsert jdbcInsert;
 
-    public ExpoDAO() {
-        final DataSource dataSource = getDataSource();
-        jdbcTemplate = new JdbcTemplate(Objects.requireNonNull(dataSource));
-        jdbcInsert = new SimpleJdbcInsert(dataSource).withTableName("expos")
-                .usingGeneratedKeyColumns("id");
+    @Autowired
+    public ExpoDAO(@NotNull final DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     @PostConstruct
     private void postConstruct() {
-
+        jdbcTemplate = new JdbcTemplate(dataSource);
+        jdbcInsert = new SimpleJdbcInsert(dataSource).withTableName("expos")
+                .usingGeneratedKeyColumns("id");
     }
 
     final static class ExpoRowMapper implements RowMapper<Expo> {

@@ -23,15 +23,20 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Repository
-@Transactional
-public class OwnerArtistPaymentDAO extends JdbcDaoSupport implements DAO<OwnerArtistPayment> {
+public class OwnerArtistPaymentDAO implements DAO<OwnerArtistPayment> {
 
+    private final DataSource dataSource;
     private JdbcTemplate jdbcTemplate;
     private SimpleJdbcInsert jdbcInsert;
 
-    public OwnerArtistPaymentDAO() {
-        final DataSource dataSource = getDataSource();
-        jdbcTemplate = new JdbcTemplate(Objects.requireNonNull(dataSource));
+    @Autowired
+    public OwnerArtistPaymentDAO(@NotNull final DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    @PostConstruct
+    private void postConstruct() {
+        jdbcTemplate = new JdbcTemplate(dataSource);
         jdbcInsert = new SimpleJdbcInsert(dataSource).withTableName("owner_artist_payments")
                 .usingGeneratedKeyColumns("id");
     }

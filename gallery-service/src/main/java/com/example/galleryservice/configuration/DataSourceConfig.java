@@ -1,5 +1,6 @@
 package com.example.galleryservice.configuration;
 
+import com.example.galleryservice.data.StorageDAO;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +15,7 @@ public class DataSourceConfig {
 
     @Bean
     @Primary
-    public DataSource getDataSource() {
+    public DataSource configDataSource() {
         return DataSourceBuilder.create()
                 .driverClassName("org.postgresql.Driver")
                 .url("jdbc:postgresql://localhost:5432/postgres")

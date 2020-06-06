@@ -3,6 +3,7 @@ package com.example.galleryservice.data.user;
 import com.example.galleryservice.data.DAO;
 import com.example.galleryservice.model.user.User;
 import com.example.galleryservice.model.user.UserRole;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -10,9 +11,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
-import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
@@ -24,13 +23,17 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Repository
-@Transactional
-public class UserDAO extends JdbcDaoSupport implements DAO<User> {
+@Data
+public class UserDAO implements DAO<User> {
 
-    @Autowired
-    private DataSource dataSource;
+    private final DataSource dataSource;
     private JdbcTemplate jdbcTemplate;
     private SimpleJdbcInsert jdbcInsert;
+
+    @Autowired
+    public UserDAO(@NotNull final DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
 
     @PostConstruct
     private void postConstruct() {

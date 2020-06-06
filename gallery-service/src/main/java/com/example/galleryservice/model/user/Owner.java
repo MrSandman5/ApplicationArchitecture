@@ -23,8 +23,6 @@ public class Owner extends User {
 
     private final List<Expo> expos = new ArrayList<>();
 
-    private final StorageDAO storageDAO = new StorageDAO();
-
     public Owner(@NotNull final String login,
                  @NotNull final String password,
                  @NotNull final String name,
@@ -39,15 +37,15 @@ public class Owner extends User {
     @SneakyThrows
     public double acceptPayment(@NotNull final Reservation reservation){
         this.checkAuthentication();
-        final Reservation payedReservation = storageDAO.getReservation(reservation.getId());
+        final Reservation payedReservation = getStorageDAO().getReservation(reservation.getId());
         if (payedReservation == null){
             throw new ReservationNotFoundException(reservation.getId());
         } else if (!payedReservation.isPayed()){
             throw new ReservationNotPaidException(payedReservation.getId());
         }
-        final ClientOwnerPayment payment = storageDAO.getClientOwnerPayment(payedReservation.getId());
+        final ClientOwnerPayment payment = getStorageDAO().getClientOwnerPayment(payedReservation.getId());
         payedReservation.setStatus(ReservationStatus.Closed);
-        storageDAO.updateReservation(payedReservation);
+        getStorageDAO().updateReservation(payedReservation);
         return payment.getAmount();
     }
 
@@ -57,7 +55,7 @@ public class Owner extends User {
         if (expos.contains(expo))
             throw new ExpoAlreadyExistedException("Artwork with id : " + expo.getId() + " already existed for this user!");
         expos.add(expo);
-        storageDAO.addExpo(expo);
+        getStorageDAO().addExpo(expo);
     }
 
     @SneakyThrows
@@ -65,7 +63,7 @@ public class Owner extends User {
                          @NotNull final EditSettings settings,
                          @NotNull final String data){
         this.checkAuthentication();
-        final Expo curExpo = storageDAO.getExpo(expo.getId());
+        final Expo curExpo = getStorageDAO().getExpo(expo.getId());
         final LocalDateTime newDateTime;
         switch (settings){
             case Name:
@@ -89,27 +87,27 @@ public class Owner extends User {
             default:
                 break;
         }
-        storageDAO.updateExpo(expo);
+        getStorageDAO().updateExpo(expo);
     }
 
     @SneakyThrows
     public void startExpo(@NotNull final Expo expo){
         this.checkAuthentication();
-        final Expo newExpo = storageDAO.getExpo(expo.getId());
+        final Expo newExpo = getStorageDAO().getExpo(expo.getId());
         if (newExpo == null){
             throw new ExpoNotFoundException(expo.getId());
         } else if ((LocalDateTime.now().equals(newExpo.getStartTime())
                 || LocalDateTime.now().isAfter(newExpo.getStartTime()))
                 && LocalDateTime.now().isBefore(newExpo.getEndTime())) {
             newExpo.setStatus(ExpoStatus.Opened);
-            storageDAO.updateExpo(newExpo);
+            getStorageDAO().updateExpo(newExpo);
         }
     }
 
     @SneakyThrows
     public void closeExpo(@NotNull final Expo expo){
         this.checkAuthentication();
-        final Expo openedExpo = storageDAO.getExpo(expo.getId());
+        final Expo openedExpo = getStorageDAO().getExpo(expo.getId());
         if (openedExpo == null){
             throw new ExpoNotFoundException(expo.getId());
         } else if (!openedExpo.isOpened()) {
@@ -117,20 +115,20 @@ public class Owner extends User {
         } else if (LocalDateTime.now().equals(openedExpo.getEndTime())
                 || LocalDateTime.now().isAfter(openedExpo.getEndTime())) {
             openedExpo.setStatus(ExpoStatus.Closed);
-            storageDAO.updateExpo(openedExpo);
+            getStorageDAO().updateExpo(openedExpo);
         }
     }
 
     @SneakyThrows
     public double payForExpo(@NotNull final Expo expo){
         this.checkAuthentication();
-        final Expo closedExpo = storageDAO.getExpo(expo.getId());
+        final Expo closedExpo = getStorageDAO().getExpo(expo.getId());
         if (closedExpo == null) {
             throw new ExpoNotFoundException(expo.getId());
         } else if (!closedExpo.isOpened()) {
             throw new ExpoHasNotClosedException("Expo with id : " + closedExpo.getId() + " hasn't started!");
         }
-        final List<Reservation> expoReservations = storageDAO.getReservationsByStatus(ReservationStatus.Closed.toString())
+        final List<Reservation> expoReservations = getStorageDAO().getReservationsByStatus(ReservationStatus.Closed.toString())
                 .stream().filter(reservation -> reservation.getTickets().get(0).getExpo() == closedExpo.getId())
                 .collect(Collectors.toList());
         double payment = 0;
@@ -139,7 +137,7 @@ public class Owner extends User {
         }
 
         final OwnerArtistPayment expoPayment = new OwnerArtistPayment(closedExpo.getId(), this.getId(), expo.getArtist(), payment * 0.5);
-        storageDAO.addOwnerArtistPayment(expoPayment);
+        getStorageDAO().addOwnerArtistPayment(expoPayment);
         return expoPayment.getAmount();
     }
 

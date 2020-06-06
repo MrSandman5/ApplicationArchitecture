@@ -5,9 +5,12 @@ import com.example.galleryservice.exceptions.NotAuthenticatedException;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
 
+@Component
 @Data
 @NoArgsConstructor
 public class User {
@@ -20,7 +23,8 @@ public class User {
     private boolean authentication;
     private UserRole role;
 
-    private StorageDAO storageDAO = new StorageDAO();
+    @Autowired
+    private StorageDAO storageDAO;
 
     public User(@NotNull final String login,
                 @NotNull final String password,

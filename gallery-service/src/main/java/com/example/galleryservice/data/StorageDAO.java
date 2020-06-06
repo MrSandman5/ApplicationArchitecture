@@ -5,6 +5,7 @@ import com.example.galleryservice.data.user.UserDAO;
 import com.example.galleryservice.exceptions.*;
 import com.example.galleryservice.model.project.*;
 import com.example.galleryservice.model.user.*;
+import lombok.Data;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -14,22 +15,33 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
+@Data
 public class StorageDAO {
 
+    private final UserDAO userDAO;
+    private final TicketDAO ticketDAO;
+    private final ReservationDAO reservationDAO;
+    private final ExpoDAO expoDAO;
+    private final ArtworkDAO artworkDAO;
+    private final ClientOwnerPaymentDAO clientOwnerPaymentDAO;
+    private final OwnerArtistPaymentDAO ownerArtistPaymentDAO;
+
     @Autowired
-    private UserDAO userDAO;
-    @Autowired
-    private TicketDAO ticketDAO;
-    @Autowired
-    private ReservationDAO reservationDAO;
-    @Autowired
-    private ExpoDAO expoDAO;
-    @Autowired
-    private ArtworkDAO artworkDAO;
-    @Autowired
-    private ClientOwnerPaymentDAO clientOwnerPaymentDAO;
-    @Autowired
-    private OwnerArtistPaymentDAO ownerArtistPaymentDAO;
+    public StorageDAO(@NotNull final UserDAO userDAO,
+                      @NotNull final TicketDAO ticketDAO,
+                      @NotNull final ReservationDAO reservationDAO,
+                      @NotNull final ExpoDAO expoDAO,
+                      @NotNull final ArtworkDAO artworkDAO,
+                      @NotNull final ClientOwnerPaymentDAO clientOwnerPaymentDAO,
+                      @NotNull final OwnerArtistPaymentDAO ownerArtistPaymentDAO) {
+        this.userDAO = userDAO;
+        this.ticketDAO = ticketDAO;
+        this.reservationDAO = reservationDAO;
+        this.expoDAO = expoDAO;
+        this.artworkDAO = artworkDAO;
+        this.clientOwnerPaymentDAO = clientOwnerPaymentDAO;
+        this.ownerArtistPaymentDAO = ownerArtistPaymentDAO;
+    }
 
     @SneakyThrows
     private User getUser(@NotNull final String login) {
@@ -74,10 +86,10 @@ public class StorageDAO {
     }
 
     @SneakyThrows
-    public void addUser(@NotNull final User user) {
+    public long addUser(@NotNull final User user) {
         if (userDAO.findByLogin(user.getLogin()).isPresent())
             throw new UserAlreadyExistedException(user.getLogin());
-        userDAO.insert(user);
+        return userDAO.insert(user);
     }
 
     @SneakyThrows
@@ -154,28 +166,28 @@ public class StorageDAO {
         return ownerArtistPayment.isEmpty() ? null : ownerArtistPayment.get();
     }
 
-    public void addTicket(@NotNull final Ticket ticket) {
-        ticketDAO.insert(ticket);
+    public long addTicket(@NotNull final Ticket ticket) {
+        return ticketDAO.insert(ticket);
     }
 
-    public void addReservation(@NotNull final Reservation reservation) {
-        reservationDAO.insert(reservation);
+    public long addReservation(@NotNull final Reservation reservation) {
+        return reservationDAO.insert(reservation);
     }
 
-    public void addExpo(@NotNull final Expo expo) {
-        expoDAO.insert(expo);
+    public long addExpo(@NotNull final Expo expo) {
+        return expoDAO.insert(expo);
     }
 
-    public void addArtwork(@NotNull final Artwork artwork) {
-        artworkDAO.insert(artwork);
+    public long addArtwork(@NotNull final Artwork artwork) {
+        return artworkDAO.insert(artwork);
     }
 
-    public void addClientOwnerPayment(@NotNull final ClientOwnerPayment clientOwnerPayment){
-        clientOwnerPaymentDAO.insert(clientOwnerPayment);
+    public long addClientOwnerPayment(@NotNull final ClientOwnerPayment clientOwnerPayment){
+        return clientOwnerPaymentDAO.insert(clientOwnerPayment);
     }
 
-    public void addOwnerArtistPayment(@NotNull final OwnerArtistPayment ownerArtistPayment){
-        ownerArtistPaymentDAO.insert(ownerArtistPayment);
+    public long addOwnerArtistPayment(@NotNull final OwnerArtistPayment ownerArtistPayment){
+        return ownerArtistPaymentDAO.insert(ownerArtistPayment);
     }
 
     public void updateUser(@NotNull final User user){
