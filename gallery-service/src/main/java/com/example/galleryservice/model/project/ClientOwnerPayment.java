@@ -9,14 +9,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ClientOwnerPayment extends Payment {
 
-    private long reservation;
-    private long client;
-    private long owner;
+    private Long reservation;
+    private Long client;
+    private Long owner;
 
-    public ClientOwnerPayment(final long reservation,
-                  final long client,
-                  final long owner,
-                  final double amount){
+    public ClientOwnerPayment(final Long reservation,
+                  final Long client,
+                  final Long owner,
+                  final Double amount){
         super(amount);
         this.reservation = reservation;
         this.client = client;

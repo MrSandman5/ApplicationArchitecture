@@ -4,6 +4,7 @@ import com.example.galleryservice.data.DAO;
 import com.example.galleryservice.model.project.*;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -12,31 +13,22 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
-import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import javax.validation.constraints.NotNull;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 @Repository
 @Data
 public class ExpoDAO implements DAO<Expo> {
 
-    private final DataSource dataSource;
     private JdbcTemplate jdbcTemplate;
     private SimpleJdbcInsert jdbcInsert;
 
     @Autowired
     public ExpoDAO(@NotNull final DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
-
-    @PostConstruct
-    private void postConstruct() {
         jdbcTemplate = new JdbcTemplate(dataSource);
         jdbcInsert = new SimpleJdbcInsert(dataSource).withTableName("expos")
                 .usingGeneratedKeyColumns("id");
@@ -57,37 +49,43 @@ public class ExpoDAO implements DAO<Expo> {
         }
     }
 
-    public Optional<Expo> findByName(@NotNull final String name) {
-        return Optional.of(Objects.requireNonNull(
-                jdbcTemplate.queryForObject("select * from expos where name = ?",
-                        new Object[]{name},
-                        new BeanPropertyRowMapper<>(Expo.class))));
+    public Expo findByName(@NotNull final String name) {
+        try {
+            return jdbcTemplate.queryForObject("select * from testbase.expos where name = ?",
+                    new Object[]{name},
+                    new BeanPropertyRowMapper<>(Expo.class));
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
     }
 
     public List<Expo> findByArtist(final long artist) {
-        return jdbcTemplate.query("select * from expos where artist = ?", new Object[]{artist}, new ExpoRowMapper());
+        return jdbcTemplate.query("select * from testbase.expos where artist = ?", new Object[]{artist}, new ExpoRowMapper());
     }
 
     public List<Expo> findByStatus(@NotNull final String status) {
-        return jdbcTemplate.query("select * from expos where status = ?", new Object[]{status}, new ExpoRowMapper());
+        return jdbcTemplate.query("select * from testbase.expos where status = ?", new Object[]{status}, new ExpoRowMapper());
     }
 
     @Override
-    public Optional<Expo> findByID(final long id) {
-        return Optional.of(Objects.requireNonNull(
-                jdbcTemplate.queryForObject("select * from expos where id = ?",
-                        new Object[]{id},
-                        new BeanPropertyRowMapper<>(Expo.class))));
+    public Expo findByID(final long id) {
+        try {
+            return jdbcTemplate.queryForObject("select * from testbase.expos where id = ?",
+                    new Object[]{id},
+                    new BeanPropertyRowMapper<>(Expo.class));
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
     }
 
     @Override
     public List<Expo> findAll() {
-        return jdbcTemplate.query("select * from expos", new ExpoRowMapper());
+        return jdbcTemplate.query("select * from testbase.expos", new ExpoRowMapper());
     }
 
     @Override
     public void update(@NotNull final Expo expo) {
-        jdbcTemplate.update("update expos " + "set name = ?, info = ?, startTime = ?, endTime = ?, status = ? " + " where id = ?",
+        jdbcTemplate.update("update testbase.expos " + "set name = ?, info = ?, startTime = ?, endTime = ?, status = ? " + " where id = ?",
                 expo.getName(), expo.getInfo(), Timestamp.valueOf(expo.getStartTime()), Timestamp.valueOf(expo.getEndTime()), expo.getStatus().toString(), expo.getId());
     }
 

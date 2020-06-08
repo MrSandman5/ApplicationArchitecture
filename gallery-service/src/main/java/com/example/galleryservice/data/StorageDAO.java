@@ -12,7 +12,6 @@ import org.springframework.stereotype.Repository;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 @Data
@@ -45,8 +44,7 @@ public class StorageDAO {
 
     @SneakyThrows
     private User getUser(@NotNull final String login) {
-        final Optional<User> user = userDAO.findByLogin(login);
-        return user.isEmpty() ? null : user.get();
+        return userDAO.findByLogin(login);
     }
 
     @SneakyThrows
@@ -87,7 +85,7 @@ public class StorageDAO {
 
     @SneakyThrows
     public long addUser(@NotNull final User user) {
-        if (userDAO.findByLogin(user.getLogin()).isPresent())
+        if (userDAO.findByLogin(user.getLogin()) != null)
             throw new UserAlreadyExistedException(user.getLogin());
         return userDAO.insert(user);
     }
@@ -122,8 +120,7 @@ public class StorageDAO {
 
     @SneakyThrows
     public Ticket getTicket(final long id) {
-        Optional<Ticket> ticket = ticketDAO.findByID(id);
-        return ticket.isEmpty() ? null : ticket.get();
+        return ticketDAO.findByID(id);
     }
 
     @SneakyThrows
@@ -133,8 +130,7 @@ public class StorageDAO {
 
     @SneakyThrows
     public Reservation getReservation(final long id) {
-        Optional<Reservation> reservation = reservationDAO.findByID(id);
-        return reservation.isEmpty() ? null : reservation.get();
+        return reservationDAO.findByID(id);
     }
 
     @SneakyThrows
@@ -144,26 +140,22 @@ public class StorageDAO {
 
     @SneakyThrows
     public Expo getExpo(final long id) {
-        Optional<Expo> expo = expoDAO.findByID(id);
-        return expo.isEmpty() ? null : expo.get();
+        return expoDAO.findByID(id);
     }
 
     @SneakyThrows
     public Artwork getArtwork(@NotNull final String name) {
-        Optional<Artwork> artwork = artworkDAO.findByName(name);
-        return artwork.isEmpty() ? null : artwork.get();
+        return artworkDAO.findByName(name);
     }
 
     @SneakyThrows
     public ClientOwnerPayment getClientOwnerPayment(final long reservation) {
-        Optional<ClientOwnerPayment> clientOwnerPayment = clientOwnerPaymentDAO.findByReservation(reservation);
-        return clientOwnerPayment.isEmpty() ? null : clientOwnerPayment.get();
+        return clientOwnerPaymentDAO.findByReservation(reservation);
     }
 
     @SneakyThrows
     public OwnerArtistPayment getOwnerArtistPayment(final long expo) {
-        Optional<OwnerArtistPayment> ownerArtistPayment = ownerArtistPaymentDAO.findByExpo(expo);
-        return ownerArtistPayment.isEmpty() ? null : ownerArtistPayment.get();
+        return ownerArtistPaymentDAO.findByExpo(expo);
     }
 
     public long addTicket(@NotNull final Ticket ticket) {

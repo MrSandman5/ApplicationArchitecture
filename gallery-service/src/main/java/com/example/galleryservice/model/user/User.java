@@ -5,12 +5,13 @@ import com.example.galleryservice.exceptions.NotAuthenticatedException;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Configurable;
 
 import javax.validation.constraints.NotNull;
 
-@Component
+@Configurable(autowire = Autowire.BY_TYPE, dependencyCheck = true)
 @Data
 @NoArgsConstructor
 public class User {
@@ -20,7 +21,7 @@ public class User {
     private String password;
     private String name;
     private String email;
-    private boolean authentication;
+    private Boolean authentication;
     private UserRole role;
 
     @Autowired
@@ -33,7 +34,7 @@ public class User {
                 @NotNull final UserRole role) {
         this.login = login;
         this.name = name;
-        this.name = password;
+        this.password = password;
         this.email = email;
         this.authentication = false;
         this.role = role;

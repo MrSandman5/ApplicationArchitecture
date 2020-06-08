@@ -16,7 +16,7 @@ public class Expo {
     private long id;
     private String name;
     private String info;
-    private long artist;
+    private Long artist;
 
     @JsonFormat(pattern = "dd/MM/yyyy hh:mm")
     private LocalDateTime startTime;
@@ -29,7 +29,7 @@ public class Expo {
 
     public Expo(@NotNull final String name,
                 @NotNull final String info,
-                final long artist,
+                final Long artist,
                 @NotNull final LocalDateTime startTime,
                 @NotNull final LocalDateTime endTime,
                 @NotNull final List<Artwork> artworks) {

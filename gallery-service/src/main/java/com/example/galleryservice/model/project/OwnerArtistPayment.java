@@ -9,14 +9,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class OwnerArtistPayment extends Payment {
 
-    private long expo;
-    private long owner;
-    private long artist;
+    private Long expo;
+    private Long owner;
+    private Long artist;
 
-    public OwnerArtistPayment(final long expo,
-                              final long owner,
-                              final long artist,
-                              final double amount) {
+    public OwnerArtistPayment(final Long expo,
+                              final Long owner,
+                              final Long artist,
+                              final Double amount) {
         super(amount);
         this.expo = expo;
         this.owner = owner;

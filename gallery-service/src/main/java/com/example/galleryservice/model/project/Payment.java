@@ -11,9 +11,9 @@ public class Payment {
 
     private long id;
     private LocalDateTime date;
-    private double amount;
+    private Double amount;
 
-    public Payment(final double amount) {
+    public Payment(final Double amount) {
         this.date = LocalDateTime.now();
         this.amount = amount;
     }

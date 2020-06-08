@@ -2,42 +2,34 @@ package com.example.galleryservice.data.project;
 
 import com.example.galleryservice.data.DAO;
 import com.example.galleryservice.model.project.OwnerArtistPayment;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
-import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import javax.validation.constraints.NotNull;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 @Repository
+@Data
 public class OwnerArtistPaymentDAO implements DAO<OwnerArtistPayment> {
 
-    private final DataSource dataSource;
     private JdbcTemplate jdbcTemplate;
     private SimpleJdbcInsert jdbcInsert;
 
     @Autowired
     public OwnerArtistPaymentDAO(@NotNull final DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
-
-    @PostConstruct
-    private void postConstruct() {
         jdbcTemplate = new JdbcTemplate(dataSource);
-        jdbcInsert = new SimpleJdbcInsert(dataSource).withTableName("owner_artist_payments")
+        jdbcInsert = new SimpleJdbcInsert(dataSource).withTableName("owner_artist_payment")
                 .usingGeneratedKeyColumns("id");
     }
 
@@ -55,32 +47,38 @@ public class OwnerArtistPaymentDAO implements DAO<OwnerArtistPayment> {
         }
     }
 
-    public Optional<OwnerArtistPayment> findByExpo(final long expo) {
-        return Optional.of(Objects.requireNonNull(
-                jdbcTemplate.queryForObject("select * from owner_artist_payments where expo = ?",
-                        new Object[]{expo},
-                        new BeanPropertyRowMapper<>(OwnerArtistPayment.class))));
+    public OwnerArtistPayment findByExpo(final long expo) {
+        try {
+            return jdbcTemplate.queryForObject("select * from testbase.owner_artist_payment where expo = ?",
+                    new Object[]{expo},
+                    new BeanPropertyRowMapper<>(OwnerArtistPayment.class));
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
     }
 
     public List<OwnerArtistPayment> findByOwner(final long owner) {
-        return jdbcTemplate.query("select * from owner_artist_payments where owner = ?", new Object[]{owner}, new OwnerArtistPaymentRowMapper());
+        return jdbcTemplate.query("select * from testbase.owner_artist_payment where owner = ?", new Object[]{owner}, new OwnerArtistPaymentRowMapper());
     }
 
     public List<OwnerArtistPayment> findByArtist(final long artist) {
-        return jdbcTemplate.query("select * from owner_artist_payments where artist = ?", new Object[]{artist}, new OwnerArtistPaymentRowMapper());
+        return jdbcTemplate.query("select * from testbase.owner_artist_payment where artist = ?", new Object[]{artist}, new OwnerArtistPaymentRowMapper());
     }
 
     @Override
-    public Optional<OwnerArtistPayment> findByID(final long id) {
-        return Optional.of(Objects.requireNonNull(
-                jdbcTemplate.queryForObject("select * from owner_artist_payments where id = ?",
-                        new Object[]{id},
-                        new BeanPropertyRowMapper<>(OwnerArtistPayment.class))));
+    public OwnerArtistPayment findByID(final long id) {
+        try {
+            return jdbcTemplate.queryForObject("select * from testbase.owner_artist_payment where id = ?",
+                    new Object[]{id},
+                    new BeanPropertyRowMapper<>(OwnerArtistPayment.class));
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
     }
 
     @Override
     public List<OwnerArtistPayment> findAll() {
-        return jdbcTemplate.query("select * from owner_artist_payments", new OwnerArtistPaymentRowMapper());
+        return jdbcTemplate.query("select * from testbase.owner_artist_payment", new OwnerArtistPaymentRowMapper());
     }
 
     @Override

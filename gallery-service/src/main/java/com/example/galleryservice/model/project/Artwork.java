@@ -12,11 +12,11 @@ public class Artwork {
     private long id;
     private String name;
     private String info;
-    private long artist;
+    private Long artist;
 
     public Artwork(@NotNull final String name,
                    @NotNull final String info,
-                   final long artist) {
+                   final Long artist) {
         this.name = name;
         this.info = info;
         this.artist = artist;

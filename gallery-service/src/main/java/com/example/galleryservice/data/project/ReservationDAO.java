@@ -5,6 +5,7 @@ import com.example.galleryservice.model.project.Reservation;
 import com.example.galleryservice.model.project.ReservationStatus;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -13,31 +14,22 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
-import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import javax.validation.constraints.NotNull;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 @Repository
 @Data
 public class ReservationDAO implements DAO<Reservation> {
 
-    private final DataSource dataSource;
     private JdbcTemplate jdbcTemplate;
     private SimpleJdbcInsert jdbcInsert;
 
     @Autowired
     public ReservationDAO(@NotNull final DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
-
-    @PostConstruct
-    private void postConstruct() {
         jdbcTemplate = new JdbcTemplate(dataSource);
         jdbcInsert = new SimpleJdbcInsert(dataSource).withTableName("reservations")
                 .usingGeneratedKeyColumns("id");
@@ -57,29 +49,32 @@ public class ReservationDAO implements DAO<Reservation> {
     }
 
     public List<Reservation> findByClient(final long client) {
-        return jdbcTemplate.query("select * from reservations where client = ?", new Object[]{client}, new ReservationRowMapper());
+        return jdbcTemplate.query("select * from testbase.reservations where client = ?", new Object[]{client}, new ReservationRowMapper());
     }
 
     public List<Reservation> findByStatus(@NotNull final String status) {
-        return jdbcTemplate.query("select * from reservations where status = ?", new Object[]{status}, new ReservationRowMapper());
+        return jdbcTemplate.query("select * from testbase.reservations where status = ?", new Object[]{status}, new ReservationRowMapper());
     }
 
     @Override
-    public Optional<Reservation> findByID(final long id) {
-        return Optional.of(Objects.requireNonNull(
-                jdbcTemplate.queryForObject("select * from reservations where id = ?",
-                        new Object[]{id},
-                        new BeanPropertyRowMapper<>(Reservation.class))));
+    public Reservation findByID(final long id) {
+        try {
+            return jdbcTemplate.queryForObject("select * from testbase.reservations where id = ?",
+                    new Object[]{id},
+                    new BeanPropertyRowMapper<>(Reservation.class));
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
     }
 
     @Override
     public List<Reservation> findAll() {
-        return jdbcTemplate.query("select * from reservations", new ReservationRowMapper());
+        return jdbcTemplate.query("select * from testbase.reservations", new ReservationRowMapper());
     }
 
     @Override
     public void update(@NotNull final Reservation reservation) {
-        jdbcTemplate.update("update reservations " + "set status = ?, dateTime = ? " + " where id = ?",
+        jdbcTemplate.update("update testbase.reservations " + "set status = ?, dateTime = ? " + " where id = ?",
                 reservation.getStatus().toString(), Timestamp.valueOf(reservation.getDateTime()), reservation.getId());
     }
 

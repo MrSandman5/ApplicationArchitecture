@@ -12,9 +12,9 @@ import java.util.List;
 @NoArgsConstructor
 public class Reservation {
 
-    private long id;
-    private long client;
-    private double cost;
+    private Long id;
+    private Long client;
+    private Double cost;
     private ReservationStatus status;
 
     @JsonFormat(pattern = "dd/MM/yyyy hh:mm")
@@ -22,7 +22,7 @@ public class Reservation {
 
     private List<Ticket> tickets;
 
-    public Reservation(@NotNull final long client,
+    public Reservation(@NotNull final Long client,
                        @NotNull final LocalDateTime dateTime,
                        @NotNull final List<Ticket> tickets) {
         this.client = client;

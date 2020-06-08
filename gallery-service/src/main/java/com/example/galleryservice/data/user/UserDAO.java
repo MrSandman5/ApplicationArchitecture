@@ -5,40 +5,31 @@ import com.example.galleryservice.model.user.User;
 import com.example.galleryservice.model.user.UserRole;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
-import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import javax.validation.constraints.NotNull;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Repository
 @Data
 public class UserDAO implements DAO<User> {
 
-    private final DataSource dataSource;
     private JdbcTemplate jdbcTemplate;
     private SimpleJdbcInsert jdbcInsert;
 
     @Autowired
     public UserDAO(@NotNull final DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
-
-    @PostConstruct
-    private void postConstruct() {
         jdbcTemplate = new JdbcTemplate(dataSource);
-        jdbcInsert = new SimpleJdbcInsert(dataSource).withTableName("users")
+        jdbcInsert = new SimpleJdbcInsert(dataSource).withSchemaName("testbase")
+                .withTableName("users")
                 .usingGeneratedKeyColumns("id");
     }
 
@@ -57,48 +48,65 @@ public class UserDAO implements DAO<User> {
     }
 
     public boolean authenticate(@NotNull final User user, @NotNull final String password) {
-        final String resultPassword = jdbcTemplate.queryForObject("select users.password FROM users WHERE id = ?;",
+        final String resultPassword = jdbcTemplate.queryForObject("select testbase.users.password FROM testbase.users WHERE id = ?;",
                 new Object[]{user.getId()},
                 new BeanPropertyRowMapper<>(String.class));
 
         return password.equals(resultPassword);
     }
 
-    public Optional<User> findByLogin(@NotNull final String login) {
-        return Optional.of(Objects.requireNonNull(
-                jdbcTemplate.queryForObject("select * from users where login = ?",
-                        new Object[]{login},
-                        new BeanPropertyRowMapper<>(User.class))));
+    public User findByLogin(@NotNull final String login) {
+        try {
+            return jdbcTemplate.queryForObject("select * from testbase.users where login = ?",
+                            new Object[]{login},
+                            new BeanPropertyRowMapper<>(User.class));
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
+
     }
 
-    public Optional<User> findByName(@NotNull final String name) {
-        return Optional.of(Objects.requireNonNull(
-                jdbcTemplate.queryForObject("select * from users where name = ?",
-                        new Object[]{name},
-                        new BeanPropertyRowMapper<>(User.class))));
+    public User findByName(@NotNull final String name) {
+        try {
+            return jdbcTemplate.queryForObject("select * from testbase.users where name = ?",
+                    new Object[]{name},
+                    new BeanPropertyRowMapper<>(User.class));
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
     }
 
     public long insert(@NotNull final User user) {
-        SqlParameterSource parameters = new BeanPropertySqlParameterSource(user);
-        return jdbcInsert.executeAndReturnKey(parameters).longValue();
+        final Map<String, Object> parameters = new HashMap<>(6);
+        parameters.put("login", user.getLogin());
+        parameters.put("password", user.getPassword());
+        parameters.put("name", user.getName());
+        parameters.put("email", user.getEmail());
+        parameters.put("authentication", user.getAuthentication());
+        parameters.put("role", user.getRole());
+        final Number newId = jdbcInsert.executeAndReturnKey(parameters);
+        return (long) newId;
     }
 
     @Override
-    public Optional<User> findByID(final long id) {
-        return Optional.of(Objects.requireNonNull(
-                jdbcTemplate.queryForObject("select * from users where id = ?",
-                        new Object[]{id},
-                        new BeanPropertyRowMapper<>(User.class))));
+    public User findByID(final long id) {
+        try {
+            return jdbcTemplate.queryForObject("select * from testbase.users where id = ?",
+                    new Object[]{id},
+                    new BeanPropertyRowMapper<>(User.class));
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
     }
 
     @Override
     public List<User> findAll() {
-        return jdbcTemplate.query("select * from users", new UserRowMapper());
+        return jdbcTemplate.query("select * from testbase.users", new UserRowMapper());
     }
 
     @Override
     public void update(@NotNull final User user) {
-        jdbcTemplate.update("update users " + "set login = ?, password = ?, name = ?, email = ? " + " where id = ?",
+        jdbcTemplate.update("update testbase.users " + "set login = ?, password = ?, name = ?, email = ? " + " where id = ?",
                 user.getLogin(), user.getPassword(), user.getName(), user.getEmail(), user.getId());
     }
 }
