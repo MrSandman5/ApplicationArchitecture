@@ -1,15 +1,12 @@
-package com.example.galleryservice.data.project;
+package com.example.galleryservice.data.gallery;
 
 import com.example.galleryservice.data.DAO;
-import com.example.galleryservice.model.project.OwnerArtistPayment;
+import com.example.galleryservice.model.gallery.OwnerArtistPayment;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
@@ -17,7 +14,9 @@ import javax.sql.DataSource;
 import javax.validation.constraints.NotNull;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 @Data
@@ -29,7 +28,8 @@ public class OwnerArtistPaymentDAO implements DAO<OwnerArtistPayment> {
     @Autowired
     public OwnerArtistPaymentDAO(@NotNull final DataSource dataSource) {
         jdbcTemplate = new JdbcTemplate(dataSource);
-        jdbcInsert = new SimpleJdbcInsert(dataSource).withTableName("owner_artist_payment")
+        jdbcInsert = new SimpleJdbcInsert(dataSource).withSchemaName("testbase")
+                .withTableName("owner_artist_payment")
                 .usingGeneratedKeyColumns("id");
     }
 
@@ -37,7 +37,7 @@ public class OwnerArtistPaymentDAO implements DAO<OwnerArtistPayment> {
         @Override
         public OwnerArtistPayment mapRow(@NotNull final ResultSet rs, final int rowNum) throws SQLException {
             OwnerArtistPayment ownerArtistPaymentDAO = new OwnerArtistPayment();
-            ownerArtistPaymentDAO.setId(rs.getLong("id"));
+            ownerArtistPaymentDAO.setId(rs.getBigDecimal("id").longValue());
             ownerArtistPaymentDAO.setDate(rs.getTimestamp("dateTime").toLocalDateTime());
             ownerArtistPaymentDAO.setAmount(rs.getDouble("amount"));
             ownerArtistPaymentDAO.setExpo(rs.getLong("expo"));
@@ -51,7 +51,7 @@ public class OwnerArtistPaymentDAO implements DAO<OwnerArtistPayment> {
         try {
             return jdbcTemplate.queryForObject("select * from testbase.owner_artist_payment where expo = ?",
                     new Object[]{expo},
-                    new BeanPropertyRowMapper<>(OwnerArtistPayment.class));
+                    new OwnerArtistPaymentRowMapper());
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
@@ -70,7 +70,7 @@ public class OwnerArtistPaymentDAO implements DAO<OwnerArtistPayment> {
         try {
             return jdbcTemplate.queryForObject("select * from testbase.owner_artist_payment where id = ?",
                     new Object[]{id},
-                    new BeanPropertyRowMapper<>(OwnerArtistPayment.class));
+                    new OwnerArtistPaymentRowMapper());
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
@@ -86,8 +86,14 @@ public class OwnerArtistPaymentDAO implements DAO<OwnerArtistPayment> {
 
     @Override
     public long insert(@NotNull final OwnerArtistPayment ownerArtistPayment) {
-        SqlParameterSource parameters = new BeanPropertySqlParameterSource(ownerArtistPayment);
-        return jdbcInsert.executeAndReturnKey(parameters).longValue();
+        final Map<String, Object> parameters = new HashMap<>(6);
+        parameters.put("date", ownerArtistPayment.getDate());
+        parameters.put("amount", ownerArtistPayment.getAmount());
+        parameters.put("expo", ownerArtistPayment.getExpo());
+        parameters.put("owner", ownerArtistPayment.getOwner());
+        parameters.put("artist", ownerArtistPayment.getArtist());
+        final Number newId = jdbcInsert.executeAndReturnKey(parameters);
+        return (long) newId;
     }
 
 }

@@ -1,4 +1,4 @@
-package com.example.galleryservice.model.project;
+package com.example.galleryservice.model.gallery;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;

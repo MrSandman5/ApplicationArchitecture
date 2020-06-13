@@ -1,17 +1,15 @@
 package com.example.galleryservice.model.user;
 
+import com.example.galleryservice.configuration.SpringContext;
 import com.example.galleryservice.data.StorageDAO;
+import com.example.galleryservice.exceptions.IncorrectPasswordException;
 import com.example.galleryservice.exceptions.NotAuthenticatedException;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
-import org.springframework.beans.factory.annotation.Autowire;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
 
 import javax.validation.constraints.NotNull;
 
-@Configurable(autowire = Autowire.BY_TYPE, dependencyCheck = true)
 @Data
 @NoArgsConstructor
 public class User {
@@ -24,8 +22,7 @@ public class User {
     private Boolean authentication;
     private UserRole role;
 
-    @Autowired
-    private StorageDAO storageDAO;
+    private StorageDAO storageDAO = SpringContext.getBean(StorageDAO.class);
 
     public User(@NotNull final String login,
                 @NotNull final String password,
@@ -41,6 +38,7 @@ public class User {
     }
 
     public User(@NotNull final User user){
+        this.id = user.id;
         this.login = user.login;
         this.name = user.name;
         this.password = user.password;
@@ -51,7 +49,9 @@ public class User {
 
     @SneakyThrows
     public void signIn(@NotNull final String password) {
-        storageDAO.authenticateUser(this, password);
+        if (!this.password.equals(password)){
+            throw new IncorrectPasswordException();
+        }
         authentication = true;
     }
 
@@ -60,7 +60,7 @@ public class User {
     }
 
     public void checkAuthentication() throws NotAuthenticatedException{
-        if (authentication) return;
+        if (isAuthenticated()) return;
         throw new NotAuthenticatedException(toString() + " is not authenticated");
     }
 

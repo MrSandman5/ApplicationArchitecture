@@ -1,4 +1,4 @@
-package com.example.galleryservice.model.project;
+package com.example.galleryservice.model.gallery;
 
 import javax.validation.constraints.NotNull;
 

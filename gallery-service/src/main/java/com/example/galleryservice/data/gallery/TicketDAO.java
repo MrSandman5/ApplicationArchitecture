@@ -1,15 +1,12 @@
-package com.example.galleryservice.data.project;
+package com.example.galleryservice.data.gallery;
 
 import com.example.galleryservice.data.DAO;
-import com.example.galleryservice.model.project.Ticket;
+import com.example.galleryservice.model.gallery.Ticket;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
@@ -17,7 +14,9 @@ import javax.sql.DataSource;
 import javax.validation.constraints.NotNull;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 @Data
@@ -29,7 +28,8 @@ public class TicketDAO implements DAO<Ticket> {
     @Autowired
     public TicketDAO(@NotNull final DataSource dataSource) {
         jdbcTemplate = new JdbcTemplate(dataSource);
-        jdbcInsert = new SimpleJdbcInsert(dataSource).withTableName("tickets")
+        jdbcInsert = new SimpleJdbcInsert(dataSource).withSchemaName("testbase")
+                .withTableName("tickets")
                 .usingGeneratedKeyColumns("id");
     }
 
@@ -37,7 +37,7 @@ public class TicketDAO implements DAO<Ticket> {
         @Override
         public Ticket mapRow(@NotNull final ResultSet rs, final int rowNum) throws SQLException {
             Ticket ticket = new Ticket();
-            ticket.setId(rs.getLong("id"));
+            ticket.setId(rs.getBigDecimal("id").longValue());
             ticket.setClient(rs.getLong("client"));
             ticket.setExpo(rs.getLong("expo"));
             ticket.setCost(rs.getDouble("cost"));
@@ -58,7 +58,7 @@ public class TicketDAO implements DAO<Ticket> {
         try {
             return jdbcTemplate.queryForObject("select * from testbase.tickets where id = ?",
                     new Object[]{id},
-                    new BeanPropertyRowMapper<>(Ticket.class));
+                    new TicketRowMapper());
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
@@ -75,8 +75,12 @@ public class TicketDAO implements DAO<Ticket> {
 
     @Override
     public long insert(@NotNull final Ticket ticket) {
-        SqlParameterSource parameters = new BeanPropertySqlParameterSource(ticket);
-        return jdbcInsert.executeAndReturnKey(parameters).longValue();
+        final Map<String, Object> parameters = new HashMap<>(6);
+        parameters.put("client", ticket.getClient());
+        parameters.put("expo", ticket.getExpo());
+        parameters.put("cost", ticket.getCost());
+        final Number newId = jdbcInsert.executeAndReturnKey(parameters);
+        return (long) newId;
     }
 
 }

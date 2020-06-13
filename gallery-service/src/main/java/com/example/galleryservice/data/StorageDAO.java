@@ -1,9 +1,9 @@
 package com.example.galleryservice.data;
 
-import com.example.galleryservice.data.project.*;
+import com.example.galleryservice.data.gallery.*;
 import com.example.galleryservice.data.user.UserDAO;
 import com.example.galleryservice.exceptions.*;
-import com.example.galleryservice.model.project.*;
+import com.example.galleryservice.model.gallery.*;
 import com.example.galleryservice.model.user.*;
 import lombok.Data;
 import lombok.SneakyThrows;
@@ -56,7 +56,7 @@ public class StorageDAO {
         else if (!user.isClient()){
             throw new IncorrectRoleException(login);
         }
-        return (Client) user;
+        return new Client(user);
     }
 
     @SneakyThrows
@@ -68,7 +68,7 @@ public class StorageDAO {
         if (!user.isOwner()){
             throw new IncorrectRoleException(login);
         }
-        return (Owner) user;
+        return new Owner(user);
     }
 
     @SneakyThrows
@@ -80,7 +80,7 @@ public class StorageDAO {
         if (!user.isArtist()){
             throw new IncorrectRoleException(login);
         }
-        return (Artist) user;
+        return new Artist(user);
     }
 
     @SneakyThrows
@@ -91,7 +91,7 @@ public class StorageDAO {
     }
 
     @SneakyThrows
-    public void authenticateUser(@NotNull final String login,
+    private void authenticate(@NotNull final String login,
                                  @NotNull final String password) {
         final User user = getUser(login);
         if (user == null){
@@ -101,15 +101,14 @@ public class StorageDAO {
         updateUser(user);
     }
 
+    @SneakyThrows
     public void authenticateUser(@NotNull final User user,
-                                 @NotNull final String password) throws IncorrectPasswordException {
-        if (!userDAO.authenticate(user, password)){
-            throw new IncorrectPasswordException();
-        }
+                                 @NotNull final String password) {
+        authenticate(user.getLogin(), password);
     }
 
     @SneakyThrows
-    public void signOut (@NotNull final String login) {
+    public void signOut(@NotNull final String login) {
         final User user = getUser(login);
         if (user == null){
             throw new UserNotFoundException(login);
@@ -124,7 +123,7 @@ public class StorageDAO {
     }
 
     @SneakyThrows
-    public List<Ticket> getTicketByExpo(final long expo) {
+    public List<Ticket> getTicketByExpo(final Long expo) {
         return ticketDAO.findByExpo(expo);
     }
 
@@ -139,6 +138,11 @@ public class StorageDAO {
     }
 
     @SneakyThrows
+    public Expo getExpo(@NotNull final String name) {
+        return expoDAO.findByName(name);
+    }
+
+    @SneakyThrows
     public Expo getExpo(final long id) {
         return expoDAO.findByID(id);
     }
@@ -146,6 +150,11 @@ public class StorageDAO {
     @SneakyThrows
     public Artwork getArtwork(@NotNull final String name) {
         return artworkDAO.findByName(name);
+    }
+
+    @SneakyThrows
+    public Artwork getArtwork(final long id) {
+        return artworkDAO.findByID(id);
     }
 
     @SneakyThrows

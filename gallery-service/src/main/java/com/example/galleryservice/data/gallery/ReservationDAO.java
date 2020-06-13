@@ -1,16 +1,13 @@
-package com.example.galleryservice.data.project;
+package com.example.galleryservice.data.gallery;
 
 import com.example.galleryservice.data.DAO;
-import com.example.galleryservice.model.project.Reservation;
-import com.example.galleryservice.model.project.ReservationStatus;
+import com.example.galleryservice.model.gallery.Reservation;
+import com.example.galleryservice.model.gallery.ReservationStatus;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
@@ -19,7 +16,9 @@ import javax.validation.constraints.NotNull;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 @Data
@@ -31,7 +30,8 @@ public class ReservationDAO implements DAO<Reservation> {
     @Autowired
     public ReservationDAO(@NotNull final DataSource dataSource) {
         jdbcTemplate = new JdbcTemplate(dataSource);
-        jdbcInsert = new SimpleJdbcInsert(dataSource).withTableName("reservations")
+        jdbcInsert = new SimpleJdbcInsert(dataSource).withSchemaName("testbase")
+                .withTableName("reservations")
                 .usingGeneratedKeyColumns("id");
     }
 
@@ -39,7 +39,7 @@ public class ReservationDAO implements DAO<Reservation> {
         @Override
         public Reservation mapRow(@NotNull final ResultSet rs, final int rowNum) throws SQLException {
             Reservation reservation = new Reservation();
-            reservation.setId(rs.getLong("id"));
+            reservation.setId(rs.getBigDecimal("id").longValue());
             reservation.setClient(rs.getLong("client"));
             reservation.setCost(rs.getDouble("cost"));
             reservation.setStatus(ReservationStatus.valueOf(rs.getString("status")));
@@ -61,7 +61,7 @@ public class ReservationDAO implements DAO<Reservation> {
         try {
             return jdbcTemplate.queryForObject("select * from testbase.reservations where id = ?",
                     new Object[]{id},
-                    new BeanPropertyRowMapper<>(Reservation.class));
+                    new ReservationRowMapper());
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
@@ -80,7 +80,12 @@ public class ReservationDAO implements DAO<Reservation> {
 
     @Override
     public long insert(@NotNull final Reservation reservation) {
-        SqlParameterSource parameters = new BeanPropertySqlParameterSource(reservation);
-        return jdbcInsert.executeAndReturnKey(parameters).longValue();
+        final Map<String, Object> parameters = new HashMap<>(6);
+        parameters.put("client", reservation.getClient());
+        parameters.put("cost", reservation.getCost());
+        parameters.put("status", reservation.getStatus());
+        parameters.put("dateTime", reservation.getDateTime());
+        final Number newId = jdbcInsert.executeAndReturnKey(parameters);
+        return (long) newId;
     }
 }

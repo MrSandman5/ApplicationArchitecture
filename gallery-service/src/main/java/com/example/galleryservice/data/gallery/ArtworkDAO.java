@@ -1,15 +1,12 @@
-package com.example.galleryservice.data.project;
+package com.example.galleryservice.data.gallery;
 
 import com.example.galleryservice.data.DAO;
-import com.example.galleryservice.model.project.Artwork;
+import com.example.galleryservice.model.gallery.Artwork;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
@@ -17,9 +14,9 @@ import javax.sql.DataSource;
 import javax.validation.constraints.NotNull;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.Map;
 
 @Repository
 @Data
@@ -31,7 +28,8 @@ public class ArtworkDAO implements DAO<Artwork> {
     @Autowired
     public ArtworkDAO(@NotNull final DataSource dataSource) {
         jdbcTemplate = new JdbcTemplate(dataSource);
-        jdbcInsert = new SimpleJdbcInsert(dataSource).withTableName("artworks")
+        jdbcInsert = new SimpleJdbcInsert(dataSource).withSchemaName("testbase")
+                .withTableName("artworks")
                 .usingGeneratedKeyColumns("id");
     }
 
@@ -39,7 +37,7 @@ public class ArtworkDAO implements DAO<Artwork> {
         @Override
         public Artwork mapRow(@NotNull final ResultSet rs, final int rowNum) throws SQLException {
             Artwork artwork = new Artwork();
-            artwork.setId(rs.getLong("id"));
+            artwork.setId(rs.getBigDecimal("id").longValue());
             artwork.setName(rs.getString("name"));
             artwork.setInfo(rs.getString("info"));
             artwork.setArtist(rs.getLong("artist"));
@@ -51,7 +49,7 @@ public class ArtworkDAO implements DAO<Artwork> {
         try {
             return jdbcTemplate.queryForObject("select * from testbase.artworks where name = ?",
                     new Object[]{name},
-                    new BeanPropertyRowMapper<>(Artwork.class));
+                    new ArtworkRowMapper());
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
@@ -66,7 +64,7 @@ public class ArtworkDAO implements DAO<Artwork> {
         try {
             return jdbcTemplate.queryForObject("select * from testbase.artworks where id = ?",
                     new Object[]{id},
-                    new BeanPropertyRowMapper<>(Artwork.class));
+                    new ArtworkRowMapper());
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
@@ -85,7 +83,11 @@ public class ArtworkDAO implements DAO<Artwork> {
 
     @Override
     public long insert(@NotNull final Artwork artwork) {
-        SqlParameterSource parameters = new BeanPropertySqlParameterSource(artwork);
-        return jdbcInsert.executeAndReturnKey(parameters).longValue();
+        final Map<String, Object> parameters = new HashMap<>(6);
+        parameters.put("name", artwork.getName());
+        parameters.put("info", artwork.getInfo());
+        parameters.put("artist", artwork.getArtist());
+        final Number newId = jdbcInsert.executeAndReturnKey(parameters);
+        return (long) newId;
     }
 }

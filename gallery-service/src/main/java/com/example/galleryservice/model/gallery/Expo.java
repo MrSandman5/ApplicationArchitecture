@@ -1,4 +1,4 @@
-package com.example.galleryservice.model.project;
+package com.example.galleryservice.model.gallery;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
@@ -23,6 +23,7 @@ public class Expo {
 
     @JsonFormat(pattern = "dd/MM/yyyy hh:mm")
     private LocalDateTime endTime;
+    private double ticketPrice;
 
     private List<Artwork> artworks;
     private ExpoStatus status;
@@ -32,6 +33,7 @@ public class Expo {
                 final Long artist,
                 @NotNull final LocalDateTime startTime,
                 @NotNull final LocalDateTime endTime,
+                final double ticketPrice,
                 @NotNull final List<Artwork> artworks) {
         this.name = name;
         this.info = info;
@@ -43,6 +45,7 @@ public class Expo {
             this.startTime = endTime;
             this.endTime = startTime;
         }
+        this.ticketPrice = ticketPrice;
         this.artworks = artworks;
         this.status = ExpoStatus.New;
     }
@@ -53,6 +56,7 @@ public class Expo {
         this.artist = expo.artist;
         this.startTime = expo.startTime;
         this.endTime = expo.endTime;
+        this.ticketPrice = expo.ticketPrice;
         this.artworks = expo.artworks;
         this.status = expo.status;
     }

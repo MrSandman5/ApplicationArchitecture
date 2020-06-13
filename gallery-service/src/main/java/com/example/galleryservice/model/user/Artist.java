@@ -1,8 +1,7 @@
 package com.example.galleryservice.model.user;
 
-import com.example.galleryservice.data.StorageDAO;
 import com.example.galleryservice.exceptions.*;
-import com.example.galleryservice.model.project.*;
+import com.example.galleryservice.model.gallery.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -33,11 +32,21 @@ public class Artist extends User {
     @SneakyThrows
     public Artwork addArtwork(@NotNull final Artwork artwork){
         this.checkAuthentication();
-        if (artworks.contains(artwork))
-            throw new ArtworkAlreadyExistedException("Artwork with id : " + artwork.getId() + " already existed for this user!");
-        this.artworks.add(artwork);
-        getStorageDAO().addArtwork(artwork);
-        return artwork;
+        if (artwork.getArtist() != this.getId()) {
+            throw new ArtworkNotSimilarArtist("Artwork with name : " + artwork.getName() + " doesn't belong to this artist!");
+        }
+        if (artworks.contains(artwork)) {
+            throw new ArtworkAlreadyExistedException("Artwork with name : " + artwork.getName() + " already added to expo list!");
+        }
+        final Artwork existedArtwork = getStorageDAO().getArtwork(artwork.getName());
+        if (existedArtwork == null) {
+            final long artworkId = getStorageDAO().addArtwork(artwork);
+            final Artwork addedArtwork = getStorageDAO().getArtwork(artworkId);
+            this.artworks.add(addedArtwork);
+            return addedArtwork;
+        }
+        this.artworks.add(existedArtwork);
+        return existedArtwork;
     }
 
     @SneakyThrows

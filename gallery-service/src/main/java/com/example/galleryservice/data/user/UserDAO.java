@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import javax.validation.constraints.NotNull;
+import java.math.BigInteger;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
@@ -37,9 +38,10 @@ public class UserDAO implements DAO<User> {
         @Override
         public User mapRow(@NotNull final ResultSet rs, final int rowNum) throws SQLException {
             User user = new User();
-            user.setId(rs.getLong("id"));
+            user.setId(rs.getBigDecimal("id").longValue());
             user.setLogin(rs.getString("login"));
             user.setPassword(rs.getString("password"));
+            user.setName(rs.getString("name"));
             user.setEmail(rs.getString("email"));
             user.setAuthentication(rs.getBoolean("authentication"));
             user.setRole(UserRole.valueOf(rs.getString("role")));
@@ -47,19 +49,25 @@ public class UserDAO implements DAO<User> {
         }
     }
 
-    public boolean authenticate(@NotNull final User user, @NotNull final String password) {
-        final String resultPassword = jdbcTemplate.queryForObject("select testbase.users.password FROM testbase.users WHERE id = ?;",
-                new Object[]{user.getId()},
-                new BeanPropertyRowMapper<>(String.class));
+    /*public boolean authenticate(@NotNull final User user, @NotNull final String password) {
+        String resultPassword;
+        try {
+            resultPassword = jdbcTemplate.queryForObject("select testbase.users.password FROM testbase.users WHERE id = ?;",
+                    new Object[]{user.getId()},
+                    new BeanPropertyRowMapper<>(String.class));
 
+        } catch (EmptyResultDataAccessException e) {
+            resultPassword = null;
+        }
         return password.equals(resultPassword);
-    }
+
+    }*/
 
     public User findByLogin(@NotNull final String login) {
         try {
             return jdbcTemplate.queryForObject("select * from testbase.users where login = ?",
-                            new Object[]{login},
-                            new BeanPropertyRowMapper<>(User.class));
+                    new Object[]{login},
+                    new UserRowMapper());
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
@@ -70,7 +78,7 @@ public class UserDAO implements DAO<User> {
         try {
             return jdbcTemplate.queryForObject("select * from testbase.users where name = ?",
                     new Object[]{name},
-                    new BeanPropertyRowMapper<>(User.class));
+                    new UserRowMapper());
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
@@ -93,7 +101,7 @@ public class UserDAO implements DAO<User> {
         try {
             return jdbcTemplate.queryForObject("select * from testbase.users where id = ?",
                     new Object[]{id},
-                    new BeanPropertyRowMapper<>(User.class));
+                    new UserRowMapper());
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
@@ -106,7 +114,7 @@ public class UserDAO implements DAO<User> {
 
     @Override
     public void update(@NotNull final User user) {
-        jdbcTemplate.update("update testbase.users " + "set login = ?, password = ?, name = ?, email = ? " + " where id = ?",
-                user.getLogin(), user.getPassword(), user.getName(), user.getEmail(), user.getId());
+        jdbcTemplate.update("update testbase.users " + "set login = ?, password = ?, name = ?, email = ?, authentication = ? " + " where id = ?",
+                user.getLogin(), user.getPassword(), user.getName(), user.getEmail(), user.getAuthentication(), user.getId());
     }
 }

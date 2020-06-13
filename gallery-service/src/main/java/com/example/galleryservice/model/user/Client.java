@@ -1,16 +1,13 @@
 package com.example.galleryservice.model.user;
 
-import com.example.galleryservice.data.StorageDAO;
 import com.example.galleryservice.exceptions.*;
-import com.example.galleryservice.model.project.*;
+import com.example.galleryservice.model.gallery.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +31,7 @@ public class Client extends User {
     }
 
     @SneakyThrows
-    public void addTicket(@NotNull final Ticket ticket){
+    public Ticket addTicket(@NotNull final Ticket ticket){
         this.checkAuthentication();
         final Expo ticketExpo = getStorageDAO().getExpo(ticket.getExpo());
         if (ticketExpo == null){
@@ -45,13 +42,16 @@ public class Client extends User {
         }
         if (!tickets.isEmpty()){
             for (Ticket tick : tickets) {
-                if (ticket.getExpo() != tick.getExpo()){
+                if (!ticket.getExpo().equals(tick.getExpo())){
                     throw new NotSameExpoException("Ticket's expo are not similar");
                 }
             }
         }
-        tickets.add(ticket);
-        getStorageDAO().addTicket(ticket);
+
+        final long ticketId = getStorageDAO().addTicket(ticket);
+        final Ticket addedTicket = getStorageDAO().getTicket(ticketId);
+        tickets.add(addedTicket);
+        return addedTicket;
     }
 
     @SneakyThrows
@@ -70,10 +70,11 @@ public class Client extends User {
                 throw new ReservationAlreadyExistedException("This reservation already existed for this user!");
             }
         }
-        this.reservations.add(reservation);
-        getStorageDAO().addReservation(reservation);
+        final long reservationId = getStorageDAO().addReservation(reservation);
+        final Reservation addedReservation = getStorageDAO().getReservation(reservationId);
+        this.reservations.add(addedReservation);
         this.tickets.clear();
-        return reservation;
+        return addedReservation;
     }
 
     @SneakyThrows
@@ -92,9 +93,6 @@ public class Client extends User {
         final Expo ticketExpo = getStorageDAO().getExpo(clientReservation.getTickets().get(0).getExpo());
         if (ticketExpo == null){
             throw new ExpoNotFoundException(clientReservation.getTickets().get(0).getExpo());
-        } else if (ticketExpo.isOpened()
-                || LocalDateTime.now().until(ticketExpo.getStartTime(), ChronoUnit.MINUTES) < 30) {
-            //return buyTickets(clientReservation);
         } else if (ticketExpo.isClosed()){
             throw new ExpoAlreadyClosedException("Expo " + ticketExpo.getName() + " already closed");
         }

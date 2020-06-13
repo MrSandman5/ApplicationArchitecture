@@ -1,4 +1,4 @@
-package com.example.galleryservice.model.project;
+package com.example.galleryservice.model.gallery;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

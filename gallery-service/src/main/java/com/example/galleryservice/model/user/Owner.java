@@ -1,9 +1,7 @@
 package com.example.galleryservice.model.user;
 
-import com.example.galleryservice.data.StorageDAO;
-import com.example.galleryservice.data.project.OwnerArtistPaymentDAO;
 import com.example.galleryservice.exceptions.*;
-import com.example.galleryservice.model.project.*;
+import com.example.galleryservice.model.gallery.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -50,12 +48,19 @@ public class Owner extends User {
     }
 
     @SneakyThrows
-    public void createExpo(@NotNull final Expo expo){
+    public Expo createExpo(@NotNull final Expo expo){
         this.checkAuthentication();
         if (expos.contains(expo))
             throw new ExpoAlreadyExistedException("Artwork with id : " + expo.getId() + " already existed for this user!");
-        expos.add(expo);
-        getStorageDAO().addExpo(expo);
+        final Expo existedExpo = getStorageDAO().getExpo(expo.getName());
+        if (existedExpo == null) {
+            final long expoId = getStorageDAO().addExpo(expo);
+            final Expo addedExpo = getStorageDAO().getExpo(expoId);
+            this.expos.add(addedExpo);
+            return addedExpo;
+        }
+        this.expos.add(existedExpo);
+        return existedExpo;
     }
 
     @SneakyThrows
@@ -63,7 +68,7 @@ public class Owner extends User {
                          @NotNull final EditSettings settings,
                          @NotNull final String data){
         this.checkAuthentication();
-        final Expo curExpo = getStorageDAO().getExpo(expo.getId());
+        final Expo curExpo = getStorageDAO().getExpo(expo.getName());
         final LocalDateTime newDateTime;
         switch (settings){
             case Name:
@@ -93,7 +98,7 @@ public class Owner extends User {
     @SneakyThrows
     public void startExpo(@NotNull final Expo expo){
         this.checkAuthentication();
-        final Expo newExpo = getStorageDAO().getExpo(expo.getId());
+        final Expo newExpo = getStorageDAO().getExpo(expo.getName());
         if (newExpo == null){
             throw new ExpoNotFoundException(expo.getId());
         } else if ((LocalDateTime.now().equals(newExpo.getStartTime())
@@ -107,7 +112,7 @@ public class Owner extends User {
     @SneakyThrows
     public void closeExpo(@NotNull final Expo expo){
         this.checkAuthentication();
-        final Expo openedExpo = getStorageDAO().getExpo(expo.getId());
+        final Expo openedExpo = getStorageDAO().getExpo(expo.getName());
         if (openedExpo == null){
             throw new ExpoNotFoundException(expo.getId());
         } else if (!openedExpo.isOpened()) {
@@ -122,7 +127,7 @@ public class Owner extends User {
     @SneakyThrows
     public double payForExpo(@NotNull final Expo expo){
         this.checkAuthentication();
-        final Expo closedExpo = getStorageDAO().getExpo(expo.getId());
+        final Expo closedExpo = getStorageDAO().getExpo(getName());
         if (closedExpo == null) {
             throw new ExpoNotFoundException(expo.getId());
         } else if (!closedExpo.isOpened()) {

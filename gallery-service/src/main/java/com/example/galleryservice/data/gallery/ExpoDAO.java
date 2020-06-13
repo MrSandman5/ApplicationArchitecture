@@ -1,15 +1,12 @@
-package com.example.galleryservice.data.project;
+package com.example.galleryservice.data.gallery;
 
 import com.example.galleryservice.data.DAO;
-import com.example.galleryservice.model.project.*;
+import com.example.galleryservice.model.gallery.*;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
@@ -18,7 +15,9 @@ import javax.validation.constraints.NotNull;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 @Data
@@ -30,7 +29,8 @@ public class ExpoDAO implements DAO<Expo> {
     @Autowired
     public ExpoDAO(@NotNull final DataSource dataSource) {
         jdbcTemplate = new JdbcTemplate(dataSource);
-        jdbcInsert = new SimpleJdbcInsert(dataSource).withTableName("expos")
+        jdbcInsert = new SimpleJdbcInsert(dataSource).withSchemaName("testbase")
+                .withTableName("expos")
                 .usingGeneratedKeyColumns("id");
     }
 
@@ -38,7 +38,7 @@ public class ExpoDAO implements DAO<Expo> {
         @Override
         public Expo mapRow(@NotNull final ResultSet rs, final int rowNum) throws SQLException {
             Expo expo = new Expo();
-            expo.setId(rs.getLong("id"));
+            expo.setId(rs.getBigDecimal("id").longValue());
             expo.setName(rs.getString("name"));
             expo.setInfo(rs.getString("info"));
             expo.setArtist(rs.getLong("artist"));
@@ -53,7 +53,7 @@ public class ExpoDAO implements DAO<Expo> {
         try {
             return jdbcTemplate.queryForObject("select * from testbase.expos where name = ?",
                     new Object[]{name},
-                    new BeanPropertyRowMapper<>(Expo.class));
+                    new ExpoRowMapper());
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
@@ -72,7 +72,7 @@ public class ExpoDAO implements DAO<Expo> {
         try {
             return jdbcTemplate.queryForObject("select * from testbase.expos where id = ?",
                     new Object[]{id},
-                    new BeanPropertyRowMapper<>(Expo.class));
+                    new ExpoRowMapper());
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
@@ -91,7 +91,14 @@ public class ExpoDAO implements DAO<Expo> {
 
     @Override
     public long insert(@NotNull final Expo expo) {
-        SqlParameterSource parameters = new BeanPropertySqlParameterSource(expo);
-        return jdbcInsert.executeAndReturnKey(parameters).longValue();
+        final Map<String, Object> parameters = new HashMap<>(6);
+        parameters.put("name", expo.getName());
+        parameters.put("info", expo.getInfo());
+        parameters.put("artist", expo.getArtist());
+        parameters.put("startTime", expo.getStartTime());
+        parameters.put("endTime", expo.getEndTime());
+        parameters.put("status", expo.getStatus());
+        final Number newId = jdbcInsert.executeAndReturnKey(parameters);
+        return (long) newId;
     }
 }
