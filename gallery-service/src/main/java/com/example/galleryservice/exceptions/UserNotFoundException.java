@@ -7,4 +7,8 @@ public class UserNotFoundException extends Exception {
     public UserNotFoundException(@NotNull final String login){
         super("User " + login + " not found");
     }
+
+    public UserNotFoundException(final long id){
+        super("User " + id + " not found");
+    }
 }

@@ -2,11 +2,9 @@ package com.example.galleryservice.data.user;
 
 import com.example.galleryservice.data.DAO;
 import com.example.galleryservice.model.user.User;
-import com.example.galleryservice.model.user.UserRole;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
@@ -14,7 +12,6 @@ import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import javax.validation.constraints.NotNull;
-import java.math.BigInteger;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
@@ -23,13 +20,15 @@ import java.util.*;
 @Data
 public class UserDAO implements DAO<User> {
 
+    private DataSource dataSource;
     private JdbcTemplate jdbcTemplate;
     private SimpleJdbcInsert jdbcInsert;
 
     @Autowired
     public UserDAO(@NotNull final DataSource dataSource) {
-        jdbcTemplate = new JdbcTemplate(dataSource);
-        jdbcInsert = new SimpleJdbcInsert(dataSource).withSchemaName("testbase")
+        this.dataSource = dataSource;
+        jdbcTemplate = new JdbcTemplate(this.dataSource);
+        jdbcInsert = new SimpleJdbcInsert(this.dataSource).withSchemaName("testbase")
                 .withTableName("users")
                 .usingGeneratedKeyColumns("id");
     }
@@ -44,24 +43,9 @@ public class UserDAO implements DAO<User> {
             user.setName(rs.getString("name"));
             user.setEmail(rs.getString("email"));
             user.setAuthentication(rs.getBoolean("authentication"));
-            user.setRole(UserRole.valueOf(rs.getString("role")));
             return user;
         }
     }
-
-    /*public boolean authenticate(@NotNull final User user, @NotNull final String password) {
-        String resultPassword;
-        try {
-            resultPassword = jdbcTemplate.queryForObject("select testbase.users.password FROM testbase.users WHERE id = ?;",
-                    new Object[]{user.getId()},
-                    new BeanPropertyRowMapper<>(String.class));
-
-        } catch (EmptyResultDataAccessException e) {
-            resultPassword = null;
-        }
-        return password.equals(resultPassword);
-
-    }*/
 
     public User findByLogin(@NotNull final String login) {
         try {
@@ -91,7 +75,6 @@ public class UserDAO implements DAO<User> {
         parameters.put("name", user.getName());
         parameters.put("email", user.getEmail());
         parameters.put("authentication", user.getAuthentication());
-        parameters.put("role", user.getRole());
         final Number newId = jdbcInsert.executeAndReturnKey(parameters);
         return (long) newId;
     }

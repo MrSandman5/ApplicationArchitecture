@@ -10,8 +10,11 @@ import javax.validation.constraints.NotNull;
 public class Artwork {
 
     private long id;
+    @NotNull
     private String name;
+    @NotNull
     private String info;
+    @NotNull
     private Long artist;
 
     public Artwork(@NotNull final String name,

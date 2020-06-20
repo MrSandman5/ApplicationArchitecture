@@ -1,8 +1,8 @@
 package com.example.galleryservice.data.gallery;
 
-import com.example.galleryservice.data.DAO;
 import com.example.galleryservice.model.gallery.OwnerArtistPayment;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -18,19 +18,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@EqualsAndHashCode(callSuper = true)
 @Repository
 @Data
-public class OwnerArtistPaymentDAO implements DAO<OwnerArtistPayment> {
+public class OwnerArtistPaymentDAO extends PaymentDAO {
 
     private JdbcTemplate jdbcTemplate;
     private SimpleJdbcInsert jdbcInsert;
 
     @Autowired
     public OwnerArtistPaymentDAO(@NotNull final DataSource dataSource) {
-        jdbcTemplate = new JdbcTemplate(dataSource);
-        jdbcInsert = new SimpleJdbcInsert(dataSource).withSchemaName("testbase")
-                .withTableName("owner_artist_payment")
-                .usingGeneratedKeyColumns("id");
+        super(dataSource);
+        this.jdbcTemplate = new JdbcTemplate(dataSource);
+        this.jdbcInsert = new SimpleJdbcInsert(dataSource).withSchemaName("testbase")
+                .withTableName("owner_artist_payment");
     }
 
     final static class OwnerArtistPaymentRowMapper implements RowMapper<OwnerArtistPayment> {
@@ -38,8 +39,6 @@ public class OwnerArtistPaymentDAO implements DAO<OwnerArtistPayment> {
         public OwnerArtistPayment mapRow(@NotNull final ResultSet rs, final int rowNum) throws SQLException {
             OwnerArtistPayment ownerArtistPaymentDAO = new OwnerArtistPayment();
             ownerArtistPaymentDAO.setId(rs.getBigDecimal("id").longValue());
-            ownerArtistPaymentDAO.setDate(rs.getTimestamp("dateTime").toLocalDateTime());
-            ownerArtistPaymentDAO.setAmount(rs.getDouble("amount"));
             ownerArtistPaymentDAO.setExpo(rs.getLong("expo"));
             ownerArtistPaymentDAO.setOwner(rs.getLong("owner"));
             ownerArtistPaymentDAO.setArtist(rs.getLong("artist"));
@@ -65,7 +64,6 @@ public class OwnerArtistPaymentDAO implements DAO<OwnerArtistPayment> {
         return jdbcTemplate.query("select * from testbase.owner_artist_payment where artist = ?", new Object[]{artist}, new OwnerArtistPaymentRowMapper());
     }
 
-    @Override
     public OwnerArtistPayment findByID(final long id) {
         try {
             return jdbcTemplate.queryForObject("select * from testbase.owner_artist_payment where id = ?",
@@ -76,24 +74,17 @@ public class OwnerArtistPaymentDAO implements DAO<OwnerArtistPayment> {
         }
     }
 
-    @Override
-    public List<OwnerArtistPayment> findAll() {
+    public List<OwnerArtistPayment> findAllOwnerArtistPayments() {
         return jdbcTemplate.query("select * from testbase.owner_artist_payment", new OwnerArtistPaymentRowMapper());
     }
 
-    @Override
-    public void update(@NotNull final OwnerArtistPayment ownerArtistPayment) { }
-
-    @Override
-    public long insert(@NotNull final OwnerArtistPayment ownerArtistPayment) {
-        final Map<String, Object> parameters = new HashMap<>(6);
-        parameters.put("date", ownerArtistPayment.getDate());
-        parameters.put("amount", ownerArtistPayment.getAmount());
+    public int insert(@NotNull final OwnerArtistPayment ownerArtistPayment) {
+        final Map<String, Object> parameters = new HashMap<>(4);
+        parameters.put("id", ownerArtistPayment.getId());
         parameters.put("expo", ownerArtistPayment.getExpo());
         parameters.put("owner", ownerArtistPayment.getOwner());
         parameters.put("artist", ownerArtistPayment.getArtist());
-        final Number newId = jdbcInsert.executeAndReturnKey(parameters);
-        return (long) newId;
+        return jdbcInsert.execute(parameters);
     }
 
 }

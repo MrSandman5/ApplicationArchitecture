@@ -8,33 +8,40 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Data
 @NoArgsConstructor
 public class User {
 
     private long id;
+    @NotNull
+    @Size(min = 5)
     private String login;
+    @NotNull
+    @Size(min = 6)
     private String password;
+    @NotNull
     private String name;
+    @NotNull
+    @Email(message = "Invalid email! Please enter valid email")
     private String email;
+    @NotNull
     private Boolean authentication;
-    private UserRole role;
 
-    private StorageDAO storageDAO = SpringContext.getBean(StorageDAO.class);
+    private final StorageDAO storageDAO = SpringContext.getBean(StorageDAO.class);
 
     public User(@NotNull final String login,
                 @NotNull final String password,
                 @NotNull final String name,
-                @NotNull final String email,
-                @NotNull final UserRole role) {
+                @NotNull final String email) {
         this.login = login;
         this.name = name;
         this.password = password;
         this.email = email;
         this.authentication = false;
-        this.role = role;
     }
 
     public User(@NotNull final User user){
@@ -44,7 +51,6 @@ public class User {
         this.password = user.password;
         this.email = user.email;
         this.authentication = user.authentication;
-        this.role = user.role;
     }
 
     @SneakyThrows
@@ -68,11 +74,8 @@ public class User {
         return authentication;
     }
 
-    public boolean isClient() { return role.equals(UserRole.Client); }
-    public boolean isOwner() { return role.equals(UserRole.Owner); }
-    public boolean isArtist() { return role.equals(UserRole.Artist); }
-
     public String toString() {
         return  login + ":" + name + "<" + email + ">";
     }
+
 }

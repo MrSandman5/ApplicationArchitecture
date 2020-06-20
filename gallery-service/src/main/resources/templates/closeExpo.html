@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+    <title>Close Expo</title>
+    <link rel="stylesheet" th:href="@{/static/style.css}"/>
+</head>
+<body>
+<h1>Enter expo's id</h1>
+<form action="#" th:action="@{/owner/{login}/closeExpo(login=${login})}" th:object="${expo}"
+      method="post">
+    <table>
+        <tr>
+            <td>Expo:</td>
+            <td><input type="text" th:field="*{expo}" /></td>
+            <td th:if="${#fields.hasErrors('expo')}" th:errors="*{expo}">Expo
+                Error</td>
+        </tr>
+        <tr>
+            <td><button type="submit">Submit</button></td>
+        </tr>
+    </table>
+</form>
+</body>
+</html>

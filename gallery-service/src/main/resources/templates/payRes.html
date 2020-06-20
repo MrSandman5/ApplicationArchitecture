@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+    <title>Add Ticket</title>
+    <link rel="stylesheet" th:href="@{/static/style.css}"/>
+</head>
+<body>
+<h1>Enter ticket's expo id</h1>
+<form action="#" th:action="@{/client/{login}/payRes(login=${login})}" th:object="${payment}"
+      method="post">
+    <table>
+        <tr>
+            <td>Reservation:</td>
+            <td><input type="text" th:field="*{reservation}" /></td>
+            <td th:if="${#fields.hasErrors('reservation')}" th:errors="*{reservation}">Reservation
+                Error</td>
+        </tr>
+        <tr>
+            <td>Owner:</td>
+            <td><input type="text" th:field="*{owner}" /></td>
+            <td th:if="${#fields.hasErrors('owner')}" th:errors="*{owner}">Owner
+                Error</td>
+        </tr>
+        <tr>
+            <td><button type="submit">Submit</button></td>
+        </tr>
+    </table>
+</form>
+</body>
+
+</html>

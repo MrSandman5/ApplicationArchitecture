@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Expos</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<h1>Expos</h1>
+<br>
+<div>
+    <table>
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Artist</th>
+            <th>StartTime</th>
+            <th>EndTime</th>
+            <th>TicketPrice</th>
+            <th>Artworks</th>
+            <th>Status</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each ="expo : ${expos}">
+            <td> <span th:text="${expo.id}">Id</span></td>
+            <td> <span th:text="${expo.name}">Name</span></td>
+            <td> <span th:text="${expo.info}">Info</span></td>
+            <td> <span th:text="${expo.artist}">Artist Id</span></td>
+            <td> <span th:text="${expo.startTime}">StartTime</span></td>
+            <td> <span th:text="${expo.endTime}">EndTime</span></td>
+            <td> <span th:text="${expo.ticketPrice}">TicketPrice</span></td>
+            <td> <span th:list="${expo.artworks}">Artworks</span></td>
+            <td> <span th:text="${expo.status}">Status</span></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>

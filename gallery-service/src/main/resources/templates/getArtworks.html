@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+    <title>Get Artworks</title>
+    <link rel="stylesheet" th:href="@{/static/style.css}"/>
+</head>
+<body>
+<h1>Enter artwork's name and info</h1>
+<form action="#" th:action="@{/owner/{login}/get(login=${login})}" th:object="${artist}"
+      method="post">
+    <table>
+        <tr>
+            <td>Artist:</td>
+            <td><input type="text" th:field="*{artist}" /></td>
+            <td th:if="${#fields.hasErrors('artist')}" th:errors="*{artist}">Artist
+                Error</td>
+        </tr>
+        <tr>
+            <td><button type="submit">Submit</button></td>
+        </tr>
+    </table>
+</form>
+</body>
+</html>

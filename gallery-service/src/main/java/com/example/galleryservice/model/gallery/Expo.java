@@ -1,12 +1,12 @@
 package com.example.galleryservice.model.gallery;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Data
@@ -14,18 +14,26 @@ import java.util.List;
 public class Expo {
 
     private long id;
+    @NotNull
     private String name;
+    @NotNull
     private String info;
+    @NotNull
     private Long artist;
 
-    @JsonFormat(pattern = "dd/MM/yyyy hh:mm")
+    @NotNull
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime startTime;
 
-    @JsonFormat(pattern = "dd/MM/yyyy hh:mm")
+    @NotNull
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime endTime;
+    @Min(value = 0, message = "must be greater than or equal to zero")
     private double ticketPrice;
 
-    private List<Artwork> artworks;
+    @NotNull
+    private List<String> artworks;
+    @NotNull
     private ExpoStatus status;
 
     public Expo(@NotNull final String name,
@@ -34,7 +42,7 @@ public class Expo {
                 @NotNull final LocalDateTime startTime,
                 @NotNull final LocalDateTime endTime,
                 final double ticketPrice,
-                @NotNull final List<Artwork> artworks) {
+                @NotNull final List<String> artworks) {
         this.name = name;
         this.info = info;
         this.artist = artist;
@@ -59,10 +67,6 @@ public class Expo {
         this.ticketPrice = expo.ticketPrice;
         this.artworks = expo.artworks;
         this.status = expo.status;
-    }
-
-    public Long getDuration(){
-        return ChronoUnit.DAYS.between(startTime, endTime);
     }
 
     public boolean isNew() { return status.equals(ExpoStatus.New); }

@@ -15,17 +15,7 @@ import org.springframework.data.jdbc.repository.config.EnableJdbcRepositories;
 public class GalleryServiceApplication {
 
     public static void main(String[] args) {
-        //SpringApplication.run(GalleryServiceApplication.class, args);
-
-        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(DataSourceConfig.class);
-
-        StorageDAO storageDAO = context.getBean(StorageDAO.class);
-
-        System.out.println("List of person is:");
-
-        for (User p : storageDAO.getUserDAO().findAll()) {
-            System.out.println(p);
-        }
+        SpringApplication.run(GalleryServiceApplication.class, args);
     }
 
 }
