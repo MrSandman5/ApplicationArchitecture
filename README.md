@@ -1,1 +1,1 @@
-# ApplicationArchitecture
+# art-gallery-app
