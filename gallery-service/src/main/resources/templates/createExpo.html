@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+    <title>Create Expo</title>
+    <link rel="stylesheet" th:href="@{/static/style.css}"/>
+</head>
+<body>
+<h1>Enter expo's fields</h1>
+<form action="#" th:action="@{/owner/{login}/createExpo(login=${login})}" th:object="${expo}"
+      method="post">
+    <table>
+        <tr>
+            <td>Name:</td>
+            <td><input type="text" th:field="*{name}" /></td>
+            <td th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name
+                Error</td>
+        </tr>
+        <tr>
+            <td>Info:</td>
+            <td><input type="text" th:field="*{info}" /></td>
+            <td th:if="${#fields.hasErrors('info')}" th:errors="*{info}">Info
+                Error</td>
+        </tr>
+        <tr>
+            <td>Artist:</td>
+            <td><input type="text" th:field="*{artist}" /></td>
+            <td th:if="${#fields.hasErrors('artist')}" th:errors="*{artist}">Artist
+                Error</td>
+        </tr>
+        <tr>
+            <td>StartTime:</td>
+            <td><input type="datetime-local" th:field="*{startTime}" /></td>
+            <td th:if="${#fields.hasErrors('startTime')}" th:errors="*{startTime}">StartTime
+                Error</td>
+        </tr>
+        <tr>
+            <td>EndTime:</td>
+            <td><input type="datetime-local" th:field="*{endTime}" /></td>
+            <td th:if="${#fields.hasErrors('endTime')}" th:errors="*{endTime}">EndTime
+                Error</td>
+        </tr>
+        <tr>
+            <td>TicketPrice:</td>
+            <td><input type="text" th:field="*{ticketPrice}" /></td>
+            <td th:if="${#fields.hasErrors('ticketPrice')}" th:errors="*{ticketPrice}">TicketPrice
+                Error</td>
+        </tr>
+        <tr>
+            <td><button type="submit">Submit</button></td>
+        </tr>
+    </table>
+</form>
+</body>
+</html>

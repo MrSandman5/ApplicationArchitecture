@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Owner</title>
+</head>
+<body>
+<div class="owner-form">
+    <p><strong>ID:</strong> <span th:text="${user.id}"></span></p>
+    <p><strong>Login:</strong> <span th:text="${user.login}"></span></p>
+    <p><strong>Password:</strong> <span th:text="${user.password}"></span></p>
+    <p><strong>Name:</strong> <span th:text="${user.name}"></span></p>
+    <p><strong>Email:</strong> <span th:text="${user.email}"></span></p>
+    <p><strong>Expos:</strong>
+    <table>
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Artist</th>
+            <th>StartTime</th>
+            <th>EndTime</th>
+            <th>TicketPrice</th>
+            <th>Artworks</th>
+            <th>Status</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each ="expo : ${expos}">
+            <td> <span th:text="${expo.id}">Id</span></td>
+            <td> <span th:text="${expo.name}">Name</span></td>
+            <td> <span th:text="${expo.info}">Info</span></td>
+            <td> <span th:text="${expo.artist}">Artist Id</span></td>
+            <td> <span th:text="${expo.startTime}">StartTime</span></td>
+            <td> <span th:text="${expo.endTime}">EndTime</span></td>
+            <td> <span th:text="${expo.ticketPrice}">TicketPrice</span></td>
+            <td> <span th:list="${expo.artworks}">Artworks</span></td>
+            <td> <span th:text="${expo.status}">Status</span></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<a th:href="@{/owner/{login}/createExpo(login=${user.login})}">Create new expo</a>
+<a th:href="@{/owner/{login}/editExpo(login=${user.login})}">Edit expo</a>
+<a th:href="@{/owner/{login}/openExpo(login=${user.login})}">Open expo</a>
+<a th:href="@{/owner/{login}/closeExpo(login=${user.login})}">Close expo</a>
+<a th:href="@{/owner/{login}/payForExpo(login=${user.login})}">Pay for expo</a>
+</body>
+</html>

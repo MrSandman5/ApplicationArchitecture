@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Artist</title>
+</head>
+<body>
+<div class="artist-form">
+    <p><strong>ID:</strong> <span th:text="${user.id}"></span></p>
+    <p><strong>Login:</strong> <span th:text="${user.login}"></span></p>
+    <p><strong>Password:</strong> <span th:text="${user.password}"></span></p>
+    <p><strong>Name:</strong> <span th:text="${user.name}"></span></p>
+    <p><strong>Email:</strong> <span th:text="${user.email}"></span></p>
+    <p><strong>Artworks for expo:</strong>
+    <table>
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Info</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each ="artwork : ${artworks}">
+            <td> <span th:text="${artwork.id}">Id</span></td>
+            <td> <span th:text="${artwork.name}">Name</span></td>
+            <td> <span th:text="${artwork.info}">Info</span></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<a th:href="@{/artist/{login}/addArtwork(login=${user.login})}">Add new artwork</a>
+</body>
+</html>
