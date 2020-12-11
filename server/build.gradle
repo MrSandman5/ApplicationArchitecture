@@ -6,9 +6,12 @@ plugins {
 
 group = 'com.safonov.galleryservice'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '15'
 
 configurations {
+	developmentOnly
+	runtimeClasspath {
+		extendsFrom developmentOnly
+	}
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
@@ -26,12 +29,16 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.hibernate.validator:hibernate-validator:6.1.6.Final'
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'org.postgresql:postgresql'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
+	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.2'
+	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.5.2'
+	testImplementation 'junit:junit:4.12'
 }
 
 test {
