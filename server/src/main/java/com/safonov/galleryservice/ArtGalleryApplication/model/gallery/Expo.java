@@ -9,7 +9,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Table(name = "expo")
@@ -56,7 +56,7 @@ public class Expo {
 
     @OneToMany(mappedBy = "artwork", cascade = CascadeType.ALL, orphanRemoval = true)
     @NotNull
-    private Set<Artwork> artworks;
+    private List<Artwork> artworks;
 
     public Expo(@NotNull final String name,
                 @NotNull final String info,
@@ -64,7 +64,7 @@ public class Expo {
                 @NotNull final LocalDateTime startTime,
                 @NotNull final LocalDateTime endTime,
                 final Double ticketPrice,
-                @NotNull final Set<Artwork> artworks) {
+                @NotNull final List<Artwork> artworks) {
         this.name = name;
         this.info = info;
         this.artist = artist;

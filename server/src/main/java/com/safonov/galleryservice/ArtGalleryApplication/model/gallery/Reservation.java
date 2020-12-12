@@ -11,8 +11,8 @@ import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "reservation")
@@ -46,16 +46,16 @@ public class Reservation {
 
     @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL, orphanRemoval = true)
     @NotNull
-    private Set<Ticket> tickets;
+    private List<Ticket> tickets;
 
     private final StorageRepository storageRepository = SpringContext.getBean(StorageRepository.class);
 
     public Reservation(@NotNull final Client client,
                        @NotNull final LocalDateTime dateTime,
-                       @NotNull final Set<Ticket> tickets) {
+                       @NotNull final List<Ticket> tickets) {
         this.client = client;
         this.tickets = tickets;
-        final Set<Ticket> resTickets = new HashSet<>();
+        final List<Ticket> resTickets = new ArrayList<>();
         for (final Ticket ticket : tickets){
             resTickets.add(storageRepository.getTicket(ticket.getId()));
         }

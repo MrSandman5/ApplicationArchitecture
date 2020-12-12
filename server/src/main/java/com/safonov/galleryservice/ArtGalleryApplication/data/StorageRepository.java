@@ -187,42 +187,42 @@ public class StorageRepository {
     }
 
     @SneakyThrows
-    public long addUser(@NotNull final String login,
+    public User addUser(@NotNull final String login,
                         @NotNull final String password,
                         @NotNull final String name,
                         @NotNull final String email) {
         if (userRepository.findUserByLogin(login).isPresent())
             throw new UserAlreadyExistedException(login);
         final User user = new User(login, password, name, email);
-        return userRepository.insert(user);
+        return userRepository.save(user);
     }
 
     @SneakyThrows
-    public long addUser(@NotNull final User user) {
+    public User addUser(@NotNull final User user) {
         if (userRepository.findUserByLogin(user.getLogin()).isPresent())
             throw new UserAlreadyExistedException(user.getLogin());
-        return userRepository.insert(user);
+        return userRepository.save(user);
     }
 
     @SneakyThrows
     public void addClient(@NotNull final Client client) {
-        final long clientId = addUser(client);
+        final long clientId = addUser(client).getId();
         client.setId(clientId);
-        clientRepository.insert(client);
+        clientRepository.save(client);
     }
 
     @SneakyThrows
     public void addOwner(@NotNull final Owner owner) {
-        final long ownerId = addUser(owner);
+        final long ownerId = addUser(owner).getId();
         owner.setId(ownerId);
-        ownerRepository.insert(owner);
+        ownerRepository.save(owner);
     }
 
     @SneakyThrows
     public void addArtist(@NotNull final Artist artist) {
-        final long artistId = addUser(artist);
+        final long artistId = addUser(artist).getId();
         artist.setId(artistId);
-        artistRepository.insert(artist);
+        artistRepository.save(artist);
     }
 
     /*@SneakyThrows
@@ -356,64 +356,64 @@ public class StorageRepository {
         return ownerArtistPayment;
     }
 
-    public long addTicket(@NotNull final Ticket ticket) {
-        return ticketRepository.insert(ticket);
+    public Ticket addTicket(@NotNull final Ticket ticket) {
+        return ticketRepository.save(ticket);
     }
 
-    public long addReservation(@NotNull final Reservation reservation) {
-        return reservationRepository.insert(reservation);
+    public Reservation addReservation(@NotNull final Reservation reservation) {
+        return reservationRepository.save(reservation);
     }
 
-    public long addExpo(@NotNull final Expo expo) {
-        return expoRepository.insert(expo);
+    public Expo addExpo(@NotNull final Expo expo) {
+        return expoRepository.save(expo);
     }
 
-    public long addArtwork(@NotNull final Artwork artwork) {
-        return artworkRepository.insert(artwork);
+    public Artwork addArtwork(@NotNull final Artwork artwork) {
+        return artworkRepository.save(artwork);
     }
 
-    private long addPayment(@NotNull final Payment payment) {
-        return paymentRepository.insert(payment);
+    private Payment addPayment(@NotNull final Payment payment) {
+        return paymentRepository.save(payment);
     }
 
     public long addClientOwnerPayment(@NotNull final ClientOwnerPayment clientOwnerPayment){
-        final long paymentId = addPayment(clientOwnerPayment);
+        final long paymentId = addPayment(clientOwnerPayment).getId();
         clientOwnerPayment.setId(paymentId);
-        clientOwnerPaymentRepository.insert(clientOwnerPayment);
+        clientOwnerPaymentRepository.save(clientOwnerPayment);
         return paymentId;
     }
 
     public long addOwnerArtistPayment(@NotNull final OwnerArtistPayment ownerArtistPayment){
-        final long paymentId = addPayment(ownerArtistPayment);
+        final long paymentId = addPayment(ownerArtistPayment).getId();
         ownerArtistPayment.setId(paymentId);
-        ownerArtistPaymentRepository.insert(ownerArtistPayment);
+        ownerArtistPaymentRepository.save(ownerArtistPayment);
         return paymentId;
     }
 
     public void updateUser(@NotNull final User user){
-        userRepository.update(user);
+        userRepository.save(user);
     }
 
     public void updateClient(@NotNull final Client client){
         updateUser(client);
-        clientRepository.update(client);
+        clientRepository.save(client);
     }
 
     public void updateOwner(@NotNull final Owner owner){
         updateUser(owner);
-        ownerRepository.update(owner);
+        ownerRepository.save(owner);
     }
 
     public void updateArtist(@NotNull final Artist artist){
         updateUser(artist);
-        artistRepository.update(artist);
+        artistRepository.save(artist);
     }
 
     public void updateReservation(@NotNull final Reservation reservation){
-        reservationRepository.update(reservation);
+        reservationRepository.save(reservation);
     }
 
     public void updateExpo(@NotNull final Expo expo){
-        expoRepository.update(expo);
+        expoRepository.save(expo);
     }
 }
