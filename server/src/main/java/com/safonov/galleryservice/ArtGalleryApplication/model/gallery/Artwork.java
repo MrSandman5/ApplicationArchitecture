@@ -16,7 +16,7 @@ public class Artwork {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id")
-    private long id;
+    private Long id;
 
     @NotNull
     @Column(name = "name")

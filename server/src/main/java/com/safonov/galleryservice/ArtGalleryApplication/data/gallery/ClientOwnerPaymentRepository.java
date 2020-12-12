@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ClientOwnerPaymentRepository extends PaymentRepository {
+public interface ClientOwnerPaymentRepository extends PaymentRepository<ClientOwnerPayment> {
 
     Optional<ClientOwnerPayment> findPaymentByReservation(@NotNull final Reservation reservation);
 

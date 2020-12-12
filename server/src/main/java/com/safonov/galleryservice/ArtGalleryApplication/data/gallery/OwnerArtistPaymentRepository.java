@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface OwnerArtistPaymentRepository extends PaymentRepository {
+public interface OwnerArtistPaymentRepository extends PaymentRepository<OwnerArtistPayment> {
 
     Optional<OwnerArtistPayment> findPaymentByExpo(@NotNull final Expo expo);
 

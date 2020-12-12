@@ -25,7 +25,7 @@ import java.util.List;
 @Data
 public class StorageRepository {
 
-    private final UserRepository userRepository;
+    private final UserRepository<User> userRepository;
     private final ClientRepository clientRepository;
     private final OwnerRepository ownerRepository;
     private final ArtistRepository artistRepository;
@@ -33,12 +33,12 @@ public class StorageRepository {
     private final ReservationRepository reservationRepository;
     private final ExpoRepository expoRepository;
     private final ArtworkRepository artworkRepository;
-    private final PaymentRepository paymentRepository;
+    private final PaymentRepository<Payment> paymentRepository;
     private final ClientOwnerPaymentRepository clientOwnerPaymentRepository;
     private final OwnerArtistPaymentRepository ownerArtistPaymentRepository;
 
     @Autowired
-    public StorageRepository(@NotNull final UserRepository userRepository,
+    public StorageRepository(@NotNull final UserRepository<User> userRepository,
                       @NotNull final ClientRepository clientRepository,
                       @NotNull final OwnerRepository ownerRepository,
                       @NotNull final ArtistRepository artistRepository,
@@ -46,7 +46,7 @@ public class StorageRepository {
                       @NotNull final ReservationRepository reservationRepository,
                       @NotNull final ExpoRepository expoRepository,
                       @NotNull final ArtworkRepository artworkRepository,
-                      @NotNull final PaymentRepository paymentRepository,
+                      @NotNull final PaymentRepository<Payment> paymentRepository,
                       @NotNull final ClientOwnerPaymentRepository clientOwnerPaymentRepository,
                       @NotNull final OwnerArtistPaymentRepository ownerArtistPaymentRepository) {
         this.userRepository = userRepository;
@@ -78,7 +78,7 @@ public class StorageRepository {
         if (user == null){
             throw new UserNotFoundException(login);
         }
-        final Client client = (Client) clientRepository.findById(user.getId()).orElse(null);
+        final Client client = clientRepository.findById(user.getId()).orElse(null);
         if (client == null) {
             return client;
         }
@@ -97,7 +97,7 @@ public class StorageRepository {
         if (user == null){
             throw new UserNotFoundException(id);
         }
-        final Client client = (Client) clientRepository.findById(user.getId()).orElse(null);
+        final Client client = clientRepository.findById(user.getId()).orElse(null);
         if (client == null) {
             return client;
         }

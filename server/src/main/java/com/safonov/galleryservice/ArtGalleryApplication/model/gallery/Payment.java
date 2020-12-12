@@ -7,18 +7,19 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "payment")
 @Data
 @NoArgsConstructor
-public class Payment {
+public class Payment implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id")
-    private long id;
+    private Long id;
 
     @NotNull
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")

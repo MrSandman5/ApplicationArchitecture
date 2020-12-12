@@ -8,9 +8,9 @@ import javax.validation.constraints.NotNull;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends BaseRepository<User> {
+public interface UserRepository<R extends User> extends BaseRepository<R> {
 
-    Optional<User> findUserByLogin(@NotNull final String login);
+    Optional<R> findUserByLogin(@NotNull final String login);
 
-    Optional<User> findUserByName(@NotNull final String name);
+    Optional<R> findUserByName(@NotNull final String name);
 }

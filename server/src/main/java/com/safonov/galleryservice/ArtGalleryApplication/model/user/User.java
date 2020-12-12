@@ -1,5 +1,7 @@
 package com.safonov.galleryservice.ArtGalleryApplication.model.user;
 
+import com.safonov.galleryservice.ArtGalleryApplication.configuration.SpringContext;
+import com.safonov.galleryservice.ArtGalleryApplication.data.StorageRepository;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -7,17 +9,18 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "user")
 @Data
 @NoArgsConstructor
-public class User {
+public class User implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id")
-    private long id;
+    private Long id;
 
     @NotNull
     @Size(min = 10)
@@ -41,7 +44,7 @@ public class User {
     @NotNull
     private Boolean authentication;
 
-    //private final StorageDAO storageDAO = SpringContext.getBean(StorageDAO.class);
+    private final StorageRepository storageRepository = SpringContext.getBean(StorageRepository.class);
 
     public User(@NotNull final String login,
                 @NotNull final String password,

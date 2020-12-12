@@ -9,6 +9,7 @@ import java.util.Optional;
 
 @NoRepositoryBean
 public interface BaseRepository<T> extends JpaRepository<T, Long> {
+
     Optional<T> findByID(final long id);
 
     List<T> findAll();

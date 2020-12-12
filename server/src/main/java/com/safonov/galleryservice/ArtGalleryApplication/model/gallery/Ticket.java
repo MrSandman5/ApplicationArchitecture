@@ -16,7 +16,7 @@ public class Ticket {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id")
-    private long id;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
@@ -30,11 +30,11 @@ public class Ticket {
 
     @Min(value = 0, message = "must be greater than or equal to zero")
     @Column(name = "cost")
-    private double cost;
+    private Double cost;
 
     public Ticket(@NotNull final Reservation reservation,
                   @NotNull final Expo expo,
-                  final double cost) {
+                  final Double cost) {
         this.reservation = reservation;
         this.expo = expo;
         this.cost = cost;

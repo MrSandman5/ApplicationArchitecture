@@ -1,5 +1,7 @@
 package com.safonov.galleryservice.ArtGalleryApplication.model.gallery;
 
+import com.safonov.galleryservice.ArtGalleryApplication.configuration.SpringContext;
+import com.safonov.galleryservice.ArtGalleryApplication.data.StorageRepository;
 import com.safonov.galleryservice.ArtGalleryApplication.model.user.Client;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,7 +23,7 @@ public class Reservation {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id")
-    private long id;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
@@ -30,7 +32,7 @@ public class Reservation {
 
     @Min(value = 0, message = "must be greater than or equal to zero")
     @Column(name = "cost")
-    private double cost;
+    private Double cost;
 
     @Enumerated(EnumType.STRING)
     @NotNull
@@ -46,7 +48,7 @@ public class Reservation {
     @NotNull
     private Set<Ticket> tickets;
 
-    //private final StorageDAO storageDAO = SpringContext.getBean(StorageDAO.class);
+    private final StorageRepository storageRepository = SpringContext.getBean(StorageRepository.class);
 
     public Reservation(@NotNull final Client client,
                        @NotNull final LocalDateTime dateTime,
@@ -55,7 +57,7 @@ public class Reservation {
         this.tickets = tickets;
         final Set<Ticket> resTickets = new HashSet<>();
         for (final Ticket ticket : tickets){
-            resTickets.add(storageDAO.getTicket(ticket));
+            resTickets.add(storageRepository.getTicket(ticket.getId()));
         }
         this.cost = resTickets.stream().map(Ticket::getCost).mapToDouble(Double::doubleValue).sum();
         this.status = ReservationStatus.New;

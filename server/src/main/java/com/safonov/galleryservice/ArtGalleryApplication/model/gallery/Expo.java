@@ -20,7 +20,7 @@ public class Expo {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id")
-    private long id;
+    private Long id;
 
     @NotNull
     @Column(name = "name")
@@ -47,7 +47,7 @@ public class Expo {
 
     @Min(value = 0, message = "must be greater than or equal to zero")
     @Column(name = "ticketPrice")
-    private double ticketPrice;
+    private Double ticketPrice;
 
     @Enumerated(EnumType.STRING)
     @NotNull
@@ -63,7 +63,7 @@ public class Expo {
                 @NotNull final Artist artist,
                 @NotNull final LocalDateTime startTime,
                 @NotNull final LocalDateTime endTime,
-                final double ticketPrice,
+                final Double ticketPrice,
                 @NotNull final Set<Artwork> artworks) {
         this.name = name;
         this.info = info;
@@ -81,6 +81,7 @@ public class Expo {
     }
 
     public Expo(@NotNull final Expo expo){
+        this.id = expo.id;
         this.name = expo.name;
         this.info = expo.info;
         this.artist = expo.artist;
