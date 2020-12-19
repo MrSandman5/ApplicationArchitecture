@@ -1,14 +1,9 @@
 package com.safonov.galleryservice.ArtGalleryApplication.data;
 
+import com.safonov.galleryservice.ArtGalleryApplication.entity.AbstractEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 
-import java.util.List;
-import java.util.Optional;
-
 @NoRepositoryBean
-public interface BaseRepository<T> extends JpaRepository<T, Long> {
-
-    Optional<T> findByID(final long id);
-    List<T> findAll();
+public interface BaseRepository<T extends AbstractEntity> extends JpaRepository<T, Long> {
 }

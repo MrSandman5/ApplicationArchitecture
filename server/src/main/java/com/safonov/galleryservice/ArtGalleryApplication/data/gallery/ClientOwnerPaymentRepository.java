@@ -1,9 +1,10 @@
 package com.safonov.galleryservice.ArtGalleryApplication.data.gallery;
 
-import com.safonov.galleryservice.ArtGalleryApplication.model.gallery.ClientOwnerPayment;
-import com.safonov.galleryservice.ArtGalleryApplication.model.gallery.Reservation;
-import com.safonov.galleryservice.ArtGalleryApplication.model.user.Client;
-import com.safonov.galleryservice.ArtGalleryApplication.model.user.Owner;
+import com.safonov.galleryservice.ArtGalleryApplication.data.BaseRepository;
+import com.safonov.galleryservice.ArtGalleryApplication.entity.actor.Client;
+import com.safonov.galleryservice.ArtGalleryApplication.entity.actor.Owner;
+import com.safonov.galleryservice.ArtGalleryApplication.entity.gallery.ClientOwnerPayment;
+import com.safonov.galleryservice.ArtGalleryApplication.entity.gallery.Reservation;
 import org.springframework.stereotype.Repository;
 
 import javax.validation.constraints.NotNull;
@@ -11,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ClientOwnerPaymentRepository extends PaymentRepository<ClientOwnerPayment> {
+public interface ClientOwnerPaymentRepository extends BaseRepository<ClientOwnerPayment> {
 
     Optional<ClientOwnerPayment> findPaymentByReservation(@NotNull final Reservation reservation);
 

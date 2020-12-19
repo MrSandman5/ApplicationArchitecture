@@ -1,8 +1,8 @@
 package com.safonov.galleryservice.ArtGalleryApplication.data.gallery;
 
 import com.safonov.galleryservice.ArtGalleryApplication.data.BaseRepository;
-import com.safonov.galleryservice.ArtGalleryApplication.model.gallery.Artwork;
-import com.safonov.galleryservice.ArtGalleryApplication.model.user.Artist;
+import com.safonov.galleryservice.ArtGalleryApplication.entity.actor.Artist;
+import com.safonov.galleryservice.ArtGalleryApplication.entity.gallery.Artwork;
 import org.springframework.stereotype.Repository;
 
 import javax.validation.constraints.NotNull;
