@@ -41,10 +41,9 @@ public class Reservation extends AbstractEntity {
     private List<Ticket> tickets;
 
     public Reservation(@NotNull final Client client,
-                       @NotNull final LocalDateTime dateTime,
-                       @NotNull final List<Ticket> tickets) {
+                       @NotNull final LocalDateTime dateTime) {
         this.client = client;
-        this.tickets = tickets;
+        this.tickets = client.getTickets();
         this.cost = this.tickets.stream()
                 .map(Ticket::getCost)
                 .mapToDouble(Double::doubleValue)

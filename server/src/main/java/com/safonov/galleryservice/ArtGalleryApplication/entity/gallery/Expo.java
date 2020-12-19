@@ -55,8 +55,7 @@ public class Expo extends AbstractEntity {
                 @NotNull final Artist artist,
                 @NotNull final LocalDateTime startTime,
                 @NotNull final LocalDateTime endTime,
-                final Double ticketPrice,
-                @NotNull final List<Artwork> artworks) {
+                final Double ticketPrice) {
         this.name = name;
         this.info = info;
         this.artist = artist;
@@ -68,7 +67,7 @@ public class Expo extends AbstractEntity {
             this.endTime = startTime;
         }
         this.ticketPrice = ticketPrice;
-        this.artworks = artworks;
+        this.artworks = this.artist.getArtworks();
         this.status = Constants.ExpoStatus.New;
     }
 

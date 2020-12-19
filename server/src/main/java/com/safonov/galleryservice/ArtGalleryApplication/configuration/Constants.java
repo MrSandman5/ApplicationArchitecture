@@ -1,6 +1,11 @@
 package com.safonov.galleryservice.ArtGalleryApplication.configuration;
 
+import java.time.format.DateTimeFormatter;
+
 public final class Constants {
+
+    public static final DateTimeFormatter formatter =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     public enum UserType {
         Client,
@@ -18,5 +23,12 @@ public final class Constants {
         New,
         Opened,
         Closed
+    }
+
+    public enum EditSettings {
+        Name,
+        Info,
+        StartTime,
+        EndTime
     }
 }

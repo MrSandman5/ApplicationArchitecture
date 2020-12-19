@@ -11,6 +11,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Data
@@ -24,8 +25,14 @@ public class Client extends User{
     private List<Reservation> reservations;
 
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Ticket> ticket;
+    private List<Ticket> tickets;
 
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ClientOwnerPayment> clientOwnerPayments;
+
+    public Client(@NotNull final String firstName,
+                  @NotNull final String secondName) {
+        this.firstName = firstName;
+        this.lastName = secondName;
+    }
 }

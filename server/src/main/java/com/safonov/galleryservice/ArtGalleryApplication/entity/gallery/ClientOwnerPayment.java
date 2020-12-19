@@ -2,17 +2,16 @@ package com.safonov.galleryservice.ArtGalleryApplication.entity.gallery;
 
 import com.safonov.galleryservice.ArtGalleryApplication.entity.actor.Client;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.actor.Owner;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Data
 @Entity
 @NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "client_owner_payment")
 @EqualsAndHashCode(callSuper = true)
 public class ClientOwnerPayment extends Payment{
@@ -28,4 +27,13 @@ public class ClientOwnerPayment extends Payment{
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id", nullable = false)
     private Owner owner;
+
+    public ClientOwnerPayment(@NotNull final Reservation reservation,
+                              @NotNull final Client client,
+                              @NotNull final Owner owner) {
+        this.reservation = reservation;
+        this.client = client;
+        this.owner = owner;
+        this.setPrice(reservation.getCost());
+    }
 }

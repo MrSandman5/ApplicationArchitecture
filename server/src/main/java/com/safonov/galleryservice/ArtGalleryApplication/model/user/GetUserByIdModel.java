@@ -8,8 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @EqualsAndHashCode(callSuper=false)
 @NoArgsConstructor
-public class SignInModel {
-    Long userId;
-    Constants.UserType userType;
-    String password;
+public class GetUserByIdModel {
+    Long personId;
+    Constants.UserType personType;
 }

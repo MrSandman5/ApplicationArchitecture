@@ -9,17 +9,17 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 @Data
 @Entity
 @NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "ticket")
 @EqualsAndHashCode(callSuper = true)
 public class Ticket extends AbstractEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reservation_id", nullable = false)
+    @JoinColumn(name = "reservation_id")
     private Reservation reservation;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -33,4 +33,12 @@ public class Ticket extends AbstractEntity {
     @Min(value = 0, message = "must be greater than or equal to zero")
     @Column(name = "cost", nullable = false)
     private Double cost;
+
+    public Ticket(@NotNull final Client client,
+                  @NotNull final Expo expo,
+                  final Double cost) {
+        this.client = client;
+        this.expo = expo;
+        this.cost = cost;
+    }
 }

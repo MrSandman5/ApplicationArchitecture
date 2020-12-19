@@ -10,11 +10,11 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
 
 @Data
 @Entity
 @NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "credentials")
 @EqualsAndHashCode(callSuper = true)
 public final class Credentials extends AbstractEntity {
@@ -28,5 +28,12 @@ public final class Credentials extends AbstractEntity {
     @Email(message = "Invalid email! Please enter valid email")
     @Column(unique = true, name = "email", nullable = false)
     protected String email;
+
+    public Credentials(@NotNull final String email,
+                       @NotNull final String password) {
+        this.email = email;
+        this.password = password;
+        this.login = email.split("@")[0];
+    }
 
 }

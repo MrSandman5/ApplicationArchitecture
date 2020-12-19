@@ -1,4 +1,4 @@
-package com.safonov.galleryservice.ArtGalleryApplication.model.user;
+package com.safonov.galleryservice.ArtGalleryApplication.model.gallery;
 
 import com.safonov.galleryservice.ArtGalleryApplication.configuration.Constants;
 import lombok.Data;
@@ -8,7 +8,9 @@ import lombok.NoArgsConstructor;
 @Data
 @EqualsAndHashCode(callSuper=false)
 @NoArgsConstructor
-public class GetPersonByIdModel {
-    Long personId;
-    Constants.UserType personType;
+public class EditExpoModel {
+    private Long ownerId;
+    private ExpoModel expo;
+    private Constants.EditSettings settings;
+    private String data;
 }

@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @EqualsAndHashCode(callSuper=false)
 @NoArgsConstructor
-public class IdAndPersonTypeModel {
+public class IdAndUserTypeModel {
     Long personId;
     Constants.UserType personType;
 }

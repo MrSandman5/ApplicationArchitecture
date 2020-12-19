@@ -9,6 +9,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Data
@@ -28,4 +29,9 @@ public class Owner extends User {
     @OneToMany(mappedBy = "artist", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OwnerArtistPayment> ownerArtistPayments;
 
+    public Owner(@NotNull final String firstName,
+                  @NotNull final String secondName) {
+        this.firstName = firstName;
+        this.lastName = secondName;
+    }
 }
