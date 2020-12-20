@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper=false)
 @NoArgsConstructor
 public class SignInModel {
-    Long userId;
-    Constants.UserType userType;
-    String password;
+    private Long userId;
+    private Constants.UserType userType;
+    private String password;
 }

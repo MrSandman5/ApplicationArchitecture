@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper=false)
 @NoArgsConstructor
 public class IdAndUserTypeModel {
-    Long personId;
-    Constants.UserType personType;
+    private Long personId;
+    private Constants.UserType personType;
 }

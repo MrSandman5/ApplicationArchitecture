@@ -9,11 +9,14 @@ import com.safonov.galleryservice.ArtGalleryApplication.entity.gallery.OwnerArti
 import com.safonov.galleryservice.ArtGalleryApplication.model.gallery.AcceptRoyaltiesModel;
 import com.safonov.galleryservice.ArtGalleryApplication.model.gallery.AddArtworkModel;
 import com.safonov.galleryservice.ArtGalleryApplication.model.response.ApiResponse;
+import com.safonov.galleryservice.ArtGalleryApplication.model.response.ResponseOrMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ArtistService {
@@ -34,6 +37,7 @@ public class ArtistService {
         this.ownerArtistPaymentRepository = ownerArtistPaymentRepository;
     }
 
+    @Transactional
     public ApiResponse addArtwork(@NotNull final AddArtworkModel model){
         final Artist artist = artistRepository.findById(model.getArtistId()).orElse(null);
         if (artist == null) {
@@ -42,7 +46,7 @@ public class ArtistService {
         final Artwork artwork = artworkRepository.findById(model.getArtwork().getArtworkId()).orElse(null);
         final List<Artwork> artworks = artist.getArtworks();
         if (artwork == null) {
-            final Artwork newArtwork = new Artwork(model.getArtwork().getName(), model.getArtwork().getInfo(), artist);
+            final Artwork newArtwork = new Artwork(model.getArtwork().getName(), model.getArtwork().getInfo(), artist, null);
             artworks.add(artworkRepository.save(newArtwork));
             artistRepository.save(artist);
             return new ApiResponse("New artwork from artist " + artist.getCredentials().getLogin() + "added for expo");
@@ -75,5 +79,39 @@ public class ArtistService {
         artist.getArtworks().clear();
         artistRepository.save(artist);
         return new ApiResponse("Artist " + artist.getCredentials().getLogin() + " accepted royalties for expo " + closedExpo.getName());
+    }
+
+    public ResponseOrMessage<List<Artwork>> getAllArtworks(@NotNull final Map<String, Long> artistId) {
+        if (artistId.containsKey("artistId")) {
+            final Artist artist = artistRepository.findById(artistId.get("artistId")).orElse(null);
+            if (artist == null) {
+                return new ResponseOrMessage<>("Artist doesnt exist");
+            }
+            final List<Artwork> artworks = artworkRepository.findArtworksByArtist(artist);
+            if (artworks == null) {
+                return new ResponseOrMessage<>("Artist has no artworks");
+            } else {
+                return new ResponseOrMessage<>(artworks);
+            }
+        } else {
+            return new ResponseOrMessage<>("Wrong parameter");
+        }
+    }
+
+    public ResponseOrMessage<List<Artwork>> getExpoArtworks(@NotNull final Map<String, Long> artistId) {
+        if (artistId.containsKey("artistId")) {
+            final Artist artist = artistRepository.findById(artistId.get("artistId")).orElse(null);
+            if (artist == null) {
+                return new ResponseOrMessage<>("Artist doesnt exist");
+            }
+            final List<Artwork> artworks = artist.getArtworks();
+            if (artworks == null) {
+                return new ResponseOrMessage<>("Artist has no artworks for expo");
+            } else {
+                return new ResponseOrMessage<>(artworks);
+            }
+        } else {
+            return new ResponseOrMessage<>("Wrong parameter");
+        }
     }
 }

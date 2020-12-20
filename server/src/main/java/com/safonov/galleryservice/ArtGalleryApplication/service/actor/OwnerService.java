@@ -2,18 +2,20 @@ package com.safonov.galleryservice.ArtGalleryApplication.service.actor;
 
 import com.safonov.galleryservice.ArtGalleryApplication.configuration.Constants;
 import com.safonov.galleryservice.ArtGalleryApplication.data.actor.ArtistRepository;
+import com.safonov.galleryservice.ArtGalleryApplication.data.actor.ClientRepository;
 import com.safonov.galleryservice.ArtGalleryApplication.data.actor.OwnerRepository;
 import com.safonov.galleryservice.ArtGalleryApplication.data.gallery.*;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.actor.Artist;
+import com.safonov.galleryservice.ArtGalleryApplication.entity.actor.Client;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.actor.Owner;
-import com.safonov.galleryservice.ArtGalleryApplication.entity.gallery.ClientOwnerPayment;
-import com.safonov.galleryservice.ArtGalleryApplication.entity.gallery.Expo;
-import com.safonov.galleryservice.ArtGalleryApplication.entity.gallery.OwnerArtistPayment;
-import com.safonov.galleryservice.ArtGalleryApplication.entity.gallery.Reservation;
+import com.safonov.galleryservice.ArtGalleryApplication.entity.gallery.*;
 import com.safonov.galleryservice.ArtGalleryApplication.model.gallery.*;
+import com.safonov.galleryservice.ArtGalleryApplication.model.info.ExpoModel;
 import com.safonov.galleryservice.ArtGalleryApplication.model.response.ApiResponse;
+import com.safonov.galleryservice.ArtGalleryApplication.model.response.ResponseOrMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -22,24 +24,30 @@ import java.util.stream.Collectors;
 
 @Service
 public class OwnerService {
+    private final ClientRepository clientRepository;
     private final OwnerRepository ownerRepository;
     private final ArtistRepository artistRepository;
     private final ReservationRepository reservationRepository;
     private final ExpoRepository expoRepository;
+    private final ArtworkRepository artworkRepository;
     private final ClientOwnerPaymentRepository clientOwnerPaymentRepository;
     private final OwnerArtistPaymentRepository ownerArtistPaymentRepository;
 
     @Autowired
-    OwnerService(@NotNull final OwnerRepository ownerRepository,
+    OwnerService(@NotNull final ClientRepository clientRepository,
+                 @NotNull final OwnerRepository ownerRepository,
                  @NotNull final ArtistRepository artistRepository,
                  @NotNull final ReservationRepository reservationRepository,
                  @NotNull final ExpoRepository expoRepository,
+                 @NotNull final ArtworkRepository artworkRepository,
                  @NotNull final ClientOwnerPaymentRepository clientOwnerPaymentRepository,
                  @NotNull final OwnerArtistPaymentRepository ownerArtistPaymentRepository) {
+        this.clientRepository = clientRepository;
         this.ownerRepository = ownerRepository;
         this.artistRepository = artistRepository;
         this.reservationRepository = reservationRepository;
         this.expoRepository = expoRepository;
+        this.artworkRepository = artworkRepository;
         this.clientOwnerPaymentRepository = clientOwnerPaymentRepository;
         this.ownerArtistPaymentRepository = ownerArtistPaymentRepository;
     }
@@ -54,6 +62,8 @@ public class OwnerService {
         final Owner owner = ownerRepository.findById(model.getOwnerId()).orElse(null);
         if (owner == null) {
             return new ApiResponse("Owner doesnt exist");
+        } else if (!owner.getAuthenticated()) {
+            return new ApiResponse("Owner wasnt authenticated");
         }
         final ClientOwnerPayment payment = clientOwnerPaymentRepository.findPaymentByReservation(payedReservation).orElse(null);
         if (payment == null){
@@ -64,10 +74,13 @@ public class OwnerService {
         return new ApiResponse("Owner " + owner.getCredentials().getLogin() + " accepted payment for reservation");
     }
 
+    @Transactional
     public ApiResponse createExpo(@NotNull final CreateExpoModel model) {
         final Owner owner = ownerRepository.findById(model.getOwnerId()).orElse(null);
         if (owner == null) {
             return new ApiResponse("Owner doesnt exist");
+        } else if (!owner.getAuthenticated()) {
+            return new ApiResponse("Owner wasnt authenticated");
         }
         final Expo existedExpo = expoRepository.findById(model.getExpo().getExpoId()).orElse(null);
         if (existedExpo == null) {
@@ -82,8 +95,13 @@ public class OwnerService {
                     expoModel.getStartTime(),
                     expoModel.getEndTime(),
                     expoModel.getTicketPrice());
-            owner.getExpos().add(expoRepository.save(newExpo));
-            ownerRepository.save(owner);
+            final Expo addedExpo = expoRepository.save(newExpo);
+            for (final Artwork artwork : artist.getArtworks()) {
+                artwork.setExpo(addedExpo);
+                artworkRepository.save(artwork);
+            }
+            addedExpo.setArtist(artistRepository.save(artist));
+            expoRepository.save(addedExpo);
             return new ApiResponse("New expo with name " + newExpo.getName() + "was created");
         } else {
             return new ApiResponse("Expo with name " + existedExpo.getName() + " already created");
@@ -91,6 +109,12 @@ public class OwnerService {
     }
 
     public ApiResponse editExpo(@NotNull final EditExpoModel model){
+        final Owner owner = ownerRepository.findById(model.getOwnerId()).orElse(null);
+        if (owner == null) {
+            return new ApiResponse("Owner doesnt exist");
+        } else if (!owner.getAuthenticated()) {
+            return new ApiResponse("Owner wasnt authenticated");
+        }
         final Expo curExpo = expoRepository.findById(model.getExpo().getExpoId()).orElse(null);
         if (curExpo == null){
             return new ApiResponse("Expo doesnt exist");
@@ -123,8 +147,14 @@ public class OwnerService {
         return new ApiResponse("Expo with id " + curExpo.getId() + " successfully updated");
     }
 
-    public ApiResponse startExpo(@NotNull final ExpoModel model){
-        final Expo expo = expoRepository.findById(model.getExpoId()).orElse(null);
+    public ApiResponse startExpo(@NotNull final StartCloseExpoModel model){
+        final Owner owner = ownerRepository.findById(model.getOwnerId()).orElse(null);
+        if (owner == null) {
+            return new ApiResponse("Owner doesnt exist");
+        } else if (!owner.getAuthenticated()) {
+            return new ApiResponse("Owner wasnt authenticated");
+        }
+        final Expo expo = expoRepository.findById(model.getExpo().getExpoId()).orElse(null);
         if (expo == null) {
             return new ApiResponse("Expo doesnt exist");
         } else if ((LocalDateTime.now().isAfter(expo.getStartTime()))
@@ -137,8 +167,14 @@ public class OwnerService {
         }
     }
 
-    public ApiResponse closeExpo(@NotNull final ExpoModel model){
-        final Expo openedExpo = expoRepository.findById(model.getExpoId()).orElse(null);
+    public ApiResponse closeExpo(@NotNull final StartCloseExpoModel model){
+        final Owner owner = ownerRepository.findById(model.getOwnerId()).orElse(null);
+        if (owner == null) {
+            return new ApiResponse("Owner doesnt exist");
+        } else if (!owner.getAuthenticated()) {
+            return new ApiResponse("Owner wasnt authenticated");
+        }
+        final Expo openedExpo = expoRepository.findById(model.getExpo().getExpoId()).orElse(null);
         if (openedExpo == null) {
             return new ApiResponse("Expo doesnt exist");
         } else if (!openedExpo.isOpened()) {
@@ -154,6 +190,7 @@ public class OwnerService {
         }
     }
 
+    @Transactional
     public ApiResponse payForExpo(@NotNull final PayForExpoModel model){
         final Expo closedExpo = expoRepository.findById(model.getExpo().getExpoId()).orElse(null);
         if (closedExpo == null) {
@@ -171,16 +208,67 @@ public class OwnerService {
         final Owner owner = ownerRepository.findById(model.getOwnerId()).orElse(null);
         if (owner == null) {
             return new ApiResponse("Owner doesnt exist");
+        } else if (!owner.getAuthenticated()) {
+            return new ApiResponse("Owner wasnt authenticated");
         }
         final Artist artist = artistRepository.findById(model.getExpo().getArtistId()).orElse(null);
         if (artist == null) {
             return new ApiResponse("Artist doesnt exist");
         }
         final OwnerArtistPayment expoPayment = new OwnerArtistPayment(closedExpo, owner, artist, payment * 0.5);
-        owner.getExpos().remove(closedExpo);
-        ownerRepository.save(owner);
         ownerArtistPaymentRepository.save(expoPayment);
         return new ApiResponse("Owner " + owner.getCredentials().getLogin() + " send royalties for expo " + closedExpo.getName());
+    }
+
+    public ResponseOrMessage<List<Expo>> getNewExpos() {
+        final List<Expo> expos = expoRepository.findExposByStatus(Constants.ExpoStatus.New);
+        if (expos == null) {
+            return new ResponseOrMessage<>("There are no new expos");
+        } else {
+            return new ResponseOrMessage<>(expos);
+        }
+    }
+
+    public ResponseOrMessage<List<Expo>> getOpenedExpos() {
+        final List<Expo> expos = expoRepository.findExposByStatus(Constants.ExpoStatus.Opened);
+        if (expos == null) {
+            return new ResponseOrMessage<>("There are no opened expos");
+        } else {
+            return new ResponseOrMessage<>(expos);
+        }
+    }
+
+    public ResponseOrMessage<List<Expo>> getClosedExpos() {
+        final List<Expo> expos = expoRepository.findExposByStatus(Constants.ExpoStatus.Closed);
+        if (expos == null) {
+            return new ResponseOrMessage<>("There are no closed expos");
+        } else {
+            return new ResponseOrMessage<>(expos);
+        }
+    }
+
+    public ApiResponse deletePerson(@NotNull final Long personId, @NotNull final Constants.UserType personType) {
+        switch (personType) {
+            case Artist:
+                final Artist artist = artistRepository.findById(personId).orElse(null);
+                if (artist == null) {
+                    return new ApiResponse("Artist not found");
+                }
+                artist.setDeleted(true);
+                artistRepository.save(artist);
+                return new ApiResponse("Artist was deleted");
+            case Client:
+                final Client client = clientRepository.findById(personId).orElse(null);
+                if (client == null) {
+                    return new ApiResponse("Client not found");
+                }
+                client.setDeleted(true);
+                clientRepository.save(client);
+                return new ApiResponse("Client was deleted");
+
+            default:
+                return new ApiResponse("Wrong parameter");
+        }
     }
 
 }

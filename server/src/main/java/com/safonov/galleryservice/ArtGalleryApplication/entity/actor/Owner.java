@@ -20,9 +20,6 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 public class Owner extends User {
 
-    @OneToMany(mappedBy = "expo_id", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Expo> expos;
-
     @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ClientOwnerPayment> clientOwnerPayments;
 
@@ -30,7 +27,7 @@ public class Owner extends User {
     private List<OwnerArtistPayment> ownerArtistPayments;
 
     public Owner(@NotNull final String firstName,
-                  @NotNull final String secondName) {
+                 @NotNull final String secondName) {
         this.firstName = firstName;
         this.lastName = secondName;
     }

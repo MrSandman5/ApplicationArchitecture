@@ -1,6 +1,6 @@
 package com.safonov.galleryservice.ArtGalleryApplication.model.gallery;
 
-import com.safonov.galleryservice.ArtGalleryApplication.model.info.ReservationModel;
+import com.safonov.galleryservice.ArtGalleryApplication.model.info.ExpoModel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @EqualsAndHashCode(callSuper=false)
 @NoArgsConstructor
-public class AcceptPaymentModel {
+public class StartCloseExpoModel {
     private Long ownerId;
-    private ReservationModel reservation;
+    private ExpoModel expo;
 }

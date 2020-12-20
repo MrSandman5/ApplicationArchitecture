@@ -15,4 +15,7 @@ public interface ReservationRepository extends BaseRepository<Reservation> {
     List<Reservation> findReservationsByClient(@NotNull final Client client);
 
     List<Reservation> findReservationsByStatus(@NotNull final Constants.ReservationStatus status);
+
+    List<Reservation> findReservationsByClientAndStatus(@NotNull final Client client,
+                                                        @NotNull final Constants.ReservationStatus status);
 }

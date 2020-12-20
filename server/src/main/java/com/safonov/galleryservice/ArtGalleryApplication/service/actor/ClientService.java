@@ -17,12 +17,15 @@ import com.safonov.galleryservice.ArtGalleryApplication.model.gallery.AddTicketM
 import com.safonov.galleryservice.ArtGalleryApplication.model.gallery.CreateReservationModel;
 import com.safonov.galleryservice.ArtGalleryApplication.model.gallery.PayForReservationModel;
 import com.safonov.galleryservice.ArtGalleryApplication.model.response.ApiResponse;
+import com.safonov.galleryservice.ArtGalleryApplication.model.response.ResponseOrMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ClientService {
@@ -49,6 +52,7 @@ public class ClientService {
         this.clientOwnerPaymentRepository = clientOwnerPaymentRepository;
     }
 
+    @Transactional
     public ApiResponse addTicket(@NotNull final AddTicketModel model){
         final Expo ticketExpo = expoRepository.findById(model.getExpo().getExpoId()).orElse(null);
         if (ticketExpo == null){
@@ -60,6 +64,8 @@ public class ClientService {
         final Client client = clientRepository.findById(model.getClientId()).orElse(null);
         if (client == null) {
             return new ApiResponse("Client doesnt exist");
+        } else if (!client.getAuthenticated()) {
+            return new ApiResponse("Client wasnt authenticated");
         }
         final List<Ticket> tickets = client.getTickets();
         if (!tickets.isEmpty()){
@@ -75,10 +81,13 @@ public class ClientService {
         return new ApiResponse("New ticket was added to client");
     }
 
+    @Transactional
     public ApiResponse createReservation(@NotNull final CreateReservationModel model){
         final Client client = clientRepository.findById(model.getClientId()).orElse(null);
         if (client == null) {
             return new ApiResponse("Client doesnt exist");
+        } else if (!client.getAuthenticated()) {
+            return new ApiResponse("Client wasnt authenticated");
         }
         final Expo expo = expoRepository.findById(client.getTickets().get(0).getExpo().getId()).orElse(null);
         if (expo == null){
@@ -94,6 +103,7 @@ public class ClientService {
         return new ApiResponse("New reservation was created for client");
     }
 
+    @Transactional
     public ApiResponse payForReservation(@NotNull final PayForReservationModel model){
         final Reservation clientReservation = reservationRepository.findById(model.getReservation().getReservationId()).orElse(null);
         if (clientReservation == null){
@@ -112,6 +122,8 @@ public class ClientService {
         final Client client = clientRepository.findById(model.getClientId()).orElse(null);
         if (client == null) {
             return new ApiResponse("Client doesnt exist");
+        } else if (!client.getAuthenticated()) {
+            return new ApiResponse("Client wasnt authenticated");
         }
         if (LocalDateTime.now().isAfter(ticketExpo.getStartTime())){
             client.getReservations().remove(clientReservation);
@@ -129,6 +141,68 @@ public class ClientService {
         clientRepository.save(client);
         clientOwnerPaymentRepository.save(ticketPayment);
         return new ApiResponse("Client " + client.getCredentials().getLogin() + " payed for reservation");
+    }
+
+    public ResponseOrMessage<List<Ticket>> getTickets(@NotNull final Map<String, Long> clientId) {
+        if (clientId.containsKey("clientId")) {
+            final Client client = clientRepository.findById(clientId.get("clientId")).orElse(null);
+            if (client == null) {
+                return new ResponseOrMessage<>("Client doesnt exist");
+            }
+            final List<Ticket> tickets = ticketRepository.findTicketsByClient(client);
+            if (tickets == null) {
+                return new ResponseOrMessage<>("Client does not have active tickets");
+            } else return new ResponseOrMessage<>(tickets);
+
+        } else return new ResponseOrMessage<>("Wrong parameter");
+    }
+
+    public ResponseOrMessage<List<Reservation>> getNewReservations(@NotNull final Map<String, Long> clientId) {
+        if (clientId.containsKey("clientId")) {
+            final Client client = clientRepository.findById(clientId.get("clientId")).orElse(null);
+            if (client == null) {
+                return new ResponseOrMessage<>("Client doesnt exist");
+            } else if (!client.getAuthenticated()) {
+                return new ResponseOrMessage<>("Client wasnt authenticated");
+            }
+            final List<Reservation> reservations = reservationRepository.findReservationsByClientAndStatus(client,  Constants.ReservationStatus.New);
+            if (reservations == null) {
+                return new ResponseOrMessage<>("Client does not have active reservations");
+            } else {
+                return new ResponseOrMessage<>(reservations);
+            }
+        } else {
+            return new ResponseOrMessage<>("Wrong parameter");
+        }
+    }
+
+    public ResponseOrMessage<List<Reservation>> getPayedReservations(@NotNull final Map<String, Long> clientId) {
+        if (clientId.containsKey("clientId")) {
+            final Client client = clientRepository.findById(clientId.get("clientId")).orElse(null);
+            if (client == null) {
+                return new ResponseOrMessage<>("Client doesnt exist");
+            } else if (!client.getAuthenticated()) {
+                return new ResponseOrMessage<>("Client wasnt authenticated");
+            }
+            final List<Reservation> reservations = reservationRepository.findReservationsByClientAndStatus(client,  Constants.ReservationStatus.Payed);
+            if (reservations == null) {
+                return new ResponseOrMessage<>("Client does not have payed reservations");
+            } else {
+                return new ResponseOrMessage<>(reservations);
+            }
+
+        } else {
+            return new ResponseOrMessage<>("Wrong parameter");
+        }
+    }
+
+    public ResponseOrMessage<List<Expo>> getNewExpos() {
+        final List<Expo> expos = expoRepository.findExposByStatus(Constants.ExpoStatus.New);
+        if (expos == null) {
+            return new ResponseOrMessage<>("There are no new expos");
+        } else {
+            return new ResponseOrMessage<>(expos);
+        }
     }
 
 }

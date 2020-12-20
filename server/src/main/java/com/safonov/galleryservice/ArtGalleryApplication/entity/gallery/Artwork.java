@@ -26,4 +26,8 @@ public class Artwork extends AbstractEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "artist_id", nullable = false)
     private Artist artist;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "expo_id")
+    private Expo expo;
 }

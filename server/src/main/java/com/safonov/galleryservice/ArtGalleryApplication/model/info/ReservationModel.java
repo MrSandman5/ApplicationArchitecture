@@ -1,4 +1,4 @@
-package com.safonov.galleryservice.ArtGalleryApplication.model.gallery;
+package com.safonov.galleryservice.ArtGalleryApplication.model.info;
 
 import com.safonov.galleryservice.ArtGalleryApplication.configuration.Constants;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.gallery.Ticket;

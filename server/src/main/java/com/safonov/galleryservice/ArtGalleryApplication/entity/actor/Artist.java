@@ -29,7 +29,7 @@ public class Artist extends User {
     private List<OwnerArtistPayment> ownerArtistPayments;
 
     public Artist(@NotNull final String firstName,
-                 @NotNull final String secondName) {
+                  @NotNull final String secondName) {
         this.firstName = firstName;
         this.lastName = secondName;
     }

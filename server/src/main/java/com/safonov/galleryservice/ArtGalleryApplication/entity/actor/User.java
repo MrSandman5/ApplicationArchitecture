@@ -22,10 +22,13 @@ public abstract class User extends AbstractEntity {
     protected String lastName;
 
     @Column(name = "deleted", nullable = false)
-    protected boolean deleted;
+    protected Boolean deleted;
 
-    @JoinColumn(name = "credentials_id")
+    @Column(name = "authenticated", nullable = false)
+    protected Boolean authenticated;
+
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "credentials_id")
     protected Credentials credentials;
 
 }

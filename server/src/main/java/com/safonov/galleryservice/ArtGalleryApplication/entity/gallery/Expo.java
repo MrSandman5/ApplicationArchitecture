@@ -67,7 +67,7 @@ public class Expo extends AbstractEntity {
             this.endTime = startTime;
         }
         this.ticketPrice = ticketPrice;
-        this.artworks = this.artist.getArtworks();
+        //this.artworks = this.artist.getArtworks();
         this.status = Constants.ExpoStatus.New;
     }
 

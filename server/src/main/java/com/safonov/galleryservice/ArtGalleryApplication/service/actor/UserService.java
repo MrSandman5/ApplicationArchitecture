@@ -37,8 +37,7 @@ public class UserService {
     }
 
     public ResponseOrMessage<Boolean> signUp(@NotNull final RegistrationModel model) {
-        final Credentials credentials = new Credentials(model.getEmail(),
-                model.getPassword());
+        final Credentials credentials = new Credentials(model.getEmail(), model.getPassword());
         try {
             switch (model.getPersonType()) {
                 case Client:
@@ -76,17 +75,27 @@ public class UserService {
                 final Artist artist = artistRepository.findByCredentials(credentials).orElse(null);
                 for (final User elem : List.of(client, owner, artist)){
                     if (elem != null) {
-                        user = elem;
                         switch (elem.getClass().getSimpleName()) {
                             case "Client":
+                                final Client newClient = new Client(elem.getFirstName(), elem.getLastName());
+                                newClient.setAuthenticated(true);
+                                user = clientRepository.save(newClient);
                                 response.setUserType(Constants.UserType.Client);
                                 break;
                             case "Owner":
+                                final Owner newOwner = new Owner(elem.getFirstName(), elem.getLastName());
+                                newOwner.setAuthenticated(true);
+                                user = ownerRepository.save(newOwner);
                                 response.setUserType(Constants.UserType.Owner);
                                 break;
                             case "Artist":
+                                final Artist newArtist = new Artist(elem.getFirstName(), elem.getLastName());
+                                newArtist.setAuthenticated(true);
+                                user = artistRepository.save(newArtist);
                                 response.setUserType(Constants.UserType.Artist);
                                 break;
+                            default:
+                                return new ResponseOrMessage<>("Invalid user role");
                         }
                         break;
                     }
@@ -94,7 +103,7 @@ public class UserService {
                 if (user == null) {
                     return new ResponseOrMessage<>("User not found");
                 }
-                if (user.isDeleted()) {
+                if (user.getDeleted()) {
                     return new ResponseOrMessage<>("User was deleted");
                 }
                 response.setUserId(user.id);
@@ -108,7 +117,7 @@ public class UserService {
         }
     }
 
-    public ResponseOrMessage<User> getPersonById(@NotNull final IdAndUserTypeModel model) {
+    public ResponseOrMessage<User> getUserById(@NotNull final IdAndUserTypeModel model) {
         final Long personId = model.getPersonId();
         User user;
         switch (model.getPersonType()) {
@@ -128,8 +137,7 @@ public class UserService {
         if (user == null) {
             return new ResponseOrMessage<>("User not found");
         }
-
-        if (user.isDeleted()) {
+        if (user.getDeleted()) {
             return new ResponseOrMessage<>("User was deleted");
         }
         return new ResponseOrMessage<>(user);

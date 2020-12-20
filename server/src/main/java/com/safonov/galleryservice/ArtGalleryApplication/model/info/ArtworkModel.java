@@ -1,4 +1,4 @@
-package com.safonov.galleryservice.ArtGalleryApplication.model.gallery;
+package com.safonov.galleryservice.ArtGalleryApplication.model.info;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
