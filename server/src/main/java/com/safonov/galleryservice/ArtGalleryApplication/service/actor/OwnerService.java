@@ -2,11 +2,9 @@ package com.safonov.galleryservice.ArtGalleryApplication.service.actor;
 
 import com.safonov.galleryservice.ArtGalleryApplication.configuration.Constants;
 import com.safonov.galleryservice.ArtGalleryApplication.data.actor.ArtistRepository;
-import com.safonov.galleryservice.ArtGalleryApplication.data.actor.ClientRepository;
 import com.safonov.galleryservice.ArtGalleryApplication.data.actor.OwnerRepository;
 import com.safonov.galleryservice.ArtGalleryApplication.data.gallery.*;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.actor.Artist;
-import com.safonov.galleryservice.ArtGalleryApplication.entity.actor.Client;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.actor.Owner;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.gallery.*;
 import com.safonov.galleryservice.ArtGalleryApplication.model.gallery.*;
@@ -24,7 +22,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class OwnerService {
-    private final ClientRepository clientRepository;
     private final OwnerRepository ownerRepository;
     private final ArtistRepository artistRepository;
     private final ReservationRepository reservationRepository;
@@ -34,15 +31,13 @@ public class OwnerService {
     private final OwnerArtistPaymentRepository ownerArtistPaymentRepository;
 
     @Autowired
-    OwnerService(@NotNull final ClientRepository clientRepository,
-                 @NotNull final OwnerRepository ownerRepository,
-                 @NotNull final ArtistRepository artistRepository,
-                 @NotNull final ReservationRepository reservationRepository,
-                 @NotNull final ExpoRepository expoRepository,
-                 @NotNull final ArtworkRepository artworkRepository,
-                 @NotNull final ClientOwnerPaymentRepository clientOwnerPaymentRepository,
-                 @NotNull final OwnerArtistPaymentRepository ownerArtistPaymentRepository) {
-        this.clientRepository = clientRepository;
+    public OwnerService(@NotNull final OwnerRepository ownerRepository,
+                        @NotNull final ArtistRepository artistRepository,
+                        @NotNull final ReservationRepository reservationRepository,
+                        @NotNull final ExpoRepository expoRepository,
+                        @NotNull final ArtworkRepository artworkRepository,
+                        @NotNull final ClientOwnerPaymentRepository clientOwnerPaymentRepository,
+                        @NotNull final OwnerArtistPaymentRepository ownerArtistPaymentRepository) {
         this.ownerRepository = ownerRepository;
         this.artistRepository = artistRepository;
         this.reservationRepository = reservationRepository;
@@ -62,8 +57,6 @@ public class OwnerService {
         final Owner owner = ownerRepository.findById(model.getOwnerId()).orElse(null);
         if (owner == null) {
             return new ApiResponse("Owner doesnt exist");
-        } else if (!owner.getAuthenticated()) {
-            return new ApiResponse("Owner wasnt authenticated");
         }
         final ClientOwnerPayment payment = clientOwnerPaymentRepository.findPaymentByReservation(payedReservation).orElse(null);
         if (payment == null){
@@ -79,8 +72,6 @@ public class OwnerService {
         final Owner owner = ownerRepository.findById(model.getOwnerId()).orElse(null);
         if (owner == null) {
             return new ApiResponse("Owner doesnt exist");
-        } else if (!owner.getAuthenticated()) {
-            return new ApiResponse("Owner wasnt authenticated");
         }
         final Expo existedExpo = expoRepository.findById(model.getExpo().getExpoId()).orElse(null);
         if (existedExpo == null) {
@@ -112,8 +103,6 @@ public class OwnerService {
         final Owner owner = ownerRepository.findById(model.getOwnerId()).orElse(null);
         if (owner == null) {
             return new ApiResponse("Owner doesnt exist");
-        } else if (!owner.getAuthenticated()) {
-            return new ApiResponse("Owner wasnt authenticated");
         }
         final Expo curExpo = expoRepository.findById(model.getExpo().getExpoId()).orElse(null);
         if (curExpo == null){
@@ -151,8 +140,6 @@ public class OwnerService {
         final Owner owner = ownerRepository.findById(model.getOwnerId()).orElse(null);
         if (owner == null) {
             return new ApiResponse("Owner doesnt exist");
-        } else if (!owner.getAuthenticated()) {
-            return new ApiResponse("Owner wasnt authenticated");
         }
         final Expo expo = expoRepository.findById(model.getExpo().getExpoId()).orElse(null);
         if (expo == null) {
@@ -171,8 +158,6 @@ public class OwnerService {
         final Owner owner = ownerRepository.findById(model.getOwnerId()).orElse(null);
         if (owner == null) {
             return new ApiResponse("Owner doesnt exist");
-        } else if (!owner.getAuthenticated()) {
-            return new ApiResponse("Owner wasnt authenticated");
         }
         final Expo openedExpo = expoRepository.findById(model.getExpo().getExpoId()).orElse(null);
         if (openedExpo == null) {
@@ -208,8 +193,6 @@ public class OwnerService {
         final Owner owner = ownerRepository.findById(model.getOwnerId()).orElse(null);
         if (owner == null) {
             return new ApiResponse("Owner doesnt exist");
-        } else if (!owner.getAuthenticated()) {
-            return new ApiResponse("Owner wasnt authenticated");
         }
         final Artist artist = artistRepository.findById(model.getExpo().getArtistId()).orElse(null);
         if (artist == null) {
@@ -246,27 +229,5 @@ public class OwnerService {
             return new ResponseOrMessage<>(expos);
         }
     }
-
-    /*public ApiResponse deletePerson(@NotNull final Long userId, @NotNull final String userType) {
-        switch (userType) {
-            case "ROLE_ARTIST":
-                final Artist artist = artistRepository.findById(userId).orElse(null);
-                if (artist == null) {
-                    return new ApiResponse("Artist not found");
-                }
-                artistRepository.save(artist);
-                return new ApiResponse("Artist was deleted");
-            case "ROLE_CLIENT":
-                final Client client = clientRepository.findById(userId).orElse(null);
-                if (client == null) {
-                    return new ApiResponse("Client not found");
-                }
-                clientRepository.save(client);
-                return new ApiResponse("Client was deleted");
-
-            default:
-                return new ApiResponse("Wrong parameter");
-        }
-    }*/
 
 }

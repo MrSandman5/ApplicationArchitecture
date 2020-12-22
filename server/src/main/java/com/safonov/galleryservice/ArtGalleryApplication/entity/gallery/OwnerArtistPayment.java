@@ -34,9 +34,9 @@ public class OwnerArtistPayment extends Payment{
                               @NotNull final Owner owner,
                               @NotNull final Artist artist,
                               final Double price) {
+        super(price);
         this.expo = expo;
         this.artist = artist;
         this.owner = owner;
-        this.setPrice(price);
     }
 }

@@ -1,7 +1,6 @@
 package com.safonov.galleryservice.ArtGalleryApplication.entity.actor;
 
 import com.safonov.galleryservice.ArtGalleryApplication.entity.AbstractEntity;
-import com.safonov.galleryservice.ArtGalleryApplication.entity.gallery.Expo;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -27,7 +26,7 @@ public final class Credentials extends AbstractEntity {
     @Column(unique = true, name = "email", nullable = false)
     private String email;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 

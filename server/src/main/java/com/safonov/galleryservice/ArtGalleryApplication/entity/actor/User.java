@@ -21,9 +21,6 @@ public abstract class User extends AbstractEntity {
     @Column(name = "last_name", nullable = false)
     protected String lastName;
 
-    @Column(name = "authenticated", nullable = false)
-    protected Boolean authenticated;
-
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "credentials_id")
     protected Credentials credentials;

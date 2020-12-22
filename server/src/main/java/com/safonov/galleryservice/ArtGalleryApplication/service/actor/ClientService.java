@@ -38,12 +38,12 @@ public class ClientService {
     private final ClientOwnerPaymentRepository clientOwnerPaymentRepository;
 
     @Autowired
-    ClientService(@NotNull final ClientRepository clientRepository,
-                  @NotNull final OwnerRepository ownerRepository,
-                  @NotNull final TicketRepository ticketRepository,
-                  @NotNull final ReservationRepository reservationRepository,
-                  @NotNull final ExpoRepository expoRepository,
-                  @NotNull final ClientOwnerPaymentRepository clientOwnerPaymentRepository) {
+    public ClientService(@NotNull final ClientRepository clientRepository,
+                         @NotNull final OwnerRepository ownerRepository,
+                         @NotNull final TicketRepository ticketRepository,
+                         @NotNull final ReservationRepository reservationRepository,
+                         @NotNull final ExpoRepository expoRepository,
+                         @NotNull final ClientOwnerPaymentRepository clientOwnerPaymentRepository) {
         this.clientRepository = clientRepository;
         this.ownerRepository = ownerRepository;
         this.ticketRepository = ticketRepository;
@@ -64,8 +64,6 @@ public class ClientService {
         final Client client = clientRepository.findById(model.getClientId()).orElse(null);
         if (client == null) {
             return new ApiResponse("Client doesnt exist");
-        } else if (!client.getAuthenticated()) {
-            return new ApiResponse("Client wasnt authenticated");
         }
         final List<Ticket> tickets = client.getTickets();
         if (!tickets.isEmpty()){
@@ -86,8 +84,6 @@ public class ClientService {
         final Client client = clientRepository.findById(model.getClientId()).orElse(null);
         if (client == null) {
             return new ApiResponse("Client doesnt exist");
-        } else if (!client.getAuthenticated()) {
-            return new ApiResponse("Client wasnt authenticated");
         }
         final Expo expo = expoRepository.findById(client.getTickets().get(0).getExpo().getId()).orElse(null);
         if (expo == null){
@@ -122,8 +118,6 @@ public class ClientService {
         final Client client = clientRepository.findById(model.getClientId()).orElse(null);
         if (client == null) {
             return new ApiResponse("Client doesnt exist");
-        } else if (!client.getAuthenticated()) {
-            return new ApiResponse("Client wasnt authenticated");
         }
         if (LocalDateTime.now().isAfter(ticketExpo.getStartTime())){
             client.getReservations().remove(clientReservation);
@@ -162,8 +156,6 @@ public class ClientService {
             final Client client = clientRepository.findById(clientId.get("clientId")).orElse(null);
             if (client == null) {
                 return new ResponseOrMessage<>("Client doesnt exist");
-            } else if (!client.getAuthenticated()) {
-                return new ResponseOrMessage<>("Client wasnt authenticated");
             }
             final List<Reservation> reservations = reservationRepository.findReservationsByClientAndStatus(client,  Constants.ReservationStatus.New);
             if (reservations == null) {
@@ -181,8 +173,6 @@ public class ClientService {
             final Client client = clientRepository.findById(clientId.get("clientId")).orElse(null);
             if (client == null) {
                 return new ResponseOrMessage<>("Client doesnt exist");
-            } else if (!client.getAuthenticated()) {
-                return new ResponseOrMessage<>("Client wasnt authenticated");
             }
             final List<Reservation> reservations = reservationRepository.findReservationsByClientAndStatus(client,  Constants.ReservationStatus.Payed);
             if (reservations == null) {

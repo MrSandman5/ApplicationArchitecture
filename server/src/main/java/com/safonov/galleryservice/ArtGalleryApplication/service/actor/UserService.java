@@ -27,18 +27,27 @@ public class UserService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
-    UserService(@NotNull final ClientRepository clientRepository,
-                @NotNull final OwnerRepository ownerRepository,
-                @NotNull final ArtistRepository artistRepository,
-                @NotNull final CredentialsRepository credentialsRepository,
-                @NotNull final RoleRepository roleRepository,
-                @NotNull final BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public UserService(@NotNull final ClientRepository clientRepository,
+                       @NotNull final OwnerRepository ownerRepository,
+                       @NotNull final ArtistRepository artistRepository,
+                       @NotNull final CredentialsRepository credentialsRepository,
+                       @NotNull final RoleRepository roleRepository,
+                       @NotNull final BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.clientRepository = clientRepository;
         this.ownerRepository = ownerRepository;
         this.artistRepository = artistRepository;
         this.credentialsRepository = credentialsRepository;
         this.roleRepository = roleRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        if (credentialsRepository.findByLogin("admin").isEmpty()) {
+            final Credentials admin = new Credentials();
+            admin.setEmail("admin@mail.ru");
+            admin.setLogin("admin");
+            admin.setPassword(bCryptPasswordEncoder.encode("nimda"));
+            final Role role = roleRepository.findRoleByName("ROLE_ADMIN").orElse(null);
+            admin.setRole(role);
+            credentialsRepository.save(admin);
+        }
     }
 
     public ResponseOrMessage<Boolean> signUp(@NotNull final RegistrationModel model) {
@@ -87,19 +96,16 @@ public class UserService {
                         switch (elem.getCredentials().getRole().getName()) {
                             case "ROLE_CLIENT":
                                 final Client newClient = new Client(elem.getFirstName(), elem.getLastName());
-                                newClient.setAuthenticated(true);
                                 user = clientRepository.save(newClient);
                                 response.setRole(ROLE_CLIENT);
                                 break;
                             case "ROLE_OWNER":
                                 final Owner newOwner = new Owner(elem.getFirstName(), elem.getLastName());
-                                newOwner.setAuthenticated(true);
                                 user = ownerRepository.save(newOwner);
                                 response.setRole(ROLE_OWNER);
                                 break;
                             case "ROLE_ARTIST":
                                 final Artist newArtist = new Artist(elem.getFirstName(), elem.getLastName());
-                                newArtist.setAuthenticated(true);
                                 user = artistRepository.save(newArtist);
                                 response.setRole(ROLE_ARTIST);
                                 break;

@@ -7,6 +7,7 @@ import com.safonov.galleryservice.ArtGalleryApplication.model.response.ApiRespon
 import com.safonov.galleryservice.ArtGalleryApplication.model.response.ResponseOrMessage;
 import com.safonov.galleryservice.ArtGalleryApplication.service.actor.ArtistService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
@@ -24,21 +25,25 @@ public class ArtistController {
         this.service = service;
     }
 
+    @Secured("ROLE_ARTIST")
     @PostMapping("/add-artwork")
     public ApiResponse addArtwork(@RequestBody AddArtworkModel model) {
         return service.addArtwork(model);
     }
 
+    @Secured("ROLE_ARTIST")
     @PostMapping("/accept-royalties")
     public ApiResponse acceptRoyalties(@RequestBody AcceptRoyaltiesModel model) {
         return service.acceptRoyalties(model);
     }
 
+    @Secured("ROLE_ARTIST")
     @GetMapping("/artworks")
     public ResponseOrMessage<List<Artwork>> getAllArtworks(@RequestBody Map<String, Long> artistId) {
         return service.getAllArtworks(artistId);
     }
 
+    @Secured("ROLE_ARTIST")
     @GetMapping("/expo-artworks")
     public ResponseOrMessage<List<Artwork>> getExpoArtworks(@RequestBody Map<String, Long> artistId) {
         return service.getExpoArtworks(artistId);

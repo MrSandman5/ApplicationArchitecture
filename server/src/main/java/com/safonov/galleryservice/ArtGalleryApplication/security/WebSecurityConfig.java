@@ -43,11 +43,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         this.filterChainExceptionHandler = filterChainExceptionHandler;
     }
 
-    @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
     @Override
     protected void configure(@NotNull final HttpSecurity http) throws Exception {
         final JWTAuthorizationFilter jwtAuthorizationFilter = new JWTAuthorizationFilter(authenticationManager());

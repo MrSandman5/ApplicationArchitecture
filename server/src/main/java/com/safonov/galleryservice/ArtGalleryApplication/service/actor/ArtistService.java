@@ -27,10 +27,10 @@ public class ArtistService {
     private final OwnerArtistPaymentRepository ownerArtistPaymentRepository;
 
     @Autowired
-    ArtistService(@NotNull final ArtistRepository artistRepository,
-                  @NotNull final ArtworkRepository artworkRepository,
-                  @NotNull final ExpoRepository expoRepository,
-                  @NotNull final OwnerArtistPaymentRepository ownerArtistPaymentRepository) {
+    public ArtistService(@NotNull final ArtistRepository artistRepository,
+                         @NotNull final ArtworkRepository artworkRepository,
+                         @NotNull final ExpoRepository expoRepository,
+                         @NotNull final OwnerArtistPaymentRepository ownerArtistPaymentRepository) {
         this.artistRepository = artistRepository;
         this.artworkRepository = artworkRepository;
         this.expoRepository = expoRepository;

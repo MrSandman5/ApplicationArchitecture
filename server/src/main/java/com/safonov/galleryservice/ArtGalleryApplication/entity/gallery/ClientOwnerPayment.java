@@ -31,9 +31,9 @@ public class ClientOwnerPayment extends Payment{
     public ClientOwnerPayment(@NotNull final Reservation reservation,
                               @NotNull final Client client,
                               @NotNull final Owner owner) {
+        super(reservation.getCost());
         this.reservation = reservation;
         this.client = client;
         this.owner = owner;
-        this.setPrice(reservation.getCost());
     }
 }

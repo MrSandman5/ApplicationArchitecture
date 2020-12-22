@@ -2,13 +2,18 @@ package com.safonov.galleryservice.ArtGalleryApplication.security;
 
 import com.auth0.jwt.JWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.safonov.galleryservice.ArtGalleryApplication.data.actor.CredentialsRepository;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.actor.Credentials;
+import com.safonov.galleryservice.ArtGalleryApplication.error.ApiError;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -59,24 +64,24 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         }
     }
 
-    /*@Override
+    @Override
     protected void unsuccessfulAuthentication(@NotNull final HttpServletRequest request,
                                               @NotNull final HttpServletResponse response,
                                               @NotNull final AuthenticationException failed) throws IOException {
         SecurityContextHolder.clearContext();
 
-        ApiError apiError = new ApiError(HttpStatus.UNAUTHORIZED);
+        final ApiError apiError = new ApiError(HttpStatus.UNAUTHORIZED);
         apiError.setError(failed.getMessage().toUpperCase().replaceAll(" ", "_"));
         apiError.setMessage(failed.getMessage());
 
-        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        final ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
 
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.addHeader("Content-Type", "application/json");
         response.getWriter().write(ow.writeValueAsString(apiError));
         response.getWriter().flush();
         response.getWriter().close();
-    }*/
+    }
 
     @Override
     protected void successfulAuthentication(@NotNull final HttpServletRequest req,
