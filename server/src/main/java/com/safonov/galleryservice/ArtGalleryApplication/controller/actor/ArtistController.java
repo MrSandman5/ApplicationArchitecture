@@ -1,24 +1,20 @@
 package com.safonov.galleryservice.ArtGalleryApplication.controller.actor;
 
 import com.safonov.galleryservice.ArtGalleryApplication.entity.gallery.Artwork;
-import com.safonov.galleryservice.ArtGalleryApplication.entity.gallery.Expo;
-import com.safonov.galleryservice.ArtGalleryApplication.model.gallery.AcceptPaymentModel;
 import com.safonov.galleryservice.ArtGalleryApplication.model.gallery.AcceptRoyaltiesModel;
 import com.safonov.galleryservice.ArtGalleryApplication.model.gallery.AddArtworkModel;
 import com.safonov.galleryservice.ArtGalleryApplication.model.response.ApiResponse;
 import com.safonov.galleryservice.ArtGalleryApplication.model.response.ResponseOrMessage;
 import com.safonov.galleryservice.ArtGalleryApplication.service.actor.ArtistService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
 
 @RestController
+@RequestMapping("/artist")
 public class ArtistController {
 
     private final ArtistService service;

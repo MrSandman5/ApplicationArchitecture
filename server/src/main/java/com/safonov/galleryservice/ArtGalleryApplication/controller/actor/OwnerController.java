@@ -1,6 +1,5 @@
 package com.safonov.galleryservice.ArtGalleryApplication.controller.actor;
 
-import com.safonov.galleryservice.ArtGalleryApplication.configuration.Constants;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.gallery.Expo;
 import com.safonov.galleryservice.ArtGalleryApplication.model.gallery.*;
 import com.safonov.galleryservice.ArtGalleryApplication.model.response.ApiResponse;
@@ -14,6 +13,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @RestController
+@RequestMapping("/owner")
 public class OwnerController {
 
     private final OwnerService service;
@@ -71,14 +71,14 @@ public class OwnerController {
         return service.getClosedExpos();
     }
 
-    @DeleteMapping("/deletePerson/{personId}/{personType}")
-    public ApiResponse deletePerson(@PathVariable Long personId, @PathVariable Constants.UserType personType) {
-        return service.deletePerson(personId, personType);
+    /*@DeleteMapping("/deletePerson/{userId}/{userType}")
+    public ApiResponse deletePerson(@PathVariable Long userId, @PathVariable String userType) {
+        return service.deletePerson(userId, userType);
     }
 
     @GetMapping("/generate/{count}")
     public ApiResponse generate(@PathVariable int count) {
         return new ApiResponse(generator.generateFakeDataForClient(count) +
                 generator.generateFakeDataForArtist(count));
-    }
+    }*/
 }

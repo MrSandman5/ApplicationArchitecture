@@ -247,28 +247,26 @@ public class OwnerService {
         }
     }
 
-    public ApiResponse deletePerson(@NotNull final Long personId, @NotNull final Constants.UserType personType) {
-        switch (personType) {
-            case Artist:
-                final Artist artist = artistRepository.findById(personId).orElse(null);
+    /*public ApiResponse deletePerson(@NotNull final Long userId, @NotNull final String userType) {
+        switch (userType) {
+            case "ROLE_ARTIST":
+                final Artist artist = artistRepository.findById(userId).orElse(null);
                 if (artist == null) {
                     return new ApiResponse("Artist not found");
                 }
-                artist.setDeleted(true);
                 artistRepository.save(artist);
                 return new ApiResponse("Artist was deleted");
-            case Client:
-                final Client client = clientRepository.findById(personId).orElse(null);
+            case "ROLE_CLIENT":
+                final Client client = clientRepository.findById(userId).orElse(null);
                 if (client == null) {
                     return new ApiResponse("Client not found");
                 }
-                client.setDeleted(true);
                 clientRepository.save(client);
                 return new ApiResponse("Client was deleted");
 
             default:
                 return new ApiResponse("Wrong parameter");
         }
-    }
+    }*/
 
 }

@@ -1,6 +1,5 @@
 package com.safonov.galleryservice.ArtGalleryApplication.model.user;
 
-import com.safonov.galleryservice.ArtGalleryApplication.configuration.Constants;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -9,6 +8,6 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper=false)
 @NoArgsConstructor
 public class GetUserByIdModel {
-    private Long personId;
-    private Constants.UserType personType;
+    private Long userId;
+    private String userType;
 }

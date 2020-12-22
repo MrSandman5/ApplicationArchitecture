@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SignInModel {
     private Long userId;
-    private Constants.UserType userType;
+    private Constants.Roles role;
     private String password;
 }

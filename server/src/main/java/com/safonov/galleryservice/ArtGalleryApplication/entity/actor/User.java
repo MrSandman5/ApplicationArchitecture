@@ -21,9 +21,6 @@ public abstract class User extends AbstractEntity {
     @Column(name = "last_name", nullable = false)
     protected String lastName;
 
-    @Column(name = "deleted", nullable = false)
-    protected Boolean deleted;
-
     @Column(name = "authenticated", nullable = false)
     protected Boolean authenticated;
 

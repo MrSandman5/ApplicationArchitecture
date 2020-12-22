@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
 public class RegistrationModel extends CredentialsModel {
     protected String firstName;
     protected String lastName;
-    protected Constants.UserType personType;
+    protected Constants.Roles role;
 }
 

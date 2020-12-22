@@ -1,14 +1,12 @@
 package com.safonov.galleryservice.ArtGalleryApplication.entity.actor;
 
 import com.safonov.galleryservice.ArtGalleryApplication.entity.AbstractEntity;
-import lombok.AllArgsConstructor;
+import com.safonov.galleryservice.ArtGalleryApplication.entity.gallery.Expo;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 
@@ -27,13 +25,19 @@ public final class Credentials extends AbstractEntity {
 
     @Email(message = "Invalid email! Please enter valid email")
     @Column(unique = true, name = "email", nullable = false)
-    protected String email;
+    private String email;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "role_id", nullable = false)
+    private Role role;
 
     public Credentials(@NotNull final String email,
-                       @NotNull final String password) {
+                       @NotNull final String password,
+                       @NotNull final Role role) {
         this.email = email;
         this.password = password;
         this.login = email.split("@")[0];
+        this.role = role;
     }
 
 }

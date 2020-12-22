@@ -1,21 +1,20 @@
 package com.safonov.galleryservice.ArtGalleryApplication.service.actor;
 
-import com.safonov.galleryservice.ArtGalleryApplication.configuration.Constants;
-import com.safonov.galleryservice.ArtGalleryApplication.data.actor.ArtistRepository;
-import com.safonov.galleryservice.ArtGalleryApplication.data.actor.ClientRepository;
-import com.safonov.galleryservice.ArtGalleryApplication.data.actor.CredentialsRepository;
-import com.safonov.galleryservice.ArtGalleryApplication.data.actor.OwnerRepository;
+import com.safonov.galleryservice.ArtGalleryApplication.data.actor.*;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.actor.*;
 import com.safonov.galleryservice.ArtGalleryApplication.model.response.ResponseOrMessage;
 import com.safonov.galleryservice.ArtGalleryApplication.model.user.IdAndUserTypeModel;
 import com.safonov.galleryservice.ArtGalleryApplication.model.user.RegistrationModel;
 import com.safonov.galleryservice.ArtGalleryApplication.model.user.SignInModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
+
+import static com.safonov.galleryservice.ArtGalleryApplication.configuration.Constants.Roles.*;
 
 @Service
 public class UserService {
@@ -24,33 +23,43 @@ public class UserService {
     private final OwnerRepository ownerRepository;
     private final ArtistRepository artistRepository;
     private final CredentialsRepository credentialsRepository;
+    private final RoleRepository roleRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
     UserService(@NotNull final ClientRepository clientRepository,
-                  @NotNull final OwnerRepository ownerRepository,
-                  @NotNull final ArtistRepository artistRepository,
-                  @NotNull final CredentialsRepository credentialsRepository) {
+                @NotNull final OwnerRepository ownerRepository,
+                @NotNull final ArtistRepository artistRepository,
+                @NotNull final CredentialsRepository credentialsRepository,
+                @NotNull final RoleRepository roleRepository,
+                @NotNull final BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.clientRepository = clientRepository;
         this.ownerRepository = ownerRepository;
         this.artistRepository = artistRepository;
         this.credentialsRepository = credentialsRepository;
+        this.roleRepository = roleRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     public ResponseOrMessage<Boolean> signUp(@NotNull final RegistrationModel model) {
-        final Credentials credentials = new Credentials(model.getEmail(), model.getPassword());
+        final Role role = roleRepository.findRoleByName(model.getRole().getCode()).orElse(null);
+        if (role == null) {
+            return new ResponseOrMessage<>("Role doesnt exist");
+        }
+        final Credentials credentials = new Credentials(model.getEmail(), bCryptPasswordEncoder.encode(model.getPassword()), role);
         try {
-            switch (model.getPersonType()) {
-                case Client:
+            switch (model.getRole()) {
+                case ROLE_CLIENT:
                     final Client client = new Client(model.getFirstName(), model.getLastName());
                     client.setCredentials(credentials);
                     clientRepository.save(client);
                     return new ResponseOrMessage<>(true);
-                case Owner:
+                case ROLE_OWNER:
                     final Owner owner = new Owner(model.getFirstName(), model.getLastName());
                     owner.setCredentials(credentials);
                     ownerRepository.save(owner);
                     return new ResponseOrMessage<>(true);
-                case Artist:
+                case ROLE_ARTIST:
                     final Artist artist = new Artist(model.getFirstName(), model.getLastName());
                     artist.setCredentials(credentials);
                     artistRepository.save(artist);
@@ -75,24 +84,24 @@ public class UserService {
                 final Artist artist = artistRepository.findByCredentials(credentials).orElse(null);
                 for (final User elem : List.of(client, owner, artist)){
                     if (elem != null) {
-                        switch (elem.getClass().getSimpleName()) {
-                            case "Client":
+                        switch (elem.getCredentials().getRole().getName()) {
+                            case "ROLE_CLIENT":
                                 final Client newClient = new Client(elem.getFirstName(), elem.getLastName());
                                 newClient.setAuthenticated(true);
                                 user = clientRepository.save(newClient);
-                                response.setUserType(Constants.UserType.Client);
+                                response.setRole(ROLE_CLIENT);
                                 break;
-                            case "Owner":
+                            case "ROLE_OWNER":
                                 final Owner newOwner = new Owner(elem.getFirstName(), elem.getLastName());
                                 newOwner.setAuthenticated(true);
                                 user = ownerRepository.save(newOwner);
-                                response.setUserType(Constants.UserType.Owner);
+                                response.setRole(ROLE_OWNER);
                                 break;
-                            case "Artist":
+                            case "ROLE_ARTIST":
                                 final Artist newArtist = new Artist(elem.getFirstName(), elem.getLastName());
                                 newArtist.setAuthenticated(true);
                                 user = artistRepository.save(newArtist);
-                                response.setUserType(Constants.UserType.Artist);
+                                response.setRole(ROLE_ARTIST);
                                 break;
                             default:
                                 return new ResponseOrMessage<>("Invalid user role");
@@ -102,9 +111,6 @@ public class UserService {
                 }
                 if (user == null) {
                     return new ResponseOrMessage<>("User not found");
-                }
-                if (user.getDeleted()) {
-                    return new ResponseOrMessage<>("User was deleted");
                 }
                 response.setUserId(user.id);
                 response.setPassword(user.getCredentials().getPassword());
@@ -118,16 +124,16 @@ public class UserService {
     }
 
     public ResponseOrMessage<User> getUserById(@NotNull final IdAndUserTypeModel model) {
-        final Long personId = model.getPersonId();
+        final Long personId = model.getUserId();
         User user;
-        switch (model.getPersonType()) {
-            case Client:
+        switch (model.getRole()) {
+            case ROLE_CLIENT:
                 user = clientRepository.findById(personId).orElse(null);
                 break;
-            case Owner:
+            case ROLE_OWNER:
                 user = ownerRepository.findById(personId).orElse(null);
                 break;
-            case Artist:
+            case ROLE_ARTIST:
                 user = artistRepository.findById(personId).orElse(null);
                 break;
             default:
@@ -136,9 +142,6 @@ public class UserService {
 
         if (user == null) {
             return new ResponseOrMessage<>("User not found");
-        }
-        if (user.getDeleted()) {
-            return new ResponseOrMessage<>("User was deleted");
         }
         return new ResponseOrMessage<>(user);
     }

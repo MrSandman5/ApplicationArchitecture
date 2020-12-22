@@ -22,7 +22,7 @@ import java.util.Date;
 
 @Service
 public class DataGenerator {
-    private static final Logger log = LoggerFactory.getLogger(DataGenerator.class);
+    /*private static final Logger log = LoggerFactory.getLogger(DataGenerator.class);
 
     Faker faker = new Faker();
 
@@ -38,10 +38,10 @@ public class DataGenerator {
     private final OwnerRepository ownerRepository;
     private final ArtistRepository artistRepository;
     private final CredentialsRepository credentialsRepository;
-    /*private final TicketRepository ticketRepository;
+    private final TicketRepository ticketRepository;
     private final ReservationRepository reservationRepository;
     private final ExpoRepository expoRepository;
-    private final ArtworkRepository artworkRepository;*/
+    private final ArtworkRepository artworkRepository;
     private final Date startDate = new SimpleDateFormat("dd.MM.yyyy").parse("01.01.2020");
 
     @Autowired
@@ -49,18 +49,18 @@ public class DataGenerator {
                   @NotNull final OwnerRepository ownerRepository,
                   @NotNull final ArtistRepository artistRepository,
                   @NotNull final CredentialsRepository credentialsRepository
-                  /*@NotNull final TicketRepository ticketRepository,
+                  @NotNull final TicketRepository ticketRepository,
                   @NotNull final ReservationRepository reservationRepository,
                   @NotNull final ExpoRepository expoRepository,
-                  @NotNull final ArtworkRepository artworkRepository*/) throws ParseException {
+                  @NotNull final ArtworkRepository artworkRepository) throws ParseException {
         this.clientRepository = clientRepository;
         this.ownerRepository = ownerRepository;
         this.artistRepository = artistRepository;
         this.credentialsRepository = credentialsRepository;
-        /*this.ticketRepository = ticketRepository;
+        this.ticketRepository = ticketRepository;
         this.reservationRepository = reservationRepository;
         this.expoRepository = expoRepository;
-        this.artworkRepository = artworkRepository*/;
+        this.artworkRepository = artworkRepository;
     }
 
     public String generateFakeDataForClient(final int count) {
@@ -123,5 +123,5 @@ public class DataGenerator {
     public static String hashPassword(@NotNull final String password_plaintext) {
         final String salt = BCrypt.gensalt(workload);
         return (BCrypt.hashpw(password_plaintext, salt));
-    }
+    }*/
 }
