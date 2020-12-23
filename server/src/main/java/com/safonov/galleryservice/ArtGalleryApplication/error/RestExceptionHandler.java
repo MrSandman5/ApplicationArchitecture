@@ -3,6 +3,9 @@ package com.safonov.galleryservice.ArtGalleryApplication.error;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import org.hibernate.JDBCException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -56,7 +59,11 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         final ApiError apiError = new ApiError(status);
         apiError.setError("ARGUMENT_NOT_VALID");
 
-        final ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        final ObjectWriter ow = new ObjectMapper()
+                .registerModule(new ParameterNamesModule())
+                .registerModule(new Jdk8Module())
+                .registerModule(new JavaTimeModule())
+                .writer().withDefaultPrettyPrinter();
         apiError.setMessage(errorsMap.toString());
 
         return new ResponseEntity<>(apiError, headers, status);

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 public class ArtistController {
@@ -38,13 +39,13 @@ public class ArtistController {
 
     @Secured("ROLE_ARTIST")
     @GetMapping("/{artistId}/artworks")
-    public ResponseEntity<List<Artwork>> getAllArtworks(@PathVariable final Long artistId) {
+    public ResponseEntity<Object> getAllArtworks(@PathVariable final Long artistId) {
         return service.getAllArtworks(artistId);
     }
 
     @Secured("ROLE_ARTIST")
     @GetMapping("/{artistId}/expo-artworks")
-    public ResponseEntity<List<Artwork>> getExpoArtworks(@PathVariable final Long artistId) {
+    public ResponseEntity<Object> getExpoArtworks(@PathVariable final Long artistId) {
         return service.getExpoArtworks(artistId);
     }
 }

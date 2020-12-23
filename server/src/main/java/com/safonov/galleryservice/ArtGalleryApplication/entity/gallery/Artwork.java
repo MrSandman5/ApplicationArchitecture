@@ -23,11 +23,11 @@ public class Artwork extends AbstractEntity {
     @Column(name = "info")
     private String info;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "artist_id", nullable = false)
     private Artist artist;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "expo_id")
     private Expo expo;
 }

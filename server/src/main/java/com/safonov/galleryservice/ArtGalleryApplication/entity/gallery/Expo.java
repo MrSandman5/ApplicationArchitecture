@@ -12,7 +12,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 
 @Data
 @Entity
@@ -27,7 +27,7 @@ public class Expo extends AbstractEntity {
     @Column(name = "info", nullable = false)
     private String info;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "artist_id", nullable = false)
     private Artist artist;
 
@@ -47,8 +47,8 @@ public class Expo extends AbstractEntity {
     @Column(name = "status", nullable = false)
     private Constants.ExpoStatus status;
 
-    @OneToMany(mappedBy = "expo", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Artwork> artworks;
+    @OneToMany(mappedBy = "expo", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Artwork> artworks;
 
     public Expo(@NotNull final String name,
                 @NotNull final String info,

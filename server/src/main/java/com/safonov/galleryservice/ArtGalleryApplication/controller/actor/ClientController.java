@@ -46,25 +46,25 @@ public class ClientController {
 
     @Secured("ROLE_CLIENT")
     @GetMapping("/{clientId}/tickets")
-    public ResponseEntity<List<Ticket>> getTickets(@PathVariable final Long clientId) {
+    public ResponseEntity<Object> getTickets(@PathVariable final Long clientId) {
         return service.getTickets(clientId);
     }
 
     @Secured("ROLE_CLIENT")
     @GetMapping("/{clientId}/new-reservations")
-    public ResponseEntity<List<Reservation>> getNewReservation(@PathVariable final Long clientId) {
+    public ResponseEntity<Object> getNewReservation(@PathVariable final Long clientId) {
         return service.getNewReservations(clientId);
     }
 
     @Secured("ROLE_CLIENT")
     @GetMapping("/{clientId}/payed-reservations")
-    public ResponseEntity<List<Reservation>> getPayedReservation(@PathVariable final Long clientId) {
+    public ResponseEntity<Object> getPayedReservation(@PathVariable final Long clientId) {
         return service.getPayedReservations(clientId);
     }
 
     @Secured("ROLE_CLIENT")
     @GetMapping("/{clientId}/expos")
-    public ResponseEntity<List<Expo>> getExpos() {
+    public ResponseEntity<Object> getExpos() {
         return service.getNewExpos();
     }
 

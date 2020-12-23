@@ -190,7 +190,7 @@ public class OwnerService {
             return new ResponseEntity<>("Expo with name " + closedExpo.getName() + " hasn't closed!", HttpStatus.NOT_ACCEPTABLE);
         }
         final List<Reservation> expoReservations = reservationRepository.findReservationsByStatus(Constants.ReservationStatus.Closed)
-                .stream().filter(reservation -> reservation.getTickets().get(0).getExpo().equals(closedExpo))
+                .stream().filter(reservation -> reservation.getTickets().stream().findFirst().get().getExpo().equals(closedExpo))
                 .collect(Collectors.toList());
         double payment = 0;
         for (final Reservation entry : expoReservations){
@@ -209,7 +209,7 @@ public class OwnerService {
         return new ResponseEntity<>("", HttpStatus.OK);
     }
 
-    public ResponseEntity<List<Expo>> getNewExpos() {
+    public ResponseEntity<Object> getNewExpos() {
         final List<Expo> expos = expoRepository.findExposByStatus(Constants.ExpoStatus.New);
         if (expos == null) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
@@ -218,7 +218,7 @@ public class OwnerService {
         }
     }
 
-    public ResponseEntity<List<Expo>> getOpenedExpos() {
+    public ResponseEntity<Object> getOpenedExpos() {
         final List<Expo> expos = expoRepository.findExposByStatus(Constants.ExpoStatus.Opened);
         if (expos == null) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
@@ -227,7 +227,7 @@ public class OwnerService {
         }
     }
 
-    public ResponseEntity<List<Expo>> getClosedExpos() {
+    public ResponseEntity<Object> getClosedExpos() {
         final List<Expo> expos = expoRepository.findExposByStatus(Constants.ExpoStatus.Closed);
         if (expos == null) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);

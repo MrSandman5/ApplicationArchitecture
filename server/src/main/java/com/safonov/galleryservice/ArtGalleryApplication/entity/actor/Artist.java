@@ -7,12 +7,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.List;
+import java.util.Set;
 
 @Data
 @Entity
@@ -22,11 +19,11 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 public class Artist extends User {
 
-    @OneToMany(mappedBy = "artist", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Artwork> artworks;
+    @OneToMany(mappedBy = "artist", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Artwork> artworks;
 
-    @OneToMany(mappedBy = "artist", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<OwnerArtistPayment> ownerArtistPayments;
+    @OneToMany(mappedBy = "artist", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<OwnerArtistPayment> ownerArtistPayments;
 
     public Artist(@NotNull final String firstName,
                   @NotNull final String secondName) {

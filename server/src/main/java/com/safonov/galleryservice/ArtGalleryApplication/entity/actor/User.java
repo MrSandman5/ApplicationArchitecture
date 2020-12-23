@@ -1,14 +1,12 @@
 package com.safonov.galleryservice.ArtGalleryApplication.entity.actor;
 
 import com.safonov.galleryservice.ArtGalleryApplication.entity.AbstractEntity;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @MappedSuperclass
@@ -21,7 +19,7 @@ public abstract class User extends AbstractEntity {
     @Column(name = "last_name", nullable = false)
     protected String lastName;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "credentials_id")
     protected Credentials credentials;
 

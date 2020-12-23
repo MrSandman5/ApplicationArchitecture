@@ -12,7 +12,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 
 @Data
 @Entity
@@ -21,7 +21,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 public class Reservation extends AbstractEntity {
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "client_id", nullable = false)
     private Client client;
 
@@ -37,8 +37,8 @@ public class Reservation extends AbstractEntity {
     @Column(name = "dateTime", nullable = false)
     private LocalDateTime dateTime;
 
-    @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Ticket> tickets;
+    @OneToMany(mappedBy = "reservation",fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Ticket> tickets;
 
     public Reservation(@NotNull final Client client,
                        @NotNull final LocalDateTime dateTime) {

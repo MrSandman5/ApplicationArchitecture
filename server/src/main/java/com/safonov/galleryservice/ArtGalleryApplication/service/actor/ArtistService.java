@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class ArtistService {
@@ -44,7 +45,7 @@ public class ArtistService {
             return new ResponseEntity<>("Artist doesnt exist", HttpStatus.NOT_FOUND);
         }
         final Artwork artwork = artworkRepository.findById(model.getArtworkId()).orElse(null);
-        final List<Artwork> artworks = artist.getArtworks();
+        final Set<Artwork> artworks = artist.getArtworks();
         if (artwork == null) {
             final Artwork newArtwork = new Artwork(model.getName(), model.getInfo(), artist, null);
             artworks.add(artworkRepository.save(newArtwork));
@@ -82,7 +83,7 @@ public class ArtistService {
         return new ResponseEntity<>("", HttpStatus.OK);
     }
 
-    public ResponseEntity<List<Artwork>> getAllArtworks(@NotNull final Long artistId) {
+    public ResponseEntity<Object> getAllArtworks(@NotNull final Long artistId) {
         final Artist artist = artistRepository.findById(artistId).orElse(null);
         if (artist == null) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
@@ -95,12 +96,12 @@ public class ArtistService {
         }
     }
 
-    public ResponseEntity<List<Artwork>> getExpoArtworks(@NotNull final Long artistId) {
+    public ResponseEntity<Object> getExpoArtworks(@NotNull final Long artistId) {
         final Artist artist = artistRepository.findById(artistId).orElse(null);
         if (artist == null) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
-        final List<Artwork> artworks = artist.getArtworks();
+        final Set<Artwork> artworks = artist.getArtworks();
         if (artworks == null) {
             return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
         } else {

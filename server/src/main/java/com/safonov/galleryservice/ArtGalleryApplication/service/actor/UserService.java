@@ -75,59 +75,6 @@ public class UserService {
         }
     }
 
-    /*public ResponseOrMessage<SignInModel> signIn(@NotNull final Map<String, String> emailOrUserName) {
-        if (emailOrUserName.containsKey("emailOrUserName")) {
-            final Credentials credentials = credentialsRepository.findByEmail(emailOrUserName.get("emailOrUserName"))
-                    .orElseGet(() -> credentialsRepository.findByLogin(emailOrUserName.get("emailOrUserName")).orElse(null));
-            if (credentials != null) {
-                final SignInModel response = new SignInModel();
-                User user = null;
-                final Client client = clientRepository.findByCredentials(credentials).orElse(null);
-                final Owner owner = ownerRepository.findByCredentials(credentials).orElse(null);
-                final Artist artist = artistRepository.findByCredentials(credentials).orElse(null);
-                for (final User elem : List.of(client, owner, artist)){
-                    if (elem != null) {
-                        switch (elem.getCredentials().getRole().getName()) {
-                            case "ROLE_ADMIN":
-                                final Client newClient = new Client(elem.getFirstName(), elem.getLastName());
-                                user = clientRepository.save(newClient);
-                                response.setRole(ROLE_CLIENT);
-                                break;
-                            case "ROLE_CLIENT":
-                                final Client newClient = new Client(elem.getFirstName(), elem.getLastName());
-                                user = clientRepository.save(newClient);
-                                response.setRole(ROLE_CLIENT);
-                                break;
-                            case "ROLE_OWNER":
-                                final Owner newOwner = new Owner(elem.getFirstName(), elem.getLastName());
-                                user = ownerRepository.save(newOwner);
-                                response.setRole(ROLE_OWNER);
-                                break;
-                            case "ROLE_ARTIST":
-                                final Artist newArtist = new Artist(elem.getFirstName(), elem.getLastName());
-                                user = artistRepository.save(newArtist);
-                                response.setRole(ROLE_ARTIST);
-                                break;
-                            default:
-                                return new ResponseOrMessage<>("Invalid user role");
-                        }
-                        break;
-                    }
-                }
-                if (user == null) {
-                    return new ResponseOrMessage<>("User not found");
-                }
-                response.setUserId(user.id);
-                response.setPassword(user.getCredentials().getPassword());
-                return new ResponseOrMessage<>(response);
-            } else {
-                return new ResponseOrMessage<>("Incorrect login");
-            }
-        } else {
-            return new ResponseOrMessage<>("Wrong parameter");
-        }
-    }*/
-
     public ResponseEntity<User> getUserById(@NotNull final String login) {
         final Credentials credentials = credentialsRepository.findByLogin(login).orElse(null);
         if (credentials == null) {

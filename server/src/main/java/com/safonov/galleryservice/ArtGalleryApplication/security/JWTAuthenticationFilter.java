@@ -3,6 +3,9 @@ package com.safonov.galleryservice.ArtGalleryApplication.security;
 import com.auth0.jwt.JWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.safonov.galleryservice.ArtGalleryApplication.data.actor.CredentialsRepository;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.actor.Credentials;
 import com.safonov.galleryservice.ArtGalleryApplication.error.ApiError;
@@ -45,6 +48,9 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                                 @NotNull final HttpServletResponse res) {
         try {
             final Credentials credential = new ObjectMapper()
+                    .registerModule(new ParameterNamesModule())
+                    .registerModule(new Jdk8Module())
+                    .registerModule(new JavaTimeModule())
                     .readValue(req.getInputStream(), Credentials.class);
             final Credentials user = credentialsRepository.findByLogin(credential.getLogin()).orElse(null);
             final Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
@@ -73,7 +79,11 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         apiError.setError(failed.getMessage().toUpperCase().replaceAll(" ", "_"));
         apiError.setMessage(failed.getMessage());
 
-        final ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        final ObjectWriter ow = new ObjectMapper()
+                .registerModule(new ParameterNamesModule())
+                .registerModule(new Jdk8Module())
+                .registerModule(new JavaTimeModule())
+                .writer().withDefaultPrettyPrinter();
 
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.addHeader("Content-Type", "application/json");

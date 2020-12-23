@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -62,7 +63,10 @@ public class AdminService {
         }
     }
 
-    public ResponseEntity<List<Role>> getRoles() {
-        return new ResponseEntity<>(roleRepository.findAll(), HttpStatus.OK);
+    public ResponseEntity<Object> getRoles() {
+        final List<String> roleNames = new ArrayList<>();
+        final List<Role> roles = roleRepository.findAll();
+        roles.forEach(role -> roleNames.add(role.getName()));
+        return new ResponseEntity<>(roleNames, HttpStatus.OK);
     }
 }

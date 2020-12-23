@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class ClientService {
@@ -64,7 +65,7 @@ public class ClientService {
         if (client == null) {
             return new ResponseEntity<>("Client doesnt exist", HttpStatus.NOT_FOUND);
         }
-        final List<Ticket> tickets = client.getTickets();
+        final Set<Ticket> tickets = client.getTickets();
         if (!tickets.isEmpty()){
             for (final Ticket tick : tickets) {
                 if (!ticketExpo.equals(tick.getExpo())){
@@ -84,7 +85,8 @@ public class ClientService {
         if (client == null) {
             return new ResponseEntity<>("Client doesnt exist", HttpStatus.NOT_FOUND);
         }
-        final Expo expo = expoRepository.findById(client.getTickets().get(0).getExpo().getId()).orElse(null);
+        final Expo expo = expoRepository.findById(
+                client.getTickets().stream().findFirst().get().getExpo().getId()).orElse(null);
         if (expo == null){
             return new ResponseEntity<>("Expo doesnt exist", HttpStatus.NOT_FOUND);
         }
@@ -109,7 +111,8 @@ public class ClientService {
             return new ResponseEntity<>("Reservation is already closed", HttpStatus.ALREADY_REPORTED);
         }
 
-        final Expo ticketExpo = expoRepository.findById(clientReservation.getTickets().get(0).getExpo().getId()).orElse(null);
+        final Expo ticketExpo = expoRepository.findById(
+                clientReservation.getTickets().stream().findFirst().get().getExpo().getId()).orElse(null);
         if (ticketExpo == null){
             return new ResponseEntity<>("Expo doesnt exist", HttpStatus.NOT_FOUND);
         } else if (ticketExpo.isClosed()){
@@ -137,7 +140,7 @@ public class ClientService {
         return new ResponseEntity<>("", HttpStatus.OK);
     }
 
-    public ResponseEntity<List<Ticket>> getTickets(@NotNull final Long clientId) {
+    public ResponseEntity<Object> getTickets(@NotNull final Long clientId) {
         final Client client = clientRepository.findById(clientId).orElse(null);
         if (client == null) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
@@ -148,7 +151,7 @@ public class ClientService {
         } else return new ResponseEntity<>(tickets, HttpStatus.OK);
     }
 
-    public ResponseEntity<List<Reservation>> getNewReservations(@NotNull final Long clientId) {
+    public ResponseEntity<Object> getNewReservations(@NotNull final Long clientId) {
         final Client client = clientRepository.findById(clientId).orElse(null);
         if (client == null) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
@@ -161,7 +164,7 @@ public class ClientService {
         }
     }
 
-    public ResponseEntity<List<Reservation>> getPayedReservations(@NotNull final Long clientId) {
+    public ResponseEntity<Object> getPayedReservations(@NotNull final Long clientId) {
         final Client client = clientRepository.findById(clientId).orElse(null);
         if (client == null) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
@@ -174,7 +177,7 @@ public class ClientService {
         }
     }
 
-    public ResponseEntity<List<Expo>> getNewExpos() {
+    public ResponseEntity<Object> getNewExpos() {
         final List<Expo> expos = expoRepository.findExposByStatus(Constants.ExpoStatus.New);
         if (expos == null) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);

@@ -1,16 +1,15 @@
 package com.safonov.galleryservice.ArtGalleryApplication.entity.actor;
 
 import com.safonov.galleryservice.ArtGalleryApplication.entity.AbstractEntity;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 
-@Data
 @Entity
+@Getter
+@Setter
 @NoArgsConstructor
 @Table(name = "credentials")
 @EqualsAndHashCode(callSuper = true)
@@ -26,7 +25,7 @@ public final class Credentials extends AbstractEntity {
     @Column(unique = true, name = "email", nullable = false)
     private String email;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 

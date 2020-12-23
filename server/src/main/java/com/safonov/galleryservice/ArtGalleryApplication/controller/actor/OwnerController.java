@@ -67,19 +67,19 @@ public class OwnerController {
 
     @Secured("ROLE_OWNER")
     @GetMapping("/{ownerId}/new-expos")
-    public ResponseEntity<List<Expo>> getNewExpos() {
+    public ResponseEntity<Object> getNewExpos() {
         return service.getNewExpos();
     }
 
     @Secured("ROLE_OWNER")
     @GetMapping("/{ownerId}/opened-expos")
-    public ResponseEntity<List<Expo>> getOpenedExpos() {
+    public ResponseEntity<Object> getOpenedExpos() {
         return service.getOpenedExpos();
     }
 
     @Secured("ROLE_OWNER")
     @GetMapping("/{ownerId}/closed-expos")
-    public ResponseEntity<List<Expo>> getClosedExpos() {
+    public ResponseEntity<Object> getClosedExpos() {
         return service.getClosedExpos();
     }
 }
