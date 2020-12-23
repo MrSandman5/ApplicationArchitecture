@@ -1,18 +1,16 @@
 package com.safonov.galleryservice.ArtGalleryApplication.controller.actor;
 
 import com.safonov.galleryservice.ArtGalleryApplication.entity.gallery.Artwork;
-import com.safonov.galleryservice.ArtGalleryApplication.model.gallery.AcceptRoyaltiesModel;
-import com.safonov.galleryservice.ArtGalleryApplication.model.gallery.AddArtworkModel;
-import com.safonov.galleryservice.ArtGalleryApplication.model.response.ApiResponse;
-import com.safonov.galleryservice.ArtGalleryApplication.model.response.ResponseOrMessage;
+import com.safonov.galleryservice.ArtGalleryApplication.model.info.ArtworkModel;
+import com.safonov.galleryservice.ArtGalleryApplication.model.info.ExpoModel;
 import com.safonov.galleryservice.ArtGalleryApplication.service.actor.ArtistService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/artist")
@@ -26,26 +24,28 @@ public class ArtistController {
     }
 
     @Secured("ROLE_ARTIST")
-    @PostMapping("/add-artwork")
-    public ApiResponse addArtwork(@RequestBody AddArtworkModel model) {
-        return service.addArtwork(model);
+    @PostMapping("/{artistId}/add-artwork")
+    public ResponseEntity<String> addArtwork(@PathVariable final Long artistId,
+                                             @RequestBody final ArtworkModel model) {
+        return service.addArtwork(artistId, model);
     }
 
     @Secured("ROLE_ARTIST")
-    @PostMapping("/accept-royalties")
-    public ApiResponse acceptRoyalties(@RequestBody AcceptRoyaltiesModel model) {
-        return service.acceptRoyalties(model);
+    @PostMapping("/{artistId}/accept-royalties")
+    public ResponseEntity<String> acceptRoyalties(@PathVariable final Long artistId,
+                                                  @RequestBody final ExpoModel model) {
+        return service.acceptRoyalties(artistId, model);
     }
 
     @Secured("ROLE_ARTIST")
-    @GetMapping("/artworks")
-    public ResponseOrMessage<List<Artwork>> getAllArtworks(@RequestBody Map<String, Long> artistId) {
+    @GetMapping("/{artistId}/artworks")
+    public ResponseEntity<List<Artwork>> getAllArtworks(@PathVariable final Long artistId) {
         return service.getAllArtworks(artistId);
     }
 
     @Secured("ROLE_ARTIST")
-    @GetMapping("/expo-artworks")
-    public ResponseOrMessage<List<Artwork>> getExpoArtworks(@RequestBody Map<String, Long> artistId) {
+    @GetMapping("/{artistId}/expo-artworks")
+    public ResponseEntity<List<Artwork>> getExpoArtworks(@PathVariable final Long artistId) {
         return service.getExpoArtworks(artistId);
     }
 }

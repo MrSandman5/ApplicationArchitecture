@@ -3,19 +3,16 @@ package com.safonov.galleryservice.ArtGalleryApplication.controller.actor;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.gallery.Expo;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.gallery.Reservation;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.gallery.Ticket;
-import com.safonov.galleryservice.ArtGalleryApplication.model.gallery.AddTicketModel;
-import com.safonov.galleryservice.ArtGalleryApplication.model.gallery.CreateReservationModel;
 import com.safonov.galleryservice.ArtGalleryApplication.model.gallery.PayForReservationModel;
-import com.safonov.galleryservice.ArtGalleryApplication.model.response.ApiResponse;
-import com.safonov.galleryservice.ArtGalleryApplication.model.response.ResponseOrMessage;
+import com.safonov.galleryservice.ArtGalleryApplication.model.info.ExpoModel;
 import com.safonov.galleryservice.ArtGalleryApplication.service.actor.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/client")
@@ -29,44 +26,46 @@ public class ClientController {
     }
 
     @Secured("ROLE_CLIENT")
-    @PostMapping("/add-ticket")
-    public ApiResponse addTicket(@RequestBody AddTicketModel model) {
-        return service.addTicket(model);
+    @PostMapping("/{clientId}/add-ticket")
+    public ResponseEntity<String> addTicket(@PathVariable final Long clientId,
+                                            @RequestBody final ExpoModel model) {
+        return service.addTicket(clientId, model);
     }
 
     @Secured("ROLE_CLIENT")
-    @PostMapping("/create-reservation")
-    public ApiResponse createReservation(@RequestBody CreateReservationModel model) {
-        return service.createReservation(model);
+    @PostMapping("/{clientId}/create-reservation")
+    public ResponseEntity<String> createReservation(@PathVariable final Long clientId) {
+        return service.createReservation(clientId);
     }
 
     @Secured("ROLE_CLIENT")
-    @PostMapping("/pay")
-    public ApiResponse payForReservation(@RequestBody PayForReservationModel model) {
-        return service.payForReservation(model);
+    @PostMapping("/{clientId}/pay")
+    public ResponseEntity<String> payForReservation(@PathVariable final Long clientId,
+                                                    @RequestBody final PayForReservationModel model) {
+        return service.payForReservation(clientId, model);
     }
 
     @Secured("ROLE_CLIENT")
-    @GetMapping("/tickets")
-    public ResponseOrMessage<List<Ticket>> getTickets(@RequestBody Map<String, Long> clientId) {
+    @GetMapping("/{clientId}/tickets")
+    public ResponseEntity<List<Ticket>> getTickets(@PathVariable final Long clientId) {
         return service.getTickets(clientId);
     }
 
     @Secured("ROLE_CLIENT")
-    @GetMapping("/new-reservations")
-    public ResponseOrMessage<List<Reservation>> getNewReservation(@RequestBody Map<String, Long> clientId) {
+    @GetMapping("/{clientId}/new-reservations")
+    public ResponseEntity<List<Reservation>> getNewReservation(@PathVariable final Long clientId) {
         return service.getNewReservations(clientId);
     }
 
     @Secured("ROLE_CLIENT")
-    @GetMapping("/payed-reservations")
-    public ResponseOrMessage<List<Reservation>> getPayedReservation(@RequestBody Map<String, Long> clientId) {
+    @GetMapping("/{clientId}/payed-reservations")
+    public ResponseEntity<List<Reservation>> getPayedReservation(@PathVariable final Long clientId) {
         return service.getPayedReservations(clientId);
     }
 
     @Secured("ROLE_CLIENT")
-    @GetMapping("/expos")
-    public ResponseOrMessage<List<Expo>> getExpos() {
+    @GetMapping("/{clientId}/expos")
+    public ResponseEntity<List<Expo>> getExpos() {
         return service.getNewExpos();
     }
 

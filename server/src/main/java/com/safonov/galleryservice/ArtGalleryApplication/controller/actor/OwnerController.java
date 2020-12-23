@@ -2,11 +2,11 @@ package com.safonov.galleryservice.ArtGalleryApplication.controller.actor;
 
 import com.safonov.galleryservice.ArtGalleryApplication.entity.gallery.Expo;
 import com.safonov.galleryservice.ArtGalleryApplication.model.gallery.*;
-import com.safonov.galleryservice.ArtGalleryApplication.model.response.ApiResponse;
-import com.safonov.galleryservice.ArtGalleryApplication.model.response.ResponseOrMessage;
-import com.safonov.galleryservice.ArtGalleryApplication.service.DataGenerator;
+import com.safonov.galleryservice.ArtGalleryApplication.model.info.ExpoModel;
+import com.safonov.galleryservice.ArtGalleryApplication.model.info.ReservationModel;
 import com.safonov.galleryservice.ArtGalleryApplication.service.actor.OwnerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,56 +25,62 @@ public class OwnerController {
     }
 
     @Secured("ROLE_OWNER")
-    @PostMapping("/accept-payment")
-    public ApiResponse acceptPayment(@RequestBody AcceptPaymentModel model) {
-        return service.acceptPayment(model);
+    @PostMapping("/{ownerId}/accept-payment")
+    public ResponseEntity<String> acceptPayment(@PathVariable final Long ownerId,
+                                                @RequestBody final ReservationModel model) {
+        return service.acceptPayment(ownerId, model);
     }
 
     @Secured("ROLE_OWNER")
-    @PostMapping("/create-expo")
-    public ApiResponse createExpo(@RequestBody CreateExpoModel model) {
-        return service.createExpo(model);
+    @PostMapping("/{ownerId}/create-expo")
+    public ResponseEntity<String> createExpo(@PathVariable final Long ownerId,
+                                             @RequestBody final ExpoModel model) {
+        return service.createExpo(ownerId, model);
     }
 
     @Secured("ROLE_OWNER")
-    @PostMapping("/edit-expo")
-    public ApiResponse editExpo(@RequestBody EditExpoModel model) {
-        return service.editExpo(model);
+    @PostMapping("/{ownerId}/edit-expo")
+    public ResponseEntity<String> editExpo(@PathVariable final Long ownerId,
+                                           @RequestBody EditExpoModel model) {
+        return service.editExpo(ownerId, model);
     }
 
     @Secured("ROLE_OWNER")
-    @PostMapping("/start-expo")
-    public ApiResponse startExpo(@RequestBody StartCloseExpoModel model) {
-        return service.startExpo(model);
+    @PostMapping("/{ownerId}/start-expo")
+    public ResponseEntity<String> startExpo(@PathVariable final Long ownerId,
+                                            @RequestBody final ExpoModel model) {
+        return service.startExpo(ownerId, model);
     }
 
     @Secured("ROLE_OWNER")
-    @PostMapping("/close-expo")
-    public ApiResponse closeExpo(@RequestBody StartCloseExpoModel model) {
-        return service.closeExpo(model);
+    @PostMapping("/{ownerId}/close-expo")
+    public ResponseEntity<String> closeExpo(@PathVariable final Long ownerId,
+                                            @RequestBody final ExpoModel model) {
+        return service.closeExpo(ownerId, model);
     }
 
     @Secured("ROLE_OWNER")
-    @PostMapping("/pay-for-expo")
-    public ApiResponse payForExpo(@RequestBody PayForExpoModel model) {
-        return service.payForExpo(model);
+    @PostMapping("/{ownerId}/pay-for-expo")
+    public ResponseEntity<String> payForExpo(@PathVariable final Long ownerId,
+                                             @RequestBody final ExpoModel model) {
+        return service.payForExpo(ownerId, model);
     }
 
     @Secured("ROLE_OWNER")
-    @GetMapping("/new-expos")
-    public ResponseOrMessage<List<Expo>> getNewExpos() {
+    @GetMapping("/{ownerId}/new-expos")
+    public ResponseEntity<List<Expo>> getNewExpos() {
         return service.getNewExpos();
     }
 
     @Secured("ROLE_OWNER")
-    @GetMapping("/opened-expos")
-    public ResponseOrMessage<List<Expo>> getOpenedExpos() {
+    @GetMapping("/{ownerId}/opened-expos")
+    public ResponseEntity<List<Expo>> getOpenedExpos() {
         return service.getOpenedExpos();
     }
 
     @Secured("ROLE_OWNER")
-    @GetMapping("/closed-expos")
-    public ResponseOrMessage<List<Expo>> getClosedExpos() {
+    @GetMapping("/{ownerId}/closed-expos")
+    public ResponseEntity<List<Expo>> getClosedExpos() {
         return service.getClosedExpos();
     }
 }

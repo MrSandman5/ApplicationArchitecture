@@ -1,20 +1,17 @@
 package com.safonov.galleryservice.ArtGalleryApplication.controller.actor;
 
-import com.safonov.galleryservice.ArtGalleryApplication.model.response.ResponseOrMessage;
+import com.safonov.galleryservice.ArtGalleryApplication.entity.actor.User;
 import com.safonov.galleryservice.ArtGalleryApplication.model.user.RegistrationModel;
-import com.safonov.galleryservice.ArtGalleryApplication.model.user.SignInModel;
 import com.safonov.galleryservice.ArtGalleryApplication.service.actor.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
-import java.util.Map;
 
 @RestController
-@RequestMapping("/login")
+@RequestMapping("/")
 public class UserController {
 
     private final UserService service;
@@ -24,13 +21,14 @@ public class UserController {
         this.service = service;
     }
 
-    @PostMapping("/sign-up")
-    public ResponseOrMessage<Boolean> signUp(@RequestBody RegistrationModel model) {
+    @PostMapping("sign-up")
+    public ResponseEntity<String> signUp(@RequestBody final RegistrationModel model) {
         return service.signUp(model);
     }
 
-    @PostMapping("/sign-in")
-    public ResponseOrMessage<SignInModel> signIn(@RequestBody Map<String, String> emailOrUserName) {
-        return service.signIn(emailOrUserName);
+    @Secured({"ROLE_CLIENT", "ROLE_OWNER", "ROLE_ARTIST"})
+    @GetMapping("users/{login}")
+    public ResponseEntity<User> getUserByLogin(@PathVariable final String login) {
+        return service.getUserById(login);
     }
 }

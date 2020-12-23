@@ -9,9 +9,10 @@ import com.safonov.galleryservice.ArtGalleryApplication.entity.actor.Owner;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.gallery.*;
 import com.safonov.galleryservice.ArtGalleryApplication.model.gallery.*;
 import com.safonov.galleryservice.ArtGalleryApplication.model.info.ExpoModel;
-import com.safonov.galleryservice.ArtGalleryApplication.model.response.ApiResponse;
-import com.safonov.galleryservice.ArtGalleryApplication.model.response.ResponseOrMessage;
+import com.safonov.galleryservice.ArtGalleryApplication.model.info.ReservationModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,45 +48,46 @@ public class OwnerService {
         this.ownerArtistPaymentRepository = ownerArtistPaymentRepository;
     }
 
-    public ApiResponse acceptPayment(@NotNull final AcceptPaymentModel model){
-        final Reservation payedReservation = reservationRepository.findById(model.getReservation().getReservationId()).orElse(null);
+    public ResponseEntity<String> acceptPayment(@NotNull final Long ownerId,
+                                                @NotNull final ReservationModel model){
+        final Reservation payedReservation = reservationRepository.findById(model.getReservationId()).orElse(null);
         if (payedReservation == null){
-            return new ApiResponse("Reservation doesnt exist");
+            return new ResponseEntity<>("Reservation doesnt exist", HttpStatus.NOT_FOUND);
         } else if (!payedReservation.isPayed()){
-            return new ApiResponse("Reservation doesnt payed for");
+            return new ResponseEntity<>("Reservation doesnt payed for", HttpStatus.GONE);
         }
-        final Owner owner = ownerRepository.findById(model.getOwnerId()).orElse(null);
+        final Owner owner = ownerRepository.findById(ownerId).orElse(null);
         if (owner == null) {
-            return new ApiResponse("Owner doesnt exist");
+            return new ResponseEntity<>("Owner doesnt exist", HttpStatus.NOT_FOUND);
         }
         final ClientOwnerPayment payment = clientOwnerPaymentRepository.findPaymentByReservation(payedReservation).orElse(null);
         if (payment == null){
-            return new ApiResponse("Payment for reservation doesnt exist");
+            return new ResponseEntity<>("Payment for reservation doesnt exist", HttpStatus.NOT_FOUND);
         }
         payedReservation.setStatus(Constants.ReservationStatus.Closed);
         reservationRepository.save(payedReservation);
-        return new ApiResponse("Owner " + owner.getCredentials().getLogin() + " accepted payment for reservation");
+        return new ResponseEntity<>("", HttpStatus.OK);
     }
 
     @Transactional
-    public ApiResponse createExpo(@NotNull final CreateExpoModel model) {
-        final Owner owner = ownerRepository.findById(model.getOwnerId()).orElse(null);
+    public ResponseEntity<String> createExpo(@NotNull final Long ownerId,
+                                             @NotNull final ExpoModel model) {
+        final Owner owner = ownerRepository.findById(ownerId).orElse(null);
         if (owner == null) {
-            return new ApiResponse("Owner doesnt exist");
+            return new ResponseEntity<>("Owner doesnt exist", HttpStatus.NOT_FOUND);
         }
-        final Expo existedExpo = expoRepository.findById(model.getExpo().getExpoId()).orElse(null);
+        final Expo existedExpo = expoRepository.findById(model.getExpoId()).orElse(null);
         if (existedExpo == null) {
-            final ExpoModel expoModel = model.getExpo();
-            final Artist artist = artistRepository.findById(expoModel.getArtistId()).orElse(null);
+            final Artist artist = artistRepository.findById(model.getArtistId()).orElse(null);
             if (artist == null) {
-                return new ApiResponse("Artist doesnt exist");
+                return new ResponseEntity<>("Artist doesnt exist", HttpStatus.NOT_FOUND);
             }
-            final Expo newExpo = new Expo(expoModel.getName(),
-                    expoModel.getInfo(),
+            final Expo newExpo = new Expo(model.getName(),
+                    model.getInfo(),
                     artist,
-                    expoModel.getStartTime(),
-                    expoModel.getEndTime(),
-                    expoModel.getTicketPrice());
+                    model.getStartTime(),
+                    model.getEndTime(),
+                    model.getTicketPrice());
             final Expo addedExpo = expoRepository.save(newExpo);
             for (final Artwork artwork : artist.getArtworks()) {
                 artwork.setExpo(addedExpo);
@@ -93,20 +95,21 @@ public class OwnerService {
             }
             addedExpo.setArtist(artistRepository.save(artist));
             expoRepository.save(addedExpo);
-            return new ApiResponse("New expo with name " + newExpo.getName() + "was created");
+            return new ResponseEntity<>("", HttpStatus.OK);
         } else {
-            return new ApiResponse("Expo with name " + existedExpo.getName() + " already created");
+            return new ResponseEntity<>("Expo with name " + existedExpo.getName() + " already created", HttpStatus.ALREADY_REPORTED);
         }
     }
 
-    public ApiResponse editExpo(@NotNull final EditExpoModel model){
-        final Owner owner = ownerRepository.findById(model.getOwnerId()).orElse(null);
+    public ResponseEntity<String> editExpo(@NotNull final Long ownerId,
+                                           @NotNull final EditExpoModel model){
+        final Owner owner = ownerRepository.findById(ownerId).orElse(null);
         if (owner == null) {
-            return new ApiResponse("Owner doesnt exist");
+            return new ResponseEntity<>("Owner doesnt exist", HttpStatus.NOT_FOUND);
         }
         final Expo curExpo = expoRepository.findById(model.getExpo().getExpoId()).orElse(null);
         if (curExpo == null){
-            return new ApiResponse("Expo doesnt exist");
+            return new ResponseEntity<>("Expo doesnt exist", HttpStatus.NOT_FOUND);
         }
         final LocalDateTime newDateTime;
         final String data = model.getData();
@@ -130,58 +133,61 @@ public class OwnerService {
                     curExpo.setEndTime(newDateTime);
                 break;
             default:
-                return new ApiResponse("Wrong data");
+                return new ResponseEntity<>("Wrong data", HttpStatus.BAD_REQUEST);
         }
         expoRepository.save(curExpo);
-        return new ApiResponse("Expo with id " + curExpo.getId() + " successfully updated");
+        return new ResponseEntity<>("", HttpStatus.OK);
     }
 
-    public ApiResponse startExpo(@NotNull final StartCloseExpoModel model){
-        final Owner owner = ownerRepository.findById(model.getOwnerId()).orElse(null);
+    public ResponseEntity<String> startExpo(@NotNull final Long ownerId,
+                                            @NotNull final ExpoModel model){
+        final Owner owner = ownerRepository.findById(ownerId).orElse(null);
         if (owner == null) {
-            return new ApiResponse("Owner doesnt exist");
+            return new ResponseEntity<>("Owner doesnt exist", HttpStatus.NOT_FOUND);
         }
-        final Expo expo = expoRepository.findById(model.getExpo().getExpoId()).orElse(null);
+        final Expo expo = expoRepository.findById(model.getExpoId()).orElse(null);
         if (expo == null) {
-            return new ApiResponse("Expo doesnt exist");
+            return new ResponseEntity<>("Expo doesnt exist", HttpStatus.NOT_FOUND);
         } else if ((LocalDateTime.now().isAfter(expo.getStartTime()))
                 && LocalDateTime.now().isBefore(expo.getEndTime())) {
             expo.setStatus(Constants.ExpoStatus.Opened);
             expoRepository.save(expo);
-            return new ApiResponse("Expo " + expo.getName() + " successfully started");
+            return new ResponseEntity<>("", HttpStatus.OK);
         } else {
-            return new ApiResponse("Time hasnt come for expo " + expo.getName() + " to start");
+            return new ResponseEntity<>("Time hasnt come for expo " + expo.getName() + " to start", HttpStatus.GONE);
         }
     }
 
-    public ApiResponse closeExpo(@NotNull final StartCloseExpoModel model){
-        final Owner owner = ownerRepository.findById(model.getOwnerId()).orElse(null);
+    public ResponseEntity<String> closeExpo(@NotNull final Long ownerId,
+                                            @NotNull final ExpoModel model){
+        final Owner owner = ownerRepository.findById(ownerId).orElse(null);
         if (owner == null) {
-            return new ApiResponse("Owner doesnt exist");
+            return new ResponseEntity<>("Owner doesnt exist", HttpStatus.NOT_FOUND);
         }
-        final Expo openedExpo = expoRepository.findById(model.getExpo().getExpoId()).orElse(null);
+        final Expo openedExpo = expoRepository.findById(model.getExpoId()).orElse(null);
         if (openedExpo == null) {
-            return new ApiResponse("Expo doesnt exist");
+            return new ResponseEntity<>("Expo doesnt exist", HttpStatus.NOT_FOUND);
         } else if (!openedExpo.isOpened()) {
-            return new ApiResponse("Expo with name " + openedExpo.getName() + " hasnt started!");
+            return new ResponseEntity<>("Expo with name " + openedExpo.getName() + " hasnt started!", HttpStatus.NOT_ACCEPTABLE);
         } else if (LocalDateTime.now().isAfter(openedExpo.getStartTime())
                 && LocalDateTime.now().isBefore(openedExpo.getEndTime())
                 || LocalDateTime.now().isAfter(openedExpo.getEndTime())) {
             openedExpo.setStatus(Constants.ExpoStatus.Closed);
             expoRepository.save(openedExpo);
-            return new ApiResponse("Expo " + openedExpo.getName() + " successfully closed");
+            return new ResponseEntity<>("", HttpStatus.OK);
         } else {
-            return new ApiResponse("Time hasnt come for expo " + openedExpo.getName() + " to close");
+            return new ResponseEntity<>("Time hasnt come for expo " + openedExpo.getName() + " to close", HttpStatus.GONE);
         }
     }
 
     @Transactional
-    public ApiResponse payForExpo(@NotNull final PayForExpoModel model){
-        final Expo closedExpo = expoRepository.findById(model.getExpo().getExpoId()).orElse(null);
+    public ResponseEntity<String> payForExpo(@NotNull final Long ownerId,
+                                             @NotNull final ExpoModel model){
+        final Expo closedExpo = expoRepository.findById(model.getExpoId()).orElse(null);
         if (closedExpo == null) {
-            return new ApiResponse("Expo doesnt exist");
+            return new ResponseEntity<>("Expo doesnt exist", HttpStatus.NOT_FOUND);
         } else if (!closedExpo.isClosed()) {
-            return new ApiResponse("Expo with name " + closedExpo.getName() + " hasn't closed!");
+            return new ResponseEntity<>("Expo with name " + closedExpo.getName() + " hasn't closed!", HttpStatus.NOT_ACCEPTABLE);
         }
         final List<Reservation> expoReservations = reservationRepository.findReservationsByStatus(Constants.ReservationStatus.Closed)
                 .stream().filter(reservation -> reservation.getTickets().get(0).getExpo().equals(closedExpo))
@@ -190,43 +196,43 @@ public class OwnerService {
         for (final Reservation entry : expoReservations){
             payment += entry.getCost();
         }
-        final Owner owner = ownerRepository.findById(model.getOwnerId()).orElse(null);
+        final Owner owner = ownerRepository.findById(ownerId).orElse(null);
         if (owner == null) {
-            return new ApiResponse("Owner doesnt exist");
+            return new ResponseEntity<>("Owner doesnt exist", HttpStatus.NOT_FOUND);
         }
-        final Artist artist = artistRepository.findById(model.getExpo().getArtistId()).orElse(null);
+        final Artist artist = artistRepository.findById(model.getArtistId()).orElse(null);
         if (artist == null) {
-            return new ApiResponse("Artist doesnt exist");
+            return new ResponseEntity<>("Artist doesnt exist", HttpStatus.NOT_FOUND);
         }
         final OwnerArtistPayment expoPayment = new OwnerArtistPayment(closedExpo, owner, artist, payment * 0.5);
         ownerArtistPaymentRepository.save(expoPayment);
-        return new ApiResponse("Owner " + owner.getCredentials().getLogin() + " send royalties for expo " + closedExpo.getName());
+        return new ResponseEntity<>("", HttpStatus.OK);
     }
 
-    public ResponseOrMessage<List<Expo>> getNewExpos() {
+    public ResponseEntity<List<Expo>> getNewExpos() {
         final List<Expo> expos = expoRepository.findExposByStatus(Constants.ExpoStatus.New);
         if (expos == null) {
-            return new ResponseOrMessage<>("There are no new expos");
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         } else {
-            return new ResponseOrMessage<>(expos);
+            return new ResponseEntity<>(expos, HttpStatus.OK);
         }
     }
 
-    public ResponseOrMessage<List<Expo>> getOpenedExpos() {
+    public ResponseEntity<List<Expo>> getOpenedExpos() {
         final List<Expo> expos = expoRepository.findExposByStatus(Constants.ExpoStatus.Opened);
         if (expos == null) {
-            return new ResponseOrMessage<>("There are no opened expos");
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         } else {
-            return new ResponseOrMessage<>(expos);
+            return new ResponseEntity<>(expos, HttpStatus.OK);
         }
     }
 
-    public ResponseOrMessage<List<Expo>> getClosedExpos() {
+    public ResponseEntity<List<Expo>> getClosedExpos() {
         final List<Expo> expos = expoRepository.findExposByStatus(Constants.ExpoStatus.Closed);
         if (expos == null) {
-            return new ResponseOrMessage<>("There are no closed expos");
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         } else {
-            return new ResponseOrMessage<>(expos);
+            return new ResponseEntity<>(expos, HttpStatus.OK);
         }
     }
 

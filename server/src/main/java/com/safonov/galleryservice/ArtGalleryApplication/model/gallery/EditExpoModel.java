@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper=false)
 @NoArgsConstructor
 public class EditExpoModel {
-    private Long ownerId;
     private ExpoModel expo;
     private Constants.EditSettings settings;
     private String data;

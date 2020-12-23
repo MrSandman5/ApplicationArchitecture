@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper=false)
 @NoArgsConstructor
 public class PayForReservationModel {
-    private Long clientId;
-    private Long ownerId;
     private ReservationModel reservation;
+    private Long ownerId;
 }
+

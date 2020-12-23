@@ -6,17 +6,16 @@ import com.safonov.galleryservice.ArtGalleryApplication.entity.actor.Artist;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.gallery.Artwork;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.gallery.Expo;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.gallery.OwnerArtistPayment;
-import com.safonov.galleryservice.ArtGalleryApplication.model.gallery.AcceptRoyaltiesModel;
-import com.safonov.galleryservice.ArtGalleryApplication.model.gallery.AddArtworkModel;
-import com.safonov.galleryservice.ArtGalleryApplication.model.response.ApiResponse;
-import com.safonov.galleryservice.ArtGalleryApplication.model.response.ResponseOrMessage;
+import com.safonov.galleryservice.ArtGalleryApplication.model.info.ArtworkModel;
+import com.safonov.galleryservice.ArtGalleryApplication.model.info.ExpoModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class ArtistService {
@@ -38,80 +37,74 @@ public class ArtistService {
     }
 
     @Transactional
-    public ApiResponse addArtwork(@NotNull final AddArtworkModel model){
-        final Artist artist = artistRepository.findById(model.getArtistId()).orElse(null);
+    public ResponseEntity<String> addArtwork(@NotNull final Long artistId,
+                                             @NotNull final ArtworkModel model){
+        final Artist artist = artistRepository.findById(artistId).orElse(null);
         if (artist == null) {
-            return new ApiResponse("Artist doesnt exist");
+            return new ResponseEntity<>("Artist doesnt exist", HttpStatus.NOT_FOUND);
         }
-        final Artwork artwork = artworkRepository.findById(model.getArtwork().getArtworkId()).orElse(null);
+        final Artwork artwork = artworkRepository.findById(model.getArtworkId()).orElse(null);
         final List<Artwork> artworks = artist.getArtworks();
         if (artwork == null) {
-            final Artwork newArtwork = new Artwork(model.getArtwork().getName(), model.getArtwork().getInfo(), artist, null);
+            final Artwork newArtwork = new Artwork(model.getName(), model.getInfo(), artist, null);
             artworks.add(artworkRepository.save(newArtwork));
             artistRepository.save(artist);
-            return new ApiResponse("New artwork from artist " + artist.getCredentials().getLogin() + "added for expo");
+            return new ResponseEntity<>("New artwork from artist " + artist.getCredentials().getLogin() + "added for expo", HttpStatus.OK);
         } else if (artist.equals(artwork.getArtist())) {
-            return new ApiResponse("Artwork " + artwork.getName() + "belongs to another artist");
+            return new ResponseEntity<>("Artwork " + artwork.getName() + "belongs to another artist", HttpStatus.BAD_GATEWAY);
         } else if (artworks.contains(artwork)) {
-            return new ApiResponse("Artwork already existed for this artist");
+            return new ResponseEntity<>("Artwork already existed for this artist", HttpStatus.ALREADY_REPORTED);
         } else {
             artworks.add(artworkRepository.save(artwork));
             artistRepository.save(artist);
-            return new ApiResponse("Existed artwork from artist " + artist.getCredentials().getLogin() + "added for expo");
+            return new ResponseEntity<>("Existed artwork from artist " + artist.getCredentials().getLogin() + "added for expo", HttpStatus.OK);
         }
     }
 
-    public ApiResponse acceptRoyalties(@NotNull final AcceptRoyaltiesModel model){
-        final Expo closedExpo = expoRepository.findById(model.getExpo().getExpoId()).orElse(null);
+    public ResponseEntity<String> acceptRoyalties(@NotNull final Long artistId,
+                                                  @NotNull final ExpoModel model){
+        final Expo closedExpo = expoRepository.findById(model.getExpoId()).orElse(null);
         if (closedExpo == null){
-            return new ApiResponse("Expo doesnt exist");
+            return new ResponseEntity<>("Expo doesnt exist", HttpStatus.NOT_FOUND);
         } if (!closedExpo.isClosed()){
-            return new ApiResponse("Expo with name " + closedExpo.getName() + " hasn't closed");
+            return new ResponseEntity<>("Expo with name " + closedExpo.getName() + " hasn't closed", HttpStatus.NOT_ACCEPTABLE);
         }
-        final Artist artist = artistRepository.findById(model.getArtistId()).orElse(null);
+        final Artist artist = artistRepository.findById(artistId).orElse(null);
         if (artist == null) {
-            return new ApiResponse("Artist doesnt exist");
+            return new ResponseEntity<>("Artist doesnt exist", HttpStatus.NOT_FOUND);
         }
         final OwnerArtistPayment payment = ownerArtistPaymentRepository.findPaymentByExpo(closedExpo).orElse(null);
         if (payment == null){
-            return new ApiResponse("Payment for expo " + closedExpo.getName() + " doesnt exist");
+            return new ResponseEntity<>("Payment for expo " + closedExpo.getName() + " doesnt exist", HttpStatus.NOT_FOUND);
         }
         artist.getArtworks().clear();
         artistRepository.save(artist);
-        return new ApiResponse("Artist " + artist.getCredentials().getLogin() + " accepted royalties for expo " + closedExpo.getName());
+        return new ResponseEntity<>("", HttpStatus.OK);
     }
 
-    public ResponseOrMessage<List<Artwork>> getAllArtworks(@NotNull final Map<String, Long> artistId) {
-        if (artistId.containsKey("artistId")) {
-            final Artist artist = artistRepository.findById(artistId.get("artistId")).orElse(null);
-            if (artist == null) {
-                return new ResponseOrMessage<>("Artist doesnt exist");
-            }
-            final List<Artwork> artworks = artworkRepository.findArtworksByArtist(artist);
-            if (artworks == null) {
-                return new ResponseOrMessage<>("Artist has no artworks");
-            } else {
-                return new ResponseOrMessage<>(artworks);
-            }
+    public ResponseEntity<List<Artwork>> getAllArtworks(@NotNull final Long artistId) {
+        final Artist artist = artistRepository.findById(artistId).orElse(null);
+        if (artist == null) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+        final List<Artwork> artworks = artworkRepository.findArtworksByArtist(artist);
+        if (artworks == null) {
+            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
         } else {
-            return new ResponseOrMessage<>("Wrong parameter");
+            return new ResponseEntity<>(artworks, HttpStatus.OK);
         }
     }
 
-    public ResponseOrMessage<List<Artwork>> getExpoArtworks(@NotNull final Map<String, Long> artistId) {
-        if (artistId.containsKey("artistId")) {
-            final Artist artist = artistRepository.findById(artistId.get("artistId")).orElse(null);
-            if (artist == null) {
-                return new ResponseOrMessage<>("Artist doesnt exist");
-            }
-            final List<Artwork> artworks = artist.getArtworks();
-            if (artworks == null) {
-                return new ResponseOrMessage<>("Artist has no artworks for expo");
-            } else {
-                return new ResponseOrMessage<>(artworks);
-            }
+    public ResponseEntity<List<Artwork>> getExpoArtworks(@NotNull final Long artistId) {
+        final Artist artist = artistRepository.findById(artistId).orElse(null);
+        if (artist == null) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+        final List<Artwork> artworks = artist.getArtworks();
+        if (artworks == null) {
+            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
         } else {
-            return new ResponseOrMessage<>("Wrong parameter");
+            return new ResponseEntity<>(artworks, HttpStatus.OK);
         }
     }
 }

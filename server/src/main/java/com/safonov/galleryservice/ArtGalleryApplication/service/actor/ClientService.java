@@ -13,19 +13,17 @@ import com.safonov.galleryservice.ArtGalleryApplication.entity.gallery.ClientOwn
 import com.safonov.galleryservice.ArtGalleryApplication.entity.gallery.Expo;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.gallery.Reservation;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.gallery.Ticket;
-import com.safonov.galleryservice.ArtGalleryApplication.model.gallery.AddTicketModel;
-import com.safonov.galleryservice.ArtGalleryApplication.model.gallery.CreateReservationModel;
 import com.safonov.galleryservice.ArtGalleryApplication.model.gallery.PayForReservationModel;
-import com.safonov.galleryservice.ArtGalleryApplication.model.response.ApiResponse;
-import com.safonov.galleryservice.ArtGalleryApplication.model.response.ResponseOrMessage;
+import com.safonov.galleryservice.ArtGalleryApplication.model.info.ExpoModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class ClientService {
@@ -53,145 +51,135 @@ public class ClientService {
     }
 
     @Transactional
-    public ApiResponse addTicket(@NotNull final AddTicketModel model){
-        final Expo ticketExpo = expoRepository.findById(model.getExpo().getExpoId()).orElse(null);
+    public ResponseEntity<String> addTicket(@NotNull final Long clientId,
+                                            @NotNull final ExpoModel model){
+        final Expo ticketExpo = expoRepository.findById(model.getExpoId()).orElse(null);
         if (ticketExpo == null){
-            return new ApiResponse("Expo doesnt exist");
+            return new ResponseEntity<>("Expo doesnt exist", HttpStatus.NOT_FOUND);
         }
         else if (ticketExpo.isClosed()){
-            return new ApiResponse("Expo with name " + ticketExpo.getName() + " already closed");
+            return new ResponseEntity<>("Expo with name " + ticketExpo.getName() + " already closed", HttpStatus.ALREADY_REPORTED);
         }
-        final Client client = clientRepository.findById(model.getClientId()).orElse(null);
+        final Client client = clientRepository.findById(clientId).orElse(null);
         if (client == null) {
-            return new ApiResponse("Client doesnt exist");
+            return new ResponseEntity<>("Client doesnt exist", HttpStatus.NOT_FOUND);
         }
         final List<Ticket> tickets = client.getTickets();
         if (!tickets.isEmpty()){
             for (final Ticket tick : tickets) {
                 if (!ticketExpo.equals(tick.getExpo())){
-                    return new ApiResponse("Must add ticket for one expo at a time");
+                    return new ResponseEntity<>("Must add ticket for one expo at a time", HttpStatus.BAD_REQUEST);
                 }
             }
         }
         final Ticket newTicket = new Ticket(client, ticketExpo, ticketExpo.getTicketPrice());
         tickets.add(ticketRepository.save(newTicket));
         clientRepository.save(client);
-        return new ApiResponse("New ticket was added to client");
+        return new ResponseEntity<>("", HttpStatus.OK);
     }
 
     @Transactional
-    public ApiResponse createReservation(@NotNull final CreateReservationModel model){
-        final Client client = clientRepository.findById(model.getClientId()).orElse(null);
+    public ResponseEntity<String> createReservation(@NotNull final Long clientId){
+        final Client client = clientRepository.findById(clientId).orElse(null);
         if (client == null) {
-            return new ApiResponse("Client doesnt exist");
+            return new ResponseEntity<>("Client doesnt exist", HttpStatus.NOT_FOUND);
         }
         final Expo expo = expoRepository.findById(client.getTickets().get(0).getExpo().getId()).orElse(null);
         if (expo == null){
-            return new ApiResponse("Expo doesnt exist");
+            return new ResponseEntity<>("Expo doesnt exist", HttpStatus.NOT_FOUND);
         }
         else if (expo.isClosed()){
-            return new ApiResponse("Expo with name " + expo.getName() + " already closed");
+            return new ResponseEntity<>("Expo with name " + expo.getName() + " already closed", HttpStatus.ALREADY_REPORTED);
         }
         final Reservation reservation = new Reservation(client, expo.getStartTime());
         client.getReservations().add(reservationRepository.save(reservation));
         client.getTickets().clear();
         clientRepository.save(client);
-        return new ApiResponse("New reservation was created for client");
+        return new ResponseEntity<>("", HttpStatus.OK);
     }
 
     @Transactional
-    public ApiResponse payForReservation(@NotNull final PayForReservationModel model){
+    public ResponseEntity<String> payForReservation(@NotNull final Long clientId,
+                                                    @NotNull final PayForReservationModel model){
         final Reservation clientReservation = reservationRepository.findById(model.getReservation().getReservationId()).orElse(null);
         if (clientReservation == null){
-            return new ApiResponse("Reservation doesnt exist");
+            return new ResponseEntity<>("Reservation doesnt exist", HttpStatus.NOT_FOUND);
         }
         if (clientReservation.isClosed()){
-            return new ApiResponse("Reservation is already closed");
+            return new ResponseEntity<>("Reservation is already closed", HttpStatus.ALREADY_REPORTED);
         }
 
         final Expo ticketExpo = expoRepository.findById(clientReservation.getTickets().get(0).getExpo().getId()).orElse(null);
         if (ticketExpo == null){
-            return new ApiResponse("Expo doesnt exist");
+            return new ResponseEntity<>("Expo doesnt exist", HttpStatus.NOT_FOUND);
         } else if (ticketExpo.isClosed()){
-            return new ApiResponse("Expo with name " + ticketExpo.getName() + " already closed");
+            return new ResponseEntity<>("Expo with name " + ticketExpo.getName() + " already closed", HttpStatus.ALREADY_REPORTED);
         }
-        final Client client = clientRepository.findById(model.getClientId()).orElse(null);
+        final Client client = clientRepository.findById(clientId).orElse(null);
         if (client == null) {
-            return new ApiResponse("Client doesnt exist");
+            return new ResponseEntity<>("Client doesnt exist", HttpStatus.NOT_FOUND);
         }
         if (LocalDateTime.now().isAfter(ticketExpo.getStartTime())){
             client.getReservations().remove(clientReservation);
             clientRepository.save(client);
-            return new ApiResponse("Expo with name" + ticketExpo.getName() + " already started");
+            return new ResponseEntity<>("Expo with name" + ticketExpo.getName() + " already started", HttpStatus.ALREADY_REPORTED);
         }
         clientReservation.setStatus(Constants.ReservationStatus.Payed);
         reservationRepository.save(clientReservation);
         final Owner owner = ownerRepository.findById(model.getOwnerId()).orElse(null);
         if (owner == null) {
-            return new ApiResponse("Owner doesnt exist");
+            return new ResponseEntity<>("Owner doesnt exist", HttpStatus.NOT_FOUND);
         }
         final ClientOwnerPayment ticketPayment = new ClientOwnerPayment(clientReservation, client, owner);
         client.getReservations().remove(clientReservation);
         clientRepository.save(client);
         clientOwnerPaymentRepository.save(ticketPayment);
-        return new ApiResponse("Client " + client.getCredentials().getLogin() + " payed for reservation");
+        return new ResponseEntity<>("", HttpStatus.OK);
     }
 
-    public ResponseOrMessage<List<Ticket>> getTickets(@NotNull final Map<String, Long> clientId) {
-        if (clientId.containsKey("clientId")) {
-            final Client client = clientRepository.findById(clientId.get("clientId")).orElse(null);
-            if (client == null) {
-                return new ResponseOrMessage<>("Client doesnt exist");
-            }
-            final List<Ticket> tickets = ticketRepository.findTicketsByClient(client);
-            if (tickets == null) {
-                return new ResponseOrMessage<>("Client does not have active tickets");
-            } else return new ResponseOrMessage<>(tickets);
-
-        } else return new ResponseOrMessage<>("Wrong parameter");
+    public ResponseEntity<List<Ticket>> getTickets(@NotNull final Long clientId) {
+        final Client client = clientRepository.findById(clientId).orElse(null);
+        if (client == null) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+        final List<Ticket> tickets = ticketRepository.findTicketsByClient(client);
+        if (tickets == null) {
+            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+        } else return new ResponseEntity<>(tickets, HttpStatus.OK);
     }
 
-    public ResponseOrMessage<List<Reservation>> getNewReservations(@NotNull final Map<String, Long> clientId) {
-        if (clientId.containsKey("clientId")) {
-            final Client client = clientRepository.findById(clientId.get("clientId")).orElse(null);
-            if (client == null) {
-                return new ResponseOrMessage<>("Client doesnt exist");
-            }
-            final List<Reservation> reservations = reservationRepository.findReservationsByClientAndStatus(client,  Constants.ReservationStatus.New);
-            if (reservations == null) {
-                return new ResponseOrMessage<>("Client does not have active reservations");
-            } else {
-                return new ResponseOrMessage<>(reservations);
-            }
+    public ResponseEntity<List<Reservation>> getNewReservations(@NotNull final Long clientId) {
+        final Client client = clientRepository.findById(clientId).orElse(null);
+        if (client == null) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+        final List<Reservation> reservations = reservationRepository.findReservationsByClientAndStatus(client,  Constants.ReservationStatus.New);
+        if (reservations == null) {
+            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
         } else {
-            return new ResponseOrMessage<>("Wrong parameter");
+            return new ResponseEntity<>(reservations, HttpStatus.OK);
         }
     }
 
-    public ResponseOrMessage<List<Reservation>> getPayedReservations(@NotNull final Map<String, Long> clientId) {
-        if (clientId.containsKey("clientId")) {
-            final Client client = clientRepository.findById(clientId.get("clientId")).orElse(null);
-            if (client == null) {
-                return new ResponseOrMessage<>("Client doesnt exist");
-            }
-            final List<Reservation> reservations = reservationRepository.findReservationsByClientAndStatus(client,  Constants.ReservationStatus.Payed);
-            if (reservations == null) {
-                return new ResponseOrMessage<>("Client does not have payed reservations");
-            } else {
-                return new ResponseOrMessage<>(reservations);
-            }
-
+    public ResponseEntity<List<Reservation>> getPayedReservations(@NotNull final Long clientId) {
+        final Client client = clientRepository.findById(clientId).orElse(null);
+        if (client == null) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+        final List<Reservation> reservations = reservationRepository.findReservationsByClientAndStatus(client,  Constants.ReservationStatus.Payed);
+        if (reservations == null) {
+            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
         } else {
-            return new ResponseOrMessage<>("Wrong parameter");
+            return new ResponseEntity<>(reservations, HttpStatus.OK);
         }
     }
 
-    public ResponseOrMessage<List<Expo>> getNewExpos() {
+    public ResponseEntity<List<Expo>> getNewExpos() {
         final List<Expo> expos = expoRepository.findExposByStatus(Constants.ExpoStatus.New);
         if (expos == null) {
-            return new ResponseOrMessage<>("There are no new expos");
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         } else {
-            return new ResponseOrMessage<>(expos);
+            return new ResponseEntity<>(expos, HttpStatus.OK);
         }
     }
 
