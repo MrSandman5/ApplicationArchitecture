@@ -48,8 +48,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                     .readValue(req.getInputStream(), Credentials.class);
             final Credentials user = credentialsRepository.findByLogin(credential.getLogin()).orElse(null);
             final Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
-
-            if (user != null && user.getRole() != null) {
+            if (user != null) {
                 grantedAuthorities.add(new SimpleGrantedAuthority(user.getRole().getName()));
             }
 
@@ -88,18 +87,16 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                             @NotNull final HttpServletResponse res,
                                             @NotNull final FilterChain chain,
                                             @NotNull final Authentication auth) {
-
         final Credentials user = credentialsRepository.findByLogin(((User) auth.getPrincipal()).getUsername()).orElse(null);
-        final Set<String> grantedAuthorities = new HashSet<>();
-
-        if (user != null && user.getRole() != null) {
-            grantedAuthorities.add(user.getRole().getName());
+        String grantedAuthorities = null;
+        if (user != null) {
+            grantedAuthorities = user.getRole().getName();
         }
 
         final String token = JWT.create()
                 .withSubject(((User) auth.getPrincipal()).getUsername())
                 .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .withArrayClaim("role", grantedAuthorities.toArray(String[]::new))
+                .withClaim("role", grantedAuthorities)
                 .sign(HMAC512(SECRET.getBytes()));
 
         res.addHeader(HEADER_STRING, TOKEN_PREFIX + token);

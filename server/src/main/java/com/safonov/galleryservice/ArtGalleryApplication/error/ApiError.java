@@ -34,14 +34,6 @@ public class ApiError {
     }
 
     ApiError(@NotNull final HttpStatus status,
-             @NotNull final Throwable ex) {
-        this();
-        this.status = status;
-        this.message = "Unexpected error";
-        this.debugMessage = ex.getLocalizedMessage();
-    }
-
-    ApiError(@NotNull final HttpStatus status,
              @NotNull final String message,
              @NotNull final Throwable ex) {
         this();

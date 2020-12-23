@@ -1,5 +1,6 @@
 package com.safonov.galleryservice.ArtGalleryApplication.controller;
 
+import com.safonov.galleryservice.ArtGalleryApplication.entity.actor.Role;
 import com.safonov.galleryservice.ArtGalleryApplication.service.AdminService;
 import com.safonov.galleryservice.ArtGalleryApplication.service.DataGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @RestController
 public class AdminController {
@@ -38,5 +40,11 @@ public class AdminController {
     public ResponseEntity<String> generate(@PathVariable final int count) {
         return new ResponseEntity<>(generator.generateFakeDataForClient(count) +
                 generator.generateFakeDataForArtist(count), HttpStatus.OK);
+    }
+
+    @Secured("ROLE_ADMIN")
+    @GetMapping("/roles")
+    public ResponseEntity<List<Role>> getRoles() {
+        return service.getRoles();
     }
 }

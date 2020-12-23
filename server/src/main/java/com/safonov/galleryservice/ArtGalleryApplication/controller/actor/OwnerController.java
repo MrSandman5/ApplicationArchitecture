@@ -14,7 +14,6 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @RestController
-@RequestMapping("/owner")
 public class OwnerController {
 
     private final OwnerService service;

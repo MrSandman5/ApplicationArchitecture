@@ -15,7 +15,6 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @RestController
-@RequestMapping("/client")
 public class ClientController {
 
     private final ClientService service;

@@ -13,7 +13,6 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @RestController
-@RequestMapping("/artist")
 public class ArtistController {
 
     private final ArtistService service;

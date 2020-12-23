@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.constraints.NotNull;
 
 @RestController
-@RequestMapping("/")
 public class UserController {
 
     private final UserService service;
@@ -21,7 +20,7 @@ public class UserController {
         this.service = service;
     }
 
-    @PostMapping("sign-up")
+    @PostMapping("/sign-up")
     public ResponseEntity<String> signUp(@RequestBody final RegistrationModel model) {
         return service.signUp(model);
     }

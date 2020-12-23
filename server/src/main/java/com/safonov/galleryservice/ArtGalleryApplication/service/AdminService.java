@@ -4,12 +4,14 @@ import com.safonov.galleryservice.ArtGalleryApplication.data.actor.*;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.actor.Artist;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.actor.Client;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.actor.Owner;
+import com.safonov.galleryservice.ArtGalleryApplication.entity.actor.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Service
 public class AdminService {
@@ -17,14 +19,17 @@ public class AdminService {
     private final ClientRepository clientRepository;
     private final OwnerRepository ownerRepository;
     private final ArtistRepository artistRepository;
+    private final RoleRepository roleRepository;
 
     @Autowired
     public AdminService(@NotNull final ClientRepository clientRepository,
                         @NotNull final OwnerRepository ownerRepository,
-                        @NotNull final ArtistRepository artistRepository) {
+                        @NotNull final ArtistRepository artistRepository,
+                        @NotNull final RoleRepository roleRepository) {
         this.clientRepository = clientRepository;
         this.ownerRepository = ownerRepository;
         this.artistRepository = artistRepository;
+        this.roleRepository = roleRepository;
     }
 
     public ResponseEntity<String> deletePerson(@NotNull final Long userId,
@@ -55,5 +60,9 @@ public class AdminService {
             default:
                 return new ResponseEntity<>("Wrong parameter", HttpStatus.BAD_REQUEST);
         }
+    }
+
+    public ResponseEntity<List<Role>> getRoles() {
+        return new ResponseEntity<>(roleRepository.findAll(), HttpStatus.OK);
     }
 }

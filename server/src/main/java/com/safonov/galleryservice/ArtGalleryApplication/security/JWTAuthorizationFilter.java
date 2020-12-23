@@ -52,7 +52,6 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
     private UsernamePasswordAuthenticationToken getAuthentication(@NotNull final HttpServletRequest request) {
         final String token = request.getHeader(HEADER_STRING);
         if (token != null) {
-            //верификаця полученного в заголовке токена без префикса
             final String user = JWT.require(Algorithm.HMAC512(SECRET.getBytes()))
                     .build()
                     .verify(token.replace(TOKEN_PREFIX, ""))
@@ -61,10 +60,9 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
             if (user != null) {
                 final Credentials credentials = credentialsRepository.findByLogin(user).orElse(null);
                 final Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
-                if (credentials != null && credentials.getRole() != null) {
+                if (credentials != null) {
                     grantedAuthorities.add(new SimpleGrantedAuthority(credentials.getRole().getName()));
                 }
-
                 return new UsernamePasswordAuthenticationToken(
                         user,
                         null,
