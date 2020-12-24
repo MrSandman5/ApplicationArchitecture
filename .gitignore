@@ -254,3 +254,8 @@ gradle-app.setting
 
 ### Gradle Patch ###
 **/build/
+# Ignore Gradle build output directory
+build
+
+backend/build/
+frontend/build/

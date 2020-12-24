@@ -54,7 +54,7 @@ public class DataGenerator {
             try {
                 final Client client = new Client(faker.name().firstName(), faker.name().lastName());
                 final Credentials credentials = new Credentials(faker.book().title().replaceAll(" ", "") + "@mail.ru",
-                        bCryptPasswordEncoder.encode((faker.book().publisher())), roleRepository.findRoleByName("ROLE_CLIENT").orElse(null));
+                        bCryptPasswordEncoder.encode(faker.name().fullName()), roleRepository.findRoleByName("ROLE_CLIENT").orElse(null));
                 client.setCredentials(credentialsRepository.save(credentials));
                 clientRepository.save(client);
                 clientsCount++;
@@ -72,7 +72,7 @@ public class DataGenerator {
             try {
                 final Owner owner = new Owner(faker.name().firstName(), faker.name().lastName());
                 final Credentials credentials = new Credentials(faker.harryPotter().spell().replaceAll(" ", "") + "@mail.ru",
-                        bCryptPasswordEncoder.encode((faker.book().publisher())), roleRepository.findRoleByName("ROLE_OWNER").orElse(null));
+                        bCryptPasswordEncoder.encode(faker.name().fullName()), roleRepository.findRoleByName("ROLE_OWNER").orElse(null));
                 owner.setCredentials(credentialsRepository.save(credentials));
                 ownerRepository.save(owner);
                 ownersCount++;
@@ -90,7 +90,7 @@ public class DataGenerator {
             try {
                 final Artist artist = new Artist(faker.name().firstName(), faker.name().lastName());
                 final Credentials credentials = new Credentials(faker.zelda().character().replaceAll(" ", "") + "@mail.ru",
-                        bCryptPasswordEncoder.encode((faker.book().publisher())), roleRepository.findRoleByName("ROLE_ARTIST").orElse(null));
+                        bCryptPasswordEncoder.encode(faker.name().fullName()), roleRepository.findRoleByName("ROLE_ARTIST").orElse(null));
                 artist.setCredentials(credentialsRepository.save(credentials));
                 artistRepository.save(artist);
                 artistsCount++;

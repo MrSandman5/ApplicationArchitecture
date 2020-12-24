@@ -1,0 +1,3 @@
+rootProject.name = 'art-gallery-app'
+
+include(":client", ":server")
