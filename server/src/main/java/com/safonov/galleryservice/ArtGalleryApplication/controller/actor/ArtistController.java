@@ -1,6 +1,5 @@
 package com.safonov.galleryservice.ArtGalleryApplication.controller.actor;
 
-import com.safonov.galleryservice.ArtGalleryApplication.entity.gallery.Artwork;
 import com.safonov.galleryservice.ArtGalleryApplication.model.info.ArtworkModel;
 import com.safonov.galleryservice.ArtGalleryApplication.model.info.ExpoModel;
 import com.safonov.galleryservice.ArtGalleryApplication.service.actor.ArtistService;
@@ -9,11 +8,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.util.List;
-import java.util.Set;
 
 @RestController
+@RequestMapping("/artist")
 public class ArtistController {
 
     private final ArtistService service;
@@ -26,14 +25,14 @@ public class ArtistController {
     @Secured("ROLE_ARTIST")
     @PostMapping("/{artistId}/add-artwork")
     public ResponseEntity<String> addArtwork(@PathVariable final Long artistId,
-                                             @RequestBody final ArtworkModel model) {
+                                             @Valid @RequestBody final ArtworkModel model) {
         return service.addArtwork(artistId, model);
     }
 
     @Secured("ROLE_ARTIST")
     @PostMapping("/{artistId}/accept-royalties")
     public ResponseEntity<String> acceptRoyalties(@PathVariable final Long artistId,
-                                                  @RequestBody final ExpoModel model) {
+                                                  @Valid @RequestBody final ExpoModel model) {
         return service.acceptRoyalties(artistId, model);
     }
 

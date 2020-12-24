@@ -54,7 +54,7 @@ public class ClientService {
     @Transactional
     public ResponseEntity<String> addTicket(@NotNull final Long clientId,
                                             @NotNull final ExpoModel model){
-        final Expo ticketExpo = expoRepository.findById(model.getExpoId()).orElse(null);
+        final Expo ticketExpo = expoRepository.findExpoByName(model.getName()).orElse(null);
         if (ticketExpo == null){
             return new ResponseEntity<>("Expo doesnt exist", HttpStatus.NOT_FOUND);
         }

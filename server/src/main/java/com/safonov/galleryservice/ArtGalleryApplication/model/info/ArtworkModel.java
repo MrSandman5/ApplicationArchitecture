@@ -1,5 +1,6 @@
 package com.safonov.galleryservice.ArtGalleryApplication.model.info;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -8,7 +9,9 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper=false)
 @NoArgsConstructor
 public class ArtworkModel {
-    private Long artworkId;
+    @JsonProperty("name")
     private String name;
+
+    @JsonProperty("info")
     private String info;
 }

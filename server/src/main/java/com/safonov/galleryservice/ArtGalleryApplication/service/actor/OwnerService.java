@@ -76,7 +76,7 @@ public class OwnerService {
         if (owner == null) {
             return new ResponseEntity<>("Owner doesnt exist", HttpStatus.NOT_FOUND);
         }
-        final Expo existedExpo = expoRepository.findById(model.getExpoId()).orElse(null);
+        final Expo existedExpo = expoRepository.findExpoByName(model.getName()).orElse(null);
         if (existedExpo == null) {
             final Artist artist = artistRepository.findById(model.getArtistId()).orElse(null);
             if (artist == null) {
@@ -107,26 +107,26 @@ public class OwnerService {
         if (owner == null) {
             return new ResponseEntity<>("Owner doesnt exist", HttpStatus.NOT_FOUND);
         }
-        final Expo curExpo = expoRepository.findById(model.getExpo().getExpoId()).orElse(null);
+        final Expo curExpo = expoRepository.findExpoByName(model.getExpo().getName()).orElse(null);
         if (curExpo == null){
             return new ResponseEntity<>("Expo doesnt exist", HttpStatus.NOT_FOUND);
         }
         final LocalDateTime newDateTime;
         final String data = model.getData();
         switch (model.getSettings()){
-            case Name:
+            case "Name":
                 curExpo.setName(data);
                 break;
-            case Info:
+            case "Info":
                 curExpo.setInfo(data);
                 break;
-            case StartTime:
+            case "StartTime":
                 newDateTime = LocalDateTime.parse(data, Constants.formatter);
                 if (newDateTime.isBefore(curExpo.getStartTime()) && LocalDateTime.now().isBefore(newDateTime)
                         || newDateTime.isAfter(curExpo.getStartTime()) && newDateTime.isBefore(curExpo.getEndTime()))
                     curExpo.setStartTime(newDateTime);
                 break;
-            case EndTime:
+            case "EndTime":
                 newDateTime = LocalDateTime.parse(data, Constants.formatter);
                 if (newDateTime.isBefore(curExpo.getEndTime()) && newDateTime.isAfter(curExpo.getStartTime())
                         || newDateTime.isAfter(curExpo.getEndTime()))
@@ -145,7 +145,7 @@ public class OwnerService {
         if (owner == null) {
             return new ResponseEntity<>("Owner doesnt exist", HttpStatus.NOT_FOUND);
         }
-        final Expo expo = expoRepository.findById(model.getExpoId()).orElse(null);
+        final Expo expo = expoRepository.findExpoByName(model.getName()).orElse(null);
         if (expo == null) {
             return new ResponseEntity<>("Expo doesnt exist", HttpStatus.NOT_FOUND);
         } else if ((LocalDateTime.now().isAfter(expo.getStartTime()))
@@ -164,7 +164,7 @@ public class OwnerService {
         if (owner == null) {
             return new ResponseEntity<>("Owner doesnt exist", HttpStatus.NOT_FOUND);
         }
-        final Expo openedExpo = expoRepository.findById(model.getExpoId()).orElse(null);
+        final Expo openedExpo = expoRepository.findExpoByName(model.getName()).orElse(null);
         if (openedExpo == null) {
             return new ResponseEntity<>("Expo doesnt exist", HttpStatus.NOT_FOUND);
         } else if (!openedExpo.isOpened()) {
@@ -183,7 +183,7 @@ public class OwnerService {
     @Transactional
     public ResponseEntity<String> payForExpo(@NotNull final Long ownerId,
                                              @NotNull final ExpoModel model){
-        final Expo closedExpo = expoRepository.findById(model.getExpoId()).orElse(null);
+        final Expo closedExpo = expoRepository.findExpoByName(model.getName()).orElse(null);
         if (closedExpo == null) {
             return new ResponseEntity<>("Expo doesnt exist", HttpStatus.NOT_FOUND);
         } else if (!closedExpo.isClosed()) {

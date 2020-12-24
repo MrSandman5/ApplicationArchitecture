@@ -1,6 +1,6 @@
 package com.safonov.galleryservice.ArtGalleryApplication.model.info;
 
-import com.safonov.galleryservice.ArtGalleryApplication.configuration.Constants;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -11,12 +11,22 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper=false)
 @NoArgsConstructor
 public class ExpoModel {
-    private Long expoId;
+
+    @JsonProperty("name")
     private String name;
+
+    @JsonProperty("info")
     private String info;
+
+    @JsonProperty("artist")
     private Long artistId;
+
+    @JsonProperty("startTime")
     private LocalDateTime startTime;
+
+    @JsonProperty("endTime")
     private LocalDateTime endTime;
+
+    @JsonProperty("ticketPrice")
     private Double ticketPrice;
-    private Constants.ExpoStatus status;
 }

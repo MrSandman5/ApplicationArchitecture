@@ -21,7 +21,7 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 public class Expo extends AbstractEntity {
 
-    @Column(name = "name", nullable = false)
+    @Column(unique = true, name = "name", nullable = false)
     private String name;
 
     @Column(name = "info", nullable = false)
@@ -67,7 +67,7 @@ public class Expo extends AbstractEntity {
             this.endTime = startTime;
         }
         this.ticketPrice = ticketPrice;
-        //this.artworks = this.artist.getArtworks();
+        this.artworks = this.artist.getArtworks();
         this.status = Constants.ExpoStatus.New;
     }
 

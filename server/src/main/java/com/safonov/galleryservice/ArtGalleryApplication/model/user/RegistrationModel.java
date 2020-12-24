@@ -1,5 +1,6 @@
 package com.safonov.galleryservice.ArtGalleryApplication.model.user;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.safonov.galleryservice.ArtGalleryApplication.configuration.Constants;
 import com.safonov.galleryservice.ArtGalleryApplication.model.info.CredentialsModel;
 import lombok.Data;
@@ -10,8 +11,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper=true)
 public class RegistrationModel extends CredentialsModel {
+    @JsonProperty("firstName")
     protected String firstName;
+
+    @JsonProperty("lastname")
     protected String lastName;
-    protected Constants.Roles role;
+
+    @JsonProperty("role")
+    protected String role;
 }
 

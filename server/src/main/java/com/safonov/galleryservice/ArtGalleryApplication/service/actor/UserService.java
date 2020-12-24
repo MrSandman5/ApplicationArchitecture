@@ -45,24 +45,24 @@ public class UserService {
     }
 
     public ResponseEntity<String> signUp(@NotNull final RegistrationModel model) {
-        final Role role = roleRepository.findRoleByName(model.getRole().getCode()).orElse(null);
+        final Role role = roleRepository.findRoleByName(model.getRole()).orElse(null);
         if (role == null) {
             return new ResponseEntity<>("Role doesnt exist", HttpStatus.NOT_FOUND);
         }
         final Credentials credentials = new Credentials(model.getEmail(), bCryptPasswordEncoder.encode(model.getPassword()), role);
         try {
-            switch (model.getRole()) {
-                case ROLE_CLIENT:
+            switch (role.getName()) {
+                case "ROLE_CLIENT":
                     final Client client = new Client(model.getFirstName(), model.getLastName());
                     client.setCredentials(credentials);
                     clientRepository.save(client);
                     return new ResponseEntity<>("", HttpStatus.CREATED);
-                case ROLE_OWNER:
+                case "ROLE_OWNER":
                     final Owner owner = new Owner(model.getFirstName(), model.getLastName());
                     owner.setCredentials(credentials);
                     ownerRepository.save(owner);
                     return new ResponseEntity<>("", HttpStatus.CREATED);
-                case ROLE_ARTIST:
+                case "ROLE_ARTIST":
                     final Artist artist = new Artist(model.getFirstName(), model.getLastName());
                     artist.setCredentials(credentials);
                     artistRepository.save(artist);

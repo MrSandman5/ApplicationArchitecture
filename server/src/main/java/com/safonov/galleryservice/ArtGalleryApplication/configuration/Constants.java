@@ -8,7 +8,7 @@ public final class Constants {
     public static final DateTimeFormatter formatter =
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-    public enum Roles {
+    /*public enum Roles {
         ROLE_CLIENT("ROLE_CLIENT"),
         ROLE_OWNER("ROLE_OWNER"),
         ROLE_ARTIST("ROLE_ARTIST"),
@@ -23,7 +23,7 @@ public final class Constants {
         public String getCode() {
             return code;
         }
-    }
+    }*/
 
 
     public enum ReservationStatus {
@@ -38,10 +38,10 @@ public final class Constants {
         Closed
     }
 
-    public enum EditSettings {
+    /*public enum EditSettings {
         Name,
         Info,
         StartTime,
         EndTime
-    }
+    }*/
 }

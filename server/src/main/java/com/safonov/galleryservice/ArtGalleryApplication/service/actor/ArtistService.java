@@ -44,7 +44,7 @@ public class ArtistService {
         if (artist == null) {
             return new ResponseEntity<>("Artist doesnt exist", HttpStatus.NOT_FOUND);
         }
-        final Artwork artwork = artworkRepository.findById(model.getArtworkId()).orElse(null);
+        final Artwork artwork = artworkRepository.findArtworkByName(model.getName()).orElse(null);
         final Set<Artwork> artworks = artist.getArtworks();
         if (artwork == null) {
             final Artwork newArtwork = new Artwork(model.getName(), model.getInfo(), artist, null);
@@ -64,7 +64,7 @@ public class ArtistService {
 
     public ResponseEntity<String> acceptRoyalties(@NotNull final Long artistId,
                                                   @NotNull final ExpoModel model){
-        final Expo closedExpo = expoRepository.findById(model.getExpoId()).orElse(null);
+        final Expo closedExpo = expoRepository.findExpoByName(model.getName()).orElse(null);
         if (closedExpo == null){
             return new ResponseEntity<>("Expo doesnt exist", HttpStatus.NOT_FOUND);
         } if (!closedExpo.isClosed()){

@@ -1,6 +1,5 @@
 package com.safonov.galleryservice.ArtGalleryApplication.model.info;
 
-import com.safonov.galleryservice.ArtGalleryApplication.configuration.Constants;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.gallery.Ticket;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,6 +12,6 @@ import java.util.List;
 @NoArgsConstructor
 public class ReservationModel {
     private Long reservationId;
-    private Constants.ReservationStatus status;
+    private String status;
     private List<Ticket> tickets;
 }
