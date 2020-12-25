@@ -17,6 +17,6 @@ public class Role extends AbstractEntity {
     @Column(name = "name", unique = true)
     private String name;
 
-    @OneToMany(mappedBy = "role", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
     private Set<Credentials> users;
 }

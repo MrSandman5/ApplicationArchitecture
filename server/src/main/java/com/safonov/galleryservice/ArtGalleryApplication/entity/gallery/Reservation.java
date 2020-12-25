@@ -37,7 +37,7 @@ public class Reservation extends AbstractEntity {
     @Column(name = "dateTime", nullable = false)
     private LocalDateTime dateTime;
 
-    @OneToMany(mappedBy = "reservation",fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "reservation",fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<Ticket> tickets;
 
     public Reservation(@NotNull final Client client,

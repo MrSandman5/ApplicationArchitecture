@@ -9,6 +9,7 @@ import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.safonov.galleryservice.ArtGalleryApplication.data.actor.CredentialsRepository;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.actor.Credentials;
 import com.safonov.galleryservice.ArtGalleryApplication.error.ApiError;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -64,7 +65,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                             credential.getPassword(),
                             grantedAuthorities)
             );
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

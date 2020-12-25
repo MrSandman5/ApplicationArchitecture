@@ -47,7 +47,7 @@ public class Expo extends AbstractEntity {
     @Column(name = "status", nullable = false)
     private Constants.ExpoStatus status;
 
-    @OneToMany(mappedBy = "expo", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "expo", fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<Artwork> artworks;
 
     public Expo(@NotNull final String name,

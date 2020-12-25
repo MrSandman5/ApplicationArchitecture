@@ -18,13 +18,13 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 public class Client extends User{
 
-    @OneToMany(mappedBy = "client", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "client", fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<Reservation> reservations;
 
-    @OneToMany(mappedBy = "client", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "client", fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<Ticket> tickets;
 
-    @OneToMany(mappedBy = "client", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "client", fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<ClientOwnerPayment> clientOwnerPayments;
 
     public Client(@NotNull final String firstName,

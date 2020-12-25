@@ -19,10 +19,10 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 public class Artist extends User {
 
-    @OneToMany(mappedBy = "artist", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "artist", fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<Artwork> artworks;
 
-    @OneToMany(mappedBy = "artist", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "artist", fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<OwnerArtistPayment> ownerArtistPayments;
 
     public Artist(@NotNull final String firstName,
