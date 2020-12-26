@@ -15,7 +15,7 @@ const getters = {
         return state.token != null && state.token !== '';
     },
     isAdmin: state => {
-        return state.role === 'admin';
+        return state.role === 'ROLE_ADMIN';
     },
     getUsername: state => {
         return state.username;
@@ -36,22 +36,33 @@ const mutations = {
         state.token = user.token;
         state.username = user.username;
         state.authorities = user.roles;
-        let isUser = false;
         let isAdmin = false;
+        let isClient = false;
+        let isOwner = false;
+        let isArtist = false;
         for (let i = 0; i < user.roles.length; i++) {
-            if (user.roles[i].authority === 'ROLE_USER') {
-                isUser = true;
-            } else if (user.roles[i].authority === 'ROLE_ADMIN') {
+            if (user.roles[i].authority === 'ROLE_ADMIN') {
                 isAdmin = true;
+            } else if (user.roles[i].authority === 'ROLE_CLIENT') {
+                isClient = true;
+            } else if (user.roles[i].authority === 'ROLE_OWNER') {
+                isOwner = true;
+            } else if (user.roles[i].authority === 'ROLE_ARTIST') {
+                isArtist = true;
             }
         }
-        if (isUser) {
-            localStorage.setItem('user-role', 'user');
-            state.role = 'user';
-        }
         if (isAdmin) {
-            localStorage.setItem('user-role', 'admin');
-            state.role = 'admin';
+            localStorage.setItem('user-role', 'ROLE_ADMIN');
+            state.role = 'ROLE_ADMIN';
+        } else if (isClient) {
+            localStorage.setItem('user-role', 'ROLE_CLIENT');
+            state.role = 'ROLE_CLIENT';
+        } else if (isOwner) {
+            localStorage.setItem('user-role', 'ROLE_OWNER');
+            state.role = 'ROLE_OWNER';
+        } else if (isArtist) {
+            localStorage.setItem('user-role', 'ROLE_ARTIST');
+            state.role = 'ROLE_ARTIST';
         }
     },
     auth_logout: () => {

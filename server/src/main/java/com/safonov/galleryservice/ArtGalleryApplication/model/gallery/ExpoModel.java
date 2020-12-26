@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 @Data
@@ -12,12 +13,14 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class ExpoModel {
 
+    @NotBlank(message = "name is mandatory")
     @JsonProperty("name")
     private String name;
 
     @JsonProperty("info")
     private String info;
 
+    @NotBlank(message = "artist is mandatory")
     @JsonProperty("artist")
     private Long artistId;
 

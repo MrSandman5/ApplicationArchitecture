@@ -1,5 +1,5 @@
 <template>
-  <div div="signin">
+  <div div="sign-in">
     <div class="login-form">
       <b-card
           title="Login"
@@ -18,7 +18,7 @@
           </b-alert>
         </div>
         <div>
-          <b-form-input type="text" placeholder="Username" v-model="username" />
+          <b-form-input type="text" placeholder="Login" v-model="login" />
           <div class="mt-2"></div>
 
           <b-form-input type="password" placeholder="Password" v-model="password" />
@@ -41,7 +41,7 @@ export default {
   name: 'SignIn',
   data() {
     return {
-      username: '',
+      login: '',
       password: '',
       dismissSecs: 5,
       dismissCountDown: 0,
@@ -50,10 +50,19 @@ export default {
   },
   methods: {
     login() {
-      AXIOS.post(`/auth/sign-in`, {'username': this.$data.username, 'password': this.$data.password})
+      AXIOS.post(`/sign-in`, {'login': this.$data.login, 'password': this.$data.password})
           .then(response => {
             this.$store.dispatch('login', {'token': response.data.accessToken, 'roles': response.data.authorities, 'username': response.data.username});
-            this.$router.push('/home')
+            if (response.data.authorities[0] === "ROLE_ADMIN") {
+              this.$router.push('/admin')
+            } else if (response.data.authorities[0] === "ROLE_CLIENT") {
+              this.$router.push('/client')
+            } else if (response.data.authorities[0] === "ROLE_OWNER") {
+              this.$router.push('/owner')
+            } else if (response.data.authorities[0] === "ROLE_ARTIST") {
+              this.$router.push('/artist')
+            }
+            //this.$router.push('/home')
           }, error => {
             this.$data.alertMessage = (error.response.data.message.length < 150) ? error.response.data.message : 'Request error. Please, report this error website owners';
             console.log(error)

@@ -1,5 +1,5 @@
 <template>
-  <div div="signup">
+  <div div="sign-up">
     <div class="login-form">
       <b-card
           title="Register"
@@ -27,16 +27,13 @@
           </b-alert>
         </div>
         <div>
-          <b-form-input type="text" placeholder="Username" v-model="username" />
+          <b-form-input type="text" placeholder="Email" v-model="email" />
           <div class="mt-2"></div>
 
           <b-form-input type="text" placeholder="First Name" v-model="firstname" />
           <div class="mt-2"></div>
 
           <b-form-input type="text" placeholder="Last name" v-model="lastname" />
-          <div class="mt-2"></div>
-
-          <b-form-input type="text" placeholder="Email" v-model="email" />
           <div class="mt-2"></div>
 
           <b-form-input type="password" placeholder="Password" v-model="password" />
@@ -59,10 +56,9 @@ export default {
   name: 'SignUp',
   data () {
     return {
-      username: '',
+      email: '',
       firstname: '',
       lastname: '',
-      email: '',
       password: '',
       confirm_password: '',
       dismissSecs: 5,
@@ -73,20 +69,17 @@ export default {
   },
   methods: {
     register: function () {
-      if (this.$data.username === '' || this.$data.username == null) {
-        this.$data.alertMessage = 'Please, fill "Username" field';
+      if (this.$data.email === '' || this.$data.email == null) {
+        this.$data.alertMessage = 'Please, fill "Email" field';
+        this.showAlert();
+      } else if (!this.$data.email.includes('@')) {
+        this.$data.alertMessage = 'Email is incorrect';
         this.showAlert();
       } else if (this.$data.firstname === '' || this.$data.firstname == null) {
         this.$data.alertMessage = 'Please, fill "First name" field';
         this.showAlert();
       } else if (this.$data.lastname === '' || this.$data.lastname == null) {
         this.$data.alertMessage = 'Please, fill "Last name" field';
-        this.showAlert();
-      } else if (this.$data.email === '' || this.$data.email == null) {
-        this.$data.alertMessage = 'Please, fill "Email" field';
-        this.showAlert();
-      } else if (!this.$data.email.includes('@')) {
-        this.$data.alertMessage = 'Email is incorrect';
         this.showAlert();
       } else if (this.$data.password === '' || this.$data.password == null) {
         this.$data.alertMessage = 'Please, fill "Password" field';
@@ -99,13 +92,12 @@ export default {
         this.showAlert();
       } else {
         const newUser = {
-          'username': this.$data.username,
+          'email': this.$data.email,
           'firstName': this.$data.firstname,
           'lastName': this.$data.lastname,
-          'email': this.$data.email,
           'password': this.$data.password
         };
-        AXIOS.post('/auth/signup', newUser)
+        AXIOS.post('/sign-up', newUser)
             .then(response => {
               console.log(response);
               this.successAlert();
@@ -127,7 +119,7 @@ export default {
       this.dismissCountDown = this.dismissSecs
     },
     successAlert() {
-      this.username = '';
+      this.login = '';
       this.firstname = '';
       this.lastname = '';
       this.email = '';
