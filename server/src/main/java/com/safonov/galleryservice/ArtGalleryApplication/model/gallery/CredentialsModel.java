@@ -1,4 +1,4 @@
-package com.safonov.galleryservice.ArtGalleryApplication.model.info;
+package com.safonov.galleryservice.ArtGalleryApplication.model.gallery;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;

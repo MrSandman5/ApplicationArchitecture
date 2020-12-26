@@ -13,8 +13,11 @@ import com.safonov.galleryservice.ArtGalleryApplication.entity.gallery.ClientOwn
 import com.safonov.galleryservice.ArtGalleryApplication.entity.gallery.Expo;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.gallery.Reservation;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.gallery.Ticket;
-import com.safonov.galleryservice.ArtGalleryApplication.model.gallery.PayForReservationModel;
-import com.safonov.galleryservice.ArtGalleryApplication.model.info.ExpoModel;
+import com.safonov.galleryservice.ArtGalleryApplication.model.gallery.ReservationModel;
+import com.safonov.galleryservice.ArtGalleryApplication.model.gallery.TicketModel;
+import com.safonov.galleryservice.ArtGalleryApplication.model.logic.PayForReservationModel;
+import com.safonov.galleryservice.ArtGalleryApplication.model.gallery.ExpoModel;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +28,7 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class ClientService {
@@ -35,6 +39,7 @@ public class ClientService {
     private final ReservationRepository reservationRepository;
     private final ExpoRepository expoRepository;
     private final ClientOwnerPaymentRepository clientOwnerPaymentRepository;
+    private final ModelMapper modelMapper = new ModelMapper();
 
     @Autowired
     public ClientService(@NotNull final ClientRepository clientRepository,
@@ -148,7 +153,9 @@ public class ClientService {
         final List<Ticket> tickets = ticketRepository.findTicketsByClient(client);
         if (tickets == null) {
             return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
-        } else return new ResponseEntity<>(tickets, HttpStatus.OK);
+        } else return new ResponseEntity<>(tickets.stream()
+                .map(ticket -> modelMapper.map(ticket, TicketModel.class))
+                .collect(Collectors.toList()), HttpStatus.OK);
     }
 
     public ResponseEntity<Object> getNewReservations(@NotNull final Long clientId) {
@@ -160,7 +167,9 @@ public class ClientService {
         if (reservations == null) {
             return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
         } else {
-            return new ResponseEntity<>(reservations, HttpStatus.OK);
+            return new ResponseEntity<>(reservations.stream()
+                    .map(reservation -> modelMapper.map(reservation, ReservationModel.class))
+                    .collect(Collectors.toList()), HttpStatus.OK);
         }
     }
 
@@ -173,7 +182,9 @@ public class ClientService {
         if (reservations == null) {
             return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
         } else {
-            return new ResponseEntity<>(reservations, HttpStatus.OK);
+            return new ResponseEntity<>(reservations.stream()
+                    .map(reservation -> modelMapper.map(reservation, ReservationModel.class))
+                    .collect(Collectors.toList()), HttpStatus.OK);
         }
     }
 
@@ -182,7 +193,9 @@ public class ClientService {
         if (expos == null) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         } else {
-            return new ResponseEntity<>(expos, HttpStatus.OK);
+            return new ResponseEntity<>(expos.stream()
+                    .map(expo -> modelMapper.map(expo, ExpoModel.class))
+                    .collect(Collectors.toList()), HttpStatus.OK);
         }
     }
 

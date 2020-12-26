@@ -6,8 +6,9 @@ import com.safonov.galleryservice.ArtGalleryApplication.entity.actor.Artist;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.gallery.Artwork;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.gallery.Expo;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.gallery.OwnerArtistPayment;
-import com.safonov.galleryservice.ArtGalleryApplication.model.info.ArtworkModel;
-import com.safonov.galleryservice.ArtGalleryApplication.model.info.ExpoModel;
+import com.safonov.galleryservice.ArtGalleryApplication.model.gallery.ArtworkModel;
+import com.safonov.galleryservice.ArtGalleryApplication.model.gallery.ExpoModel;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class ArtistService {
@@ -25,6 +27,7 @@ public class ArtistService {
     private final ArtworkRepository artworkRepository;
     private final ExpoRepository expoRepository;
     private final OwnerArtistPaymentRepository ownerArtistPaymentRepository;
+    private final ModelMapper modelMapper = new ModelMapper();
 
     @Autowired
     public ArtistService(@NotNull final ArtistRepository artistRepository,
@@ -92,7 +95,9 @@ public class ArtistService {
         if (artworks == null) {
             return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
         } else {
-            return new ResponseEntity<>(artworks, HttpStatus.OK);
+            return new ResponseEntity<>(artworks.stream()
+                    .map(artwork -> modelMapper.map(artwork, ArtworkModel.class))
+                    .collect(Collectors.toList()), HttpStatus.OK);
         }
     }
 
@@ -105,7 +110,9 @@ public class ArtistService {
         if (artworks == null) {
             return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
         } else {
-            return new ResponseEntity<>(artworks, HttpStatus.OK);
+            return new ResponseEntity<>(artworks.stream()
+                    .map(artwork -> modelMapper.map(artwork, ArtworkModel.class))
+                    .collect(Collectors.toList()), HttpStatus.OK);
         }
     }
 }

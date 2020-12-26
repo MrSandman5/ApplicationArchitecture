@@ -7,9 +7,10 @@ import com.safonov.galleryservice.ArtGalleryApplication.data.gallery.*;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.actor.Artist;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.actor.Owner;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.gallery.*;
-import com.safonov.galleryservice.ArtGalleryApplication.model.gallery.*;
-import com.safonov.galleryservice.ArtGalleryApplication.model.info.ExpoModel;
-import com.safonov.galleryservice.ArtGalleryApplication.model.info.ReservationModel;
+import com.safonov.galleryservice.ArtGalleryApplication.model.logic.*;
+import com.safonov.galleryservice.ArtGalleryApplication.model.gallery.ExpoModel;
+import com.safonov.galleryservice.ArtGalleryApplication.model.gallery.ReservationModel;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +31,7 @@ public class OwnerService {
     private final ArtworkRepository artworkRepository;
     private final ClientOwnerPaymentRepository clientOwnerPaymentRepository;
     private final OwnerArtistPaymentRepository ownerArtistPaymentRepository;
+    private final ModelMapper modelMapper = new ModelMapper();
 
     @Autowired
     public OwnerService(@NotNull final OwnerRepository ownerRepository,
@@ -214,7 +216,9 @@ public class OwnerService {
         if (expos == null) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         } else {
-            return new ResponseEntity<>(expos, HttpStatus.OK);
+            return new ResponseEntity<>(expos.stream()
+                    .map(expo -> modelMapper.map(expo, ExpoModel.class))
+                    .collect(Collectors.toList()), HttpStatus.OK);
         }
     }
 
@@ -223,7 +227,9 @@ public class OwnerService {
         if (expos == null) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         } else {
-            return new ResponseEntity<>(expos, HttpStatus.OK);
+            return new ResponseEntity<>(expos.stream()
+                    .map(expo -> modelMapper.map(expo, ExpoModel.class))
+                    .collect(Collectors.toList()), HttpStatus.OK);
         }
     }
 
@@ -232,7 +238,9 @@ public class OwnerService {
         if (expos == null) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         } else {
-            return new ResponseEntity<>(expos, HttpStatus.OK);
+            return new ResponseEntity<>(expos.stream()
+                    .map(expo -> modelMapper.map(expo, ExpoModel.class))
+                    .collect(Collectors.toList()), HttpStatus.OK);
         }
     }
 

@@ -1,8 +1,7 @@
 package com.safonov.galleryservice.ArtGalleryApplication.model.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.safonov.galleryservice.ArtGalleryApplication.configuration.Constants;
-import com.safonov.galleryservice.ArtGalleryApplication.model.info.CredentialsModel;
+import com.safonov.galleryservice.ArtGalleryApplication.model.gallery.CredentialsModel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;

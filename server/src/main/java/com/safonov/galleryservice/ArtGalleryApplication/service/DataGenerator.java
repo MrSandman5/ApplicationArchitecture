@@ -49,12 +49,13 @@ public class DataGenerator {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
-    public String generateFakeDataForClient(final int count) {
+    public String generateFakeDataForClient(final Long count) {
         for (int i = 0; i < count; i++) {
             try {
                 final Client client = new Client(faker.name().firstName(), faker.name().lastName());
                 final Credentials credentials = new Credentials(faker.book().title().replaceAll(" ", "") + "@mail.ru",
-                        bCryptPasswordEncoder.encode(faker.name().fullName()), roleRepository.findRoleByName("ROLE_CLIENT").orElse(null));
+                        bCryptPasswordEncoder.encode(client.getFirstName() + " " + client.getLastName()),
+                        roleRepository.findRoleByName("ROLE_CLIENT").orElse(null));
                 client.setCredentials(credentialsRepository.save(credentials));
                 clientRepository.save(client);
                 clientsCount++;
@@ -67,12 +68,13 @@ public class DataGenerator {
                 "Catch  " + clientsCountCatch + " clients\n";
     }
 
-    public String generateFakeDataForOwner(final int count) {
+    public String generateFakeDataForOwner(final Long count) {
         for (int i = 0; i < count; i++) {
             try {
                 final Owner owner = new Owner(faker.name().firstName(), faker.name().lastName());
                 final Credentials credentials = new Credentials(faker.harryPotter().spell().replaceAll(" ", "") + "@mail.ru",
-                        bCryptPasswordEncoder.encode(faker.name().fullName()), roleRepository.findRoleByName("ROLE_OWNER").orElse(null));
+                        bCryptPasswordEncoder.encode(owner.getFirstName() + " " + owner.getLastName()),
+                        roleRepository.findRoleByName("ROLE_OWNER").orElse(null));
                 owner.setCredentials(credentialsRepository.save(credentials));
                 ownerRepository.save(owner);
                 ownersCount++;
@@ -85,12 +87,13 @@ public class DataGenerator {
                 "Catch " + ownersCountCatch + " owners\n";
     }
 
-    public String generateFakeDataForArtist(final int count) {
+    public String generateFakeDataForArtist(final Long count) {
         for (int i = 0; i < count; i++) {
             try {
                 final Artist artist = new Artist(faker.name().firstName(), faker.name().lastName());
                 final Credentials credentials = new Credentials(faker.zelda().character().replaceAll(" ", "") + "@mail.ru",
-                        bCryptPasswordEncoder.encode(faker.name().fullName()), roleRepository.findRoleByName("ROLE_ARTIST").orElse(null));
+                        bCryptPasswordEncoder.encode(artist.getFirstName() + " " + artist.getLastName()),
+                        roleRepository.findRoleByName("ROLE_ARTIST").orElse(null));
                 artist.setCredentials(credentialsRepository.save(credentials));
                 artistRepository.save(artist);
                 artistsCount++;

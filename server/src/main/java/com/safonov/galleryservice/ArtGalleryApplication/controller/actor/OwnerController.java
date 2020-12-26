@@ -1,8 +1,8 @@
 package com.safonov.galleryservice.ArtGalleryApplication.controller.actor;
 
-import com.safonov.galleryservice.ArtGalleryApplication.model.gallery.*;
-import com.safonov.galleryservice.ArtGalleryApplication.model.info.ExpoModel;
-import com.safonov.galleryservice.ArtGalleryApplication.model.info.ReservationModel;
+import com.safonov.galleryservice.ArtGalleryApplication.model.logic.*;
+import com.safonov.galleryservice.ArtGalleryApplication.model.gallery.ExpoModel;
+import com.safonov.galleryservice.ArtGalleryApplication.model.gallery.ReservationModel;
 import com.safonov.galleryservice.ArtGalleryApplication.service.actor.OwnerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

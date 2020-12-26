@@ -1,7 +1,7 @@
 package com.safonov.galleryservice.ArtGalleryApplication.controller.actor;
 
-import com.safonov.galleryservice.ArtGalleryApplication.model.gallery.PayForReservationModel;
-import com.safonov.galleryservice.ArtGalleryApplication.model.info.ExpoModel;
+import com.safonov.galleryservice.ArtGalleryApplication.model.logic.PayForReservationModel;
+import com.safonov.galleryservice.ArtGalleryApplication.model.gallery.ExpoModel;
 import com.safonov.galleryservice.ArtGalleryApplication.service.actor.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

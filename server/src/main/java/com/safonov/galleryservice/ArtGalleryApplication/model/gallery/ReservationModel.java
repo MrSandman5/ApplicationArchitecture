@@ -1,4 +1,4 @@
-package com.safonov.galleryservice.ArtGalleryApplication.model.info;
+package com.safonov.galleryservice.ArtGalleryApplication.model.gallery;
 
 import com.safonov.galleryservice.ArtGalleryApplication.entity.gallery.Ticket;
 import lombok.Data;
