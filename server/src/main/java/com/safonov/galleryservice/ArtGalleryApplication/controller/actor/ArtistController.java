@@ -14,6 +14,7 @@ import javax.validation.constraints.NotNull;
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/artist")
+@PreAuthorize("hasRole('ARTIST')")
 public class ArtistController {
 
     private final ArtistService service;
@@ -24,21 +25,18 @@ public class ArtistController {
     }
 
     @PostMapping("/{artistId}/add-artwork")
-    @PreAuthorize("hasRole('ARTIST')")
     public ResponseEntity<String> addArtwork(@PathVariable final Long artistId,
                                              @Valid @RequestBody final ArtworkModel model) {
         return service.addArtwork(artistId, model);
     }
 
     @PostMapping("/{artistId}/accept-royalties")
-    @PreAuthorize("hasRole('ARTIST')")
     public ResponseEntity<String> acceptRoyalties(@PathVariable final Long artistId,
                                                   @Valid @RequestBody final ExpoModel model) {
         return service.acceptRoyalties(artistId, model);
     }
 
     @GetMapping("/{artistId}/artworks")
-    @PreAuthorize("hasRole('ARTIST')")
     public ResponseEntity<Object> getAllArtworks(@PathVariable final Long artistId) {
         return service.getAllArtworks(artistId);
     }

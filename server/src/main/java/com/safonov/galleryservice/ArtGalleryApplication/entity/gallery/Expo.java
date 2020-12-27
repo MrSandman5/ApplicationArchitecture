@@ -25,7 +25,7 @@ public class Expo extends AbstractEntity {
     @Column(unique = true, name = "name", nullable = false)
     private String name;
 
-    @Column(name = "info", nullable = false)
+    @Column(name = "info")
     private String info;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -68,7 +68,6 @@ public class Expo extends AbstractEntity {
             this.endTime = startTime;
         }
         this.ticketPrice = ticketPrice;
-        this.artworks = this.artist.getArtworks();
         this.status = Constants.ExpoStatus.New;
     }
 

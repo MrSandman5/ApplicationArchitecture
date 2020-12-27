@@ -11,9 +11,7 @@ import com.safonov.galleryservice.ArtGalleryApplication.model.logic.*;
 import com.safonov.galleryservice.ArtGalleryApplication.model.gallery.ExpoModel;
 import com.safonov.galleryservice.ArtGalleryApplication.model.gallery.ReservationModel;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.module.jdk8.Jdk8Module;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -54,6 +52,7 @@ public class OwnerService {
         this.modelMapper = modelMapper;
     }
 
+    @Transactional
     public ResponseEntity<String> acceptPayment(@NotNull final Long ownerId,
                                                 @NotNull final ReservationModel model){
         final Reservation payedReservation = reservationRepository.findById(model.getReservationId()).orElse(null);
@@ -94,11 +93,11 @@ public class OwnerService {
                     model.getStartTime(),
                     model.getEndTime(),
                     model.getTicketPrice());
-            for (final Artwork artwork : artist.getArtworks()) {
-                artwork.setExpo(newExpo);
+            final Expo addedExpo = expoRepository.save(newExpo);
+            for (final Artwork artwork : artworkRepository.findArtworksByArtist(artist)) {
+                artwork.setExpo(addedExpo);
                 artworkRepository.save(artwork);
             }
-            expoRepository.save(newExpo);
             return new ResponseEntity<>("", HttpStatus.CREATED);
         } else {
             return new ResponseEntity<>("Expo with name " + existedExpo.getName() + " already created", HttpStatus.ALREADY_REPORTED);
@@ -138,6 +137,9 @@ public class OwnerService {
                         || newDateTime.isAfter(curExpo.getEndTime())) {
                     curExpo.setEndTime(newDateTime);
                 }
+                break;
+            case "TicketPrice":
+                curExpo.setTicketPrice(Double.parseDouble(data));
                 break;
             default:
                 return new ResponseEntity<>("Wrong data", HttpStatus.BAD_REQUEST);

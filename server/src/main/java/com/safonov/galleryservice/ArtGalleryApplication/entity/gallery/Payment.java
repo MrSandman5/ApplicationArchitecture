@@ -22,7 +22,7 @@ public class Payment extends AbstractEntity {
     private LocalDateTime dateTime;
 
     @Min(value = 0, message = "must be greater than or equal to zero")
-    @Column(name = "price")
+    @Column(name = "price", nullable = false)
     private Double price;
 
     public Payment(final Double price) {

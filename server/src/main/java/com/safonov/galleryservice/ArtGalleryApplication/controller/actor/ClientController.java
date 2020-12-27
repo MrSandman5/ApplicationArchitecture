@@ -14,6 +14,7 @@ import javax.validation.constraints.NotNull;
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/client")
+@PreAuthorize("hasRole('CLIENT')")
 public class ClientController {
 
     private final ClientService service;
@@ -24,45 +25,38 @@ public class ClientController {
     }
 
     @PostMapping("/{clientId}/add-ticket")
-    @PreAuthorize("hasRole('CLIENT')")
     public ResponseEntity<String> addTicket(@PathVariable final Long clientId,
                                             @Valid @RequestBody final ExpoModel model) {
         return service.addTicket(clientId, model);
     }
 
     @PostMapping("/{clientId}/create-reservation")
-    @PreAuthorize("hasRole('CLIENT')")
     public ResponseEntity<String> createReservation(@PathVariable final Long clientId) {
         return service.createReservation(clientId);
     }
 
     @PostMapping("/{clientId}/pay")
-    @PreAuthorize("hasRole('CLIENT')")
     public ResponseEntity<String> payForReservation(@PathVariable final Long clientId,
                                                     @Valid  @RequestBody final PayForReservationModel model) {
         return service.payForReservation(clientId, model);
     }
 
     @GetMapping("/{clientId}/tickets")
-    @PreAuthorize("hasRole('CLIENT')")
     public ResponseEntity<Object> getTickets(@PathVariable final Long clientId) {
         return service.getTickets(clientId);
     }
 
     @GetMapping("/{clientId}/new-reservations")
-    @PreAuthorize("hasRole('CLIENT')")
     public ResponseEntity<Object> getNewReservation(@PathVariable final Long clientId) {
         return service.getNewReservations(clientId);
     }
 
     @GetMapping("/{clientId}/payed-reservations")
-    @PreAuthorize("hasRole('CLIENT')")
     public ResponseEntity<Object> getPayedReservation(@PathVariable final Long clientId) {
         return service.getPayedReservations(clientId);
     }
 
     @GetMapping("/{clientId}/expos")
-    @PreAuthorize("hasRole('CLIENT')")
     public ResponseEntity<Object> getExpos() {
         return service.getNewExpos();
     }

@@ -2,6 +2,7 @@ package com.safonov.galleryservice.ArtGalleryApplication.model.gallery;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.gallery.Ticket;
+import com.sun.istack.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -14,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 public class ReservationModel {
 
-    @NotBlank(message = "id is mandatory")
+    @NotNull
     @JsonProperty("id")
     private Long reservationId;
 

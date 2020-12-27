@@ -72,7 +72,7 @@ public class ClientService {
         if (client == null) {
             return new ResponseEntity<>("Client doesnt exist", HttpStatus.NOT_FOUND);
         }
-        final Set<Ticket> tickets = client.getTickets();
+        final List<Ticket> tickets = ticketRepository.findTicketsByClient(client);
         if (!tickets.isEmpty()){
             for (final Ticket tick : tickets) {
                 if (!ticketExpo.equals(tick.getExpo())){
@@ -91,18 +91,26 @@ public class ClientService {
             return new ResponseEntity<>("Client doesnt exist", HttpStatus.NOT_FOUND);
         }
         final Expo expo = expoRepository.findById(
-                client.getTickets().stream().findFirst().get().getExpo().getId()).orElse(null);
+                ticketRepository.findTicketsByClient(client).stream()
+                        .findFirst().get().getExpo().getId()).orElse(null);
         if (expo == null){
             return new ResponseEntity<>("Expo doesnt exist", HttpStatus.NOT_FOUND);
         }
         else if (expo.isClosed()){
             return new ResponseEntity<>("Expo with name " + expo.getName() + " already closed", HttpStatus.BAD_REQUEST);
         }
-        reservationRepository.save(new Reservation(client, expo.getStartTime()));
+        final Reservation addedReservation = reservationRepository.save(new Reservation(client, expo.getStartTime()));
+        double cost = 0;
+        for (final Ticket ticket : ticketRepository.findTicketsByExpo(expo)) {
+            ticket.setReservation(addedReservation);
+            ticketRepository.save(ticket);
+            cost += ticket.getCost();
+        }
+        addedReservation.setCost(cost);
+        reservationRepository.save(addedReservation);
         return new ResponseEntity<>("", HttpStatus.CREATED);
     }
 
-    @Transactional
     public ResponseEntity<String> payForReservation(@NotNull final Long clientId,
                                                     @NotNull final PayForReservationModel model) {
         final Reservation clientReservation = reservationRepository.findById(model.getReservation().getReservationId()).orElse(null);
@@ -114,7 +122,8 @@ public class ClientService {
         }
 
         final Expo ticketExpo = expoRepository.findById(
-                clientReservation.getTickets().stream().findFirst().get().getExpo().getId()).orElse(null);
+                ticketRepository.findTicketsByReservation(clientReservation)
+                        .stream().findFirst().get().getExpo().getId()).orElse(null);
         if (ticketExpo == null){
             return new ResponseEntity<>("Expo doesnt exist", HttpStatus.NOT_FOUND);
         } else if (ticketExpo.isClosed()){
@@ -125,8 +134,8 @@ public class ClientService {
             return new ResponseEntity<>("Client doesnt exist", HttpStatus.NOT_FOUND);
         }
         if (LocalDateTime.now().isAfter(ticketExpo.getStartTime())){
-            client.getReservations().remove(clientReservation);
-            clientRepository.save(client);
+            clientReservation.setStatus(Constants.ReservationStatus.Closed);
+            reservationRepository.save(clientReservation);
             return new ResponseEntity<>("Expo with name" + ticketExpo.getName() + " already started", HttpStatus.BAD_REQUEST);
         }
         clientReservation.setStatus(Constants.ReservationStatus.Payed);
@@ -157,7 +166,7 @@ public class ClientService {
         if (client == null) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
-        final List<Reservation> reservations = reservationRepository.findReservationsByClientAndStatus(client,  Constants.ReservationStatus.New);
+        final List<Reservation> reservations = reservationRepository.findReservationsByClientAndStatus(client, Constants.ReservationStatus.New);
         if (reservations == null) {
             return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
         } else {

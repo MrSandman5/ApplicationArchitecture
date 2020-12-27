@@ -5,7 +5,7 @@ import java.time.format.DateTimeFormatter;
 public final class Constants {
 
     public static final DateTimeFormatter formatter =
-            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
 
     public enum Roles {
         ROLE_ADMIN,

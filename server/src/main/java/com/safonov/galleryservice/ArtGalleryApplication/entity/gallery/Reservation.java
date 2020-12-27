@@ -44,11 +44,7 @@ public class Reservation extends AbstractEntity {
     public Reservation(@NotNull final Client client,
                        @NotNull final LocalDateTime dateTime) {
         this.client = client;
-        this.tickets = client.getTickets();
-        this.cost = this.tickets.stream()
-                .map(Ticket::getCost)
-                .mapToDouble(Double::doubleValue)
-                .sum();
+        this.cost = (double) 0;
         this.status = Constants.ReservationStatus.New;
         this.dateTime = dateTime;
     }

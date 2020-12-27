@@ -3,10 +3,10 @@ import Router from 'vue-router'
 import Home from '@/components/Home'
 import Login from "@/components/Login";
 import Register from "@/components/Register";
-import AdminPage from "@/components/AdminPage";
+/*import AdminPage from "@/components/AdminPage";
 import ClientPage from "@/components/ClientPage";
 import OwnerPage from "@/components/OwnerPage";
-import ArtistPage from "@/components/ArtistPage";
+import ArtistPage from "@/components/ArtistPage";*/
 
 Vue.use(Router)
 

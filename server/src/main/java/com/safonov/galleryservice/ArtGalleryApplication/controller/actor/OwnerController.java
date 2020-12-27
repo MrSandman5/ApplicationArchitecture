@@ -15,6 +15,7 @@ import javax.validation.constraints.NotNull;
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/owner")
+@PreAuthorize("hasRole('OWNER')")
 public class OwnerController {
 
     private final OwnerService service;
@@ -25,61 +26,52 @@ public class OwnerController {
     }
 
     @PostMapping("/{ownerId}/accept-payment")
-    @PreAuthorize("hasRole('OWNER')")
     public ResponseEntity<String> acceptPayment(@PathVariable final Long ownerId,
                                                 @Valid @RequestBody final ReservationModel model) {
         return service.acceptPayment(ownerId, model);
     }
 
     @PostMapping("/{ownerId}/create-expo")
-    @PreAuthorize("hasRole('OWNER')")
     public ResponseEntity<String> createExpo(@PathVariable final Long ownerId,
                                              @Valid @RequestBody final ExpoModel model) {
         return service.createExpo(ownerId, model);
     }
 
     @PostMapping("/{ownerId}/edit-expo")
-    @PreAuthorize("hasRole('OWNER')")
     public ResponseEntity<String> editExpo(@PathVariable final Long ownerId,
                                            @Valid @RequestBody EditExpoModel model) {
         return service.editExpo(ownerId, model);
     }
 
     @PostMapping("/{ownerId}/start-expo")
-    @PreAuthorize("hasRole('OWNER')")
     public ResponseEntity<String> startExpo(@PathVariable final Long ownerId,
                                             @Valid @RequestBody final ExpoModel model) {
         return service.startExpo(ownerId, model);
     }
 
     @PostMapping("/{ownerId}/close-expo")
-    @PreAuthorize("hasRole('OWNER')")
     public ResponseEntity<String> closeExpo(@PathVariable final Long ownerId,
                                             @Valid @RequestBody final ExpoModel model) {
         return service.closeExpo(ownerId, model);
     }
 
     @PostMapping("/{ownerId}/pay-for-expo")
-    @PreAuthorize("hasRole('OWNER')")
     public ResponseEntity<String> payForExpo(@PathVariable final Long ownerId,
                                              @Valid @RequestBody final ExpoModel model) {
         return service.payForExpo(ownerId, model);
     }
 
     @GetMapping("/{ownerId}/new-expos")
-    @PreAuthorize("hasRole('OWNER')")
     public ResponseEntity<Object> getNewExpos() {
         return service.getNewExpos();
     }
 
     @GetMapping("/{ownerId}/opened-expos")
-    @PreAuthorize("hasRole('OWNER')")
     public ResponseEntity<Object> getOpenedExpos() {
         return service.getOpenedExpos();
     }
 
     @GetMapping("/{ownerId}/closed-expos")
-    @PreAuthorize("hasRole('OWNER')")
     public ResponseEntity<Object> getClosedExpos() {
         return service.getClosedExpos();
     }

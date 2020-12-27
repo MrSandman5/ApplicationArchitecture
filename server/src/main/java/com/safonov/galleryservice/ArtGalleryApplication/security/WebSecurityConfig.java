@@ -26,15 +26,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserDetailsServiceImpl userDetailsService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final AuthEntryPointJwt unauthorizedHandler;
-    /*private final CredentialsRepository credentialsRepository;
-    private final FilterChainExceptionHandler filterChainExceptionHandler;*/
 
     @Autowired
     public WebSecurityConfig(@NotNull final UserDetailsServiceImpl userDetailsService,
                              @NotNull final BCryptPasswordEncoder bCryptPasswordEncoder,
-                             @NotNull final AuthEntryPointJwt unauthorizedHandler
-                             /*@NotNull final CredentialsRepository credentialsRepository,
-                             @NotNull final FilterChainExceptionHandler filterChainExceptionHandler*/) {
+                             @NotNull final AuthEntryPointJwt unauthorizedHandler) {
         this.userDetailsService = userDetailsService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.unauthorizedHandler = unauthorizedHandler;
@@ -56,6 +52,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
+    /*@Override
+    public void configure(@NotNull final WebSecurity web) {
+        web.ignoring().mvcMatchers(HttpMethod.OPTIONS, "/**");
+        web.ignoring().mvcMatchers("/swagger-ui.html/**", "/configuration/**", "/swagger-resources/**", "/v2/api-docs","/webjars/**");
+    }*/
+
     @Override
     protected void configure(@NotNull final HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable()
@@ -67,48 +69,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
     }
-
-    /*@Override
-    protected void configure(@NotNull final HttpSecurity http) throws Exception {
-        final JWTAuthorizationFilter jwtAuthorizationFilter = new JWTAuthorizationFilter(authenticationManager());
-        jwtAuthorizationFilter.setCredentialsRepository(credentialsRepository);
-        final JWTAuthenticationFilter jwtAuthenticationFilter = new JWTAuthenticationFilter(authenticationManager(), credentialsRepository);
-
-        http.cors().and().csrf().disable().authorizeRequests()
-                .antMatchers(HttpMethod.POST, SIGN_UP_URL).permitAll()
-                /*.antMatchers("/swagger-resources/**").permitAll()
-                .antMatchers("/swagger-ui.html").permitAll()
-                .antMatchers("/v2/api-docs").permitAll()
-                .antMatchers("/webjars/**").permitAll()
-                .antMatchers("/secret/**").hasAnyRole("ADMIN", "ADMIN1")
-                .antMatchers("/**").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .addFilterBefore(filterChainExceptionHandler, jwtAuthenticationFilter.getClass())
-                .addFilter(jwtAuthenticationFilter)
-                .addFilterBefore(filterChainExceptionHandler, jwtAuthorizationFilter.getClass())
-                .addFilter(jwtAuthorizationFilter)
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-    }
-
-    @Override
-    public void configure(@NotNull final AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
-    }
-
-    @Bean
-    CorsConfigurationSource corsConfigurationSource() {
-        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        final CorsConfiguration config = new CorsConfiguration();
-        source.registerCorsConfiguration("/**", config.applyPermitDefaultValues());
-        config.setAllowCredentials(true);
-        config.setAllowedOrigins(Collections.singletonList("http://localhost:8081"));
-        config.setExposedHeaders(Collections.singletonList("Authorization"));
-        config.setAllowedMethods(Collections.singletonList("*"));
-        config.setAllowedHeaders(Collections.singletonList("*"));
-
-        return source;
-    }*/
 
 }
 

@@ -13,6 +13,7 @@ import javax.validation.constraints.NotNull;
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/admin")
+@PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
 
     private final AdminService service;
@@ -26,14 +27,12 @@ public class AdminController {
     }
 
     @DeleteMapping("/deleteUser/{userId}/{userType}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> deleteUser(@PathVariable final Long userId,
                                              @PathVariable final String userType) {
         return service.deletePerson(userId, userType);
     }
 
     @GetMapping("/generate/{count}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> generate(@PathVariable final Long count) {
         return new ResponseEntity<>(generator.generateFakeDataForClient(count) +
                 generator.generateFakeDataForOwner(count) +
