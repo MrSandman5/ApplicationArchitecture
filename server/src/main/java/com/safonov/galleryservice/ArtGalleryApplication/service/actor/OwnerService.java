@@ -99,7 +99,7 @@ public class OwnerService {
                 artworkRepository.save(artwork);
             }
             expoRepository.save(newExpo);
-            return new ResponseEntity<>("", HttpStatus.OK);
+            return new ResponseEntity<>("", HttpStatus.CREATED);
         } else {
             return new ResponseEntity<>("Expo with name " + existedExpo.getName() + " already created", HttpStatus.ALREADY_REPORTED);
         }
@@ -215,7 +215,7 @@ public class OwnerService {
         }
         final OwnerArtistPayment expoPayment = new OwnerArtistPayment(closedExpo, owner, artist, payment * 0.5);
         ownerArtistPaymentRepository.save(expoPayment);
-        return new ResponseEntity<>("", HttpStatus.OK);
+        return new ResponseEntity<>("", HttpStatus.CREATED);
     }
 
     public ResponseEntity<Object> getNewExpos() {

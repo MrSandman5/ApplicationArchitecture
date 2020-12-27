@@ -81,7 +81,7 @@ public class ClientService {
             }
         }
         ticketRepository.save(new Ticket(client, ticketExpo, ticketExpo.getTicketPrice()));
-        return new ResponseEntity<>("", HttpStatus.OK);
+        return new ResponseEntity<>("", HttpStatus.CREATED);
     }
 
     @Transactional
@@ -99,7 +99,7 @@ public class ClientService {
             return new ResponseEntity<>("Expo with name " + expo.getName() + " already closed", HttpStatus.BAD_REQUEST);
         }
         reservationRepository.save(new Reservation(client, expo.getStartTime()));
-        return new ResponseEntity<>("", HttpStatus.OK);
+        return new ResponseEntity<>("", HttpStatus.CREATED);
     }
 
     @Transactional
@@ -136,7 +136,7 @@ public class ClientService {
             return new ResponseEntity<>("Owner doesnt exist", HttpStatus.NOT_FOUND);
         }
         clientOwnerPaymentRepository.save(new ClientOwnerPayment(clientReservation, client, owner));
-        return new ResponseEntity<>("", HttpStatus.OK);
+        return new ResponseEntity<>("", HttpStatus.CREATED);
     }
 
     public ResponseEntity<Object> getTickets(@NotNull final Long clientId) {

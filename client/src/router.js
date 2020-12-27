@@ -1,8 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Home from '@/components/Home'
-import SignIn from "@/components/SignIn";
-import SignUp from "@/components/SignUp";
+import Login from "@/components/Login";
+import Register from "@/components/Register";
 import AdminPage from "@/components/AdminPage";
 import ClientPage from "@/components/ClientPage";
 import OwnerPage from "@/components/OwnerPage";
@@ -25,15 +25,15 @@ export default new Router({
         },
         {
             path: '/login',
-            name: 'SignIn',
-            component: SignIn
+            name: 'Login',
+            component: Login
         },
         {
-            path: '/sign-up',
-            name: 'SignUp',
-            component: SignUp
+            path: '/register',
+            name: 'Register',
+            component: Register
         },
-        {
+        /*{
             path: '/admin',
             name: 'AdminPage',
             component: AdminPage
@@ -52,6 +52,6 @@ export default new Router({
             path: '/artist',
             name: 'ArtistPage',
             component: ArtistPage
-        },
+        },*/
     ]
 })

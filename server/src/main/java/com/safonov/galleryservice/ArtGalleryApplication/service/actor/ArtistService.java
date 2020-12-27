@@ -53,13 +53,13 @@ public class ArtistService {
         final Set<Artwork> artworks = artist.getArtworks();
         if (artwork == null) {
             artworkRepository.save(new Artwork(model.getName(), model.getInfo(), artist, null));
-            return new ResponseEntity<>("New artwork from artist " + artist.getCredentials().getLogin() + "added for expo", HttpStatus.OK);
+            return new ResponseEntity<>("New artwork from artist " + artist.getCredentials().getLogin() + "added for expo", HttpStatus.CREATED);
         } else if (artist.equals(artwork.getArtist())) {
             return new ResponseEntity<>("Artwork " + artwork.getName() + "belongs to another artist", HttpStatus.BAD_GATEWAY);
         } else if (artworks.contains(artwork)) {
             return new ResponseEntity<>("Artwork already existed for this artist", HttpStatus.ALREADY_REPORTED);
         } else {
-            return new ResponseEntity<>("Existed artwork from artist " + artist.getCredentials().getLogin() + "added for expo", HttpStatus.OK);
+            return new ResponseEntity<>("Existed artwork from artist " + artist.getCredentials().getLogin() + "added for expo", HttpStatus.CREATED);
         }
     }
 
