@@ -1,5 +1,6 @@
 package com.safonov.galleryservice.ArtGalleryApplication.entity.actor;
 
+import com.safonov.galleryservice.ArtGalleryApplication.configuration.Constants;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.AbstractEntity;
 import lombok.*;
 
@@ -14,9 +15,8 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 public class Role extends AbstractEntity {
 
-    @Column(name = "name", unique = true)
-    private String name;
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20)
+    private Constants.Roles name;
 
-    @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
-    private Set<Credentials> users;
 }

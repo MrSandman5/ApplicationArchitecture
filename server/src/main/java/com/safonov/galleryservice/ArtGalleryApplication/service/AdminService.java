@@ -30,7 +30,7 @@ public class AdminService {
     public ResponseEntity<String> deletePerson(@NotNull final Long userId,
                                                @NotNull final String userType) {
         switch (userType) {
-            case "ROLE_CLIENT":
+            case "client":
                 final Client client = clientRepository.findById(userId).orElse(null);
                 if (client == null) {
                     return new ResponseEntity<>("Client not found", HttpStatus.NOT_FOUND);
@@ -38,14 +38,14 @@ public class AdminService {
                 clientRepository.delete(client);
                 return new ResponseEntity<>("Client was deleted", HttpStatus.OK);
 
-            case "ROLE_OWNER":
+            case "owner":
                 final Owner owner = ownerRepository.findById(userId).orElse(null);
                 if (owner == null) {
                     return new ResponseEntity<>("Owner not found", HttpStatus.NOT_FOUND);
                 }
                 ownerRepository.save(owner);
                 return new ResponseEntity<>("Owner was deleted", HttpStatus.OK);
-            case "ROLE_ARTIST":
+            case "artist":
                 final Artist artist = artistRepository.findById(userId).orElse(null);
                 if (artist == null) {
                     return new ResponseEntity<>("Artist not found", HttpStatus.NOT_FOUND);

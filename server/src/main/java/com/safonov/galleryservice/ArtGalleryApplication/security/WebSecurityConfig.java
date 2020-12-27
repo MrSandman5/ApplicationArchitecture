@@ -1,11 +1,12 @@
 package com.safonov.galleryservice.ArtGalleryApplication.security;
 
-import com.safonov.galleryservice.ArtGalleryApplication.data.actor.CredentialsRepository;
-import com.safonov.galleryservice.ArtGalleryApplication.error.FilterChainExceptionHandler;
+import com.safonov.galleryservice.ArtGalleryApplication.security.jwt.AuthEntryPointJwt;
+import com.safonov.galleryservice.ArtGalleryApplication.security.jwt.AuthTokenFilter;
+import com.safonov.galleryservice.ArtGalleryApplication.security.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -13,14 +14,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.validation.constraints.NotNull;
-import java.util.Collections;
-
-import static com.safonov.galleryservice.ArtGalleryApplication.security.SecurityConstants.SIGN_UP_URL;
 
 @Configuration
 @EnableWebSecurity
@@ -29,21 +25,50 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserDetailsServiceImpl userDetailsService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final CredentialsRepository credentialsRepository;
-    private final FilterChainExceptionHandler filterChainExceptionHandler;
+    private final AuthEntryPointJwt unauthorizedHandler;
+    /*private final CredentialsRepository credentialsRepository;
+    private final FilterChainExceptionHandler filterChainExceptionHandler;*/
 
     @Autowired
     public WebSecurityConfig(@NotNull final UserDetailsServiceImpl userDetailsService,
                              @NotNull final BCryptPasswordEncoder bCryptPasswordEncoder,
-                             @NotNull final CredentialsRepository credentialsRepository,
-                             @NotNull final FilterChainExceptionHandler filterChainExceptionHandler) {
+                             @NotNull final AuthEntryPointJwt unauthorizedHandler
+                             /*@NotNull final CredentialsRepository credentialsRepository,
+                             @NotNull final FilterChainExceptionHandler filterChainExceptionHandler*/) {
         this.userDetailsService = userDetailsService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-        this.credentialsRepository = credentialsRepository;
-        this.filterChainExceptionHandler = filterChainExceptionHandler;
+        this.unauthorizedHandler = unauthorizedHandler;
+    }
+
+    @Bean
+    public AuthTokenFilter authenticationJwtTokenFilter() {
+        return new AuthTokenFilter();
     }
 
     @Override
+    public void configure(@NotNull final AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
+    }
+
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
+
+    @Override
+    protected void configure(@NotNull final HttpSecurity http) throws Exception {
+        http.cors().and().csrf().disable()
+                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+                .authorizeRequests().antMatchers("/api/auth/**").permitAll()
+                .antMatchers("/api/test/**").permitAll()
+                .anyRequest().authenticated();
+
+        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+    }
+
+    /*@Override
     protected void configure(@NotNull final HttpSecurity http) throws Exception {
         final JWTAuthorizationFilter jwtAuthorizationFilter = new JWTAuthorizationFilter(authenticationManager());
         jwtAuthorizationFilter.setCredentialsRepository(credentialsRepository);
@@ -51,7 +76,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.cors().and().csrf().disable().authorizeRequests()
                 .antMatchers(HttpMethod.POST, SIGN_UP_URL).permitAll()
-                .antMatchers("/swagger-resources/**").permitAll()
+                /*.antMatchers("/swagger-resources/**").permitAll()
                 .antMatchers("/swagger-ui.html").permitAll()
                 .antMatchers("/v2/api-docs").permitAll()
                 .antMatchers("/webjars/**").permitAll()
@@ -77,13 +102,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         final CorsConfiguration config = new CorsConfiguration();
         source.registerCorsConfiguration("/**", config.applyPermitDefaultValues());
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(Collections.singletonList("http://localhost:8080"));
+        config.setAllowedOrigins(Collections.singletonList("http://localhost:8081"));
         config.setExposedHeaders(Collections.singletonList("Authorization"));
         config.setAllowedMethods(Collections.singletonList("*"));
         config.setAllowedHeaders(Collections.singletonList("*"));
 
         return source;
-    }
+    }*/
 
 }
 

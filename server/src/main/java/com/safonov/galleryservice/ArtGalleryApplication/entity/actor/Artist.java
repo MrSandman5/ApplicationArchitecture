@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -20,10 +21,10 @@ import java.util.Set;
 public class Artist extends User {
 
     @OneToMany(mappedBy = "artist", fetch = FetchType.LAZY, orphanRemoval = true)
-    private Set<Artwork> artworks;
+    private Set<Artwork> artworks = new HashSet<>();
 
     @OneToMany(mappedBy = "artist", fetch = FetchType.LAZY, orphanRemoval = true)
-    private Set<OwnerArtistPayment> ownerArtistPayments;
+    private Set<OwnerArtistPayment> ownerArtistPayments = new HashSet<>();
 
     public Artist(@NotNull final String firstName,
                   @NotNull final String secondName) {

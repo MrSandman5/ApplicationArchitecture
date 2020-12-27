@@ -6,15 +6,18 @@ import com.safonov.galleryservice.ArtGalleryApplication.entity.actor.Role;
 import com.safonov.galleryservice.ArtGalleryApplication.model.gallery.CredentialsModel;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.constraints.NotNull;
 import java.util.stream.Collectors;
 
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
+@RequestMapping("/api")
 public class BackendController {
 
     private final RoleRepository roleRepository;
@@ -30,18 +33,17 @@ public class BackendController {
 
     @GetMapping("/roles")
     public ResponseEntity<Object> getRoles() {
-        return new ResponseEntity<>(roleRepository.findAll()
+        return ResponseEntity.ok(roleRepository.findAll()
                 .stream()
                 .map(Role::getName)
-                .collect(Collectors.toList()),
-                HttpStatus.OK);
+                .collect(Collectors.toList()));
     }
 
     @GetMapping("/users")
     public ResponseEntity<Object> getUsers() {
-        return new ResponseEntity<>(credentialsRepository.findAll()
+        return ResponseEntity.ok(credentialsRepository.findAll()
                 .stream()
                 .map(user -> modelMapper.map(user, CredentialsModel.class))
-                .collect(Collectors.toList()), HttpStatus.OK);
+                .collect(Collectors.toList()));
     }
 }

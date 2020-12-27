@@ -1,6 +1,8 @@
 package com.safonov.galleryservice.ArtGalleryApplication.model.gallery;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.safonov.galleryservice.ArtGalleryApplication.configuration.Constants;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -25,9 +27,11 @@ public class ExpoModel {
     private Long artistId;
 
     @JsonProperty("startTime")
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime startTime;
 
     @JsonProperty("endTime")
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime endTime;
 
     @JsonProperty("ticketPrice")

@@ -6,14 +6,15 @@ import com.safonov.galleryservice.ArtGalleryApplication.model.gallery.Reservatio
 import com.safonov.galleryservice.ArtGalleryApplication.service.actor.OwnerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("/owner")
+@RequestMapping("/api/owner")
 public class OwnerController {
 
     private final OwnerService service;
@@ -23,62 +24,62 @@ public class OwnerController {
         this.service = service;
     }
 
-    @Secured("ROLE_OWNER")
     @PostMapping("/{ownerId}/accept-payment")
+    @PreAuthorize("hasRole('OWNER')")
     public ResponseEntity<String> acceptPayment(@PathVariable final Long ownerId,
                                                 @Valid @RequestBody final ReservationModel model) {
         return service.acceptPayment(ownerId, model);
     }
 
-    @Secured("ROLE_OWNER")
     @PostMapping("/{ownerId}/create-expo")
+    @PreAuthorize("hasRole('OWNER')")
     public ResponseEntity<String> createExpo(@PathVariable final Long ownerId,
                                              @Valid @RequestBody final ExpoModel model) {
         return service.createExpo(ownerId, model);
     }
 
-    @Secured("ROLE_OWNER")
     @PostMapping("/{ownerId}/edit-expo")
+    @PreAuthorize("hasRole('OWNER')")
     public ResponseEntity<String> editExpo(@PathVariable final Long ownerId,
                                            @Valid @RequestBody EditExpoModel model) {
         return service.editExpo(ownerId, model);
     }
 
-    @Secured("ROLE_OWNER")
     @PostMapping("/{ownerId}/start-expo")
+    @PreAuthorize("hasRole('OWNER')")
     public ResponseEntity<String> startExpo(@PathVariable final Long ownerId,
                                             @Valid @RequestBody final ExpoModel model) {
         return service.startExpo(ownerId, model);
     }
 
-    @Secured("ROLE_OWNER")
     @PostMapping("/{ownerId}/close-expo")
+    @PreAuthorize("hasRole('OWNER')")
     public ResponseEntity<String> closeExpo(@PathVariable final Long ownerId,
                                             @Valid @RequestBody final ExpoModel model) {
         return service.closeExpo(ownerId, model);
     }
 
-    @Secured("ROLE_OWNER")
     @PostMapping("/{ownerId}/pay-for-expo")
+    @PreAuthorize("hasRole('OWNER')")
     public ResponseEntity<String> payForExpo(@PathVariable final Long ownerId,
                                              @Valid @RequestBody final ExpoModel model) {
         return service.payForExpo(ownerId, model);
     }
 
-    @Secured("ROLE_OWNER")
     @GetMapping("/{ownerId}/new-expos")
+    @PreAuthorize("hasRole('OWNER')")
     public ResponseEntity<Object> getNewExpos() {
         return service.getNewExpos();
     }
 
-    @Secured("ROLE_OWNER")
     @GetMapping("/{ownerId}/opened-expos")
+    @PreAuthorize("hasRole('OWNER')")
     public ResponseEntity<Object> getOpenedExpos() {
         return service.getOpenedExpos();
     }
 
-    @Secured("ROLE_OWNER")
     @GetMapping("/{ownerId}/closed-expos")
+    @PreAuthorize("hasRole('OWNER')")
     public ResponseEntity<Object> getClosedExpos() {
         return service.getClosedExpos();
     }

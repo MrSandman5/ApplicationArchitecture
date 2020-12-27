@@ -12,6 +12,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -38,7 +39,7 @@ public class Reservation extends AbstractEntity {
     private LocalDateTime dateTime;
 
     @OneToMany(mappedBy = "reservation",fetch = FetchType.LAZY, orphanRemoval = true)
-    private Set<Ticket> tickets;
+    private Set<Ticket> tickets = new HashSet<>();
 
     public Reservation(@NotNull final Client client,
                        @NotNull final LocalDateTime dateTime) {

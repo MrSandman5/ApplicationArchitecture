@@ -1,5 +1,6 @@
 package com.safonov.galleryservice.ArtGalleryApplication.data.actor;
 
+import com.safonov.galleryservice.ArtGalleryApplication.configuration.Constants;
 import com.safonov.galleryservice.ArtGalleryApplication.data.BaseRepository;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.actor.Role;
 import org.springframework.stereotype.Repository;
@@ -9,5 +10,5 @@ import java.util.Optional;
 
 @Repository
 public interface RoleRepository extends BaseRepository<Role> {
-    Optional<Role> findRoleByName(@NotNull final String name);
+    Optional<Role> findRoleByName(@NotNull final Constants.Roles name);
 }

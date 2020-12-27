@@ -11,7 +11,9 @@ import com.safonov.galleryservice.ArtGalleryApplication.model.logic.*;
 import com.safonov.galleryservice.ArtGalleryApplication.model.gallery.ExpoModel;
 import com.safonov.galleryservice.ArtGalleryApplication.model.gallery.ReservationModel;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.module.jdk8.Jdk8Module;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -31,7 +33,7 @@ public class OwnerService {
     private final ArtworkRepository artworkRepository;
     private final ClientOwnerPaymentRepository clientOwnerPaymentRepository;
     private final OwnerArtistPaymentRepository ownerArtistPaymentRepository;
-    private final ModelMapper modelMapper = new ModelMapper();
+    private final ModelMapper modelMapper;
 
     @Autowired
     public OwnerService(@NotNull final OwnerRepository ownerRepository,
@@ -40,7 +42,8 @@ public class OwnerService {
                         @NotNull final ExpoRepository expoRepository,
                         @NotNull final ArtworkRepository artworkRepository,
                         @NotNull final ClientOwnerPaymentRepository clientOwnerPaymentRepository,
-                        @NotNull final OwnerArtistPaymentRepository ownerArtistPaymentRepository) {
+                        @NotNull final OwnerArtistPaymentRepository ownerArtistPaymentRepository,
+                        @NotNull final ModelMapper modelMapper) {
         this.ownerRepository = ownerRepository;
         this.artistRepository = artistRepository;
         this.reservationRepository = reservationRepository;
@@ -48,6 +51,7 @@ public class OwnerService {
         this.artworkRepository = artworkRepository;
         this.clientOwnerPaymentRepository = clientOwnerPaymentRepository;
         this.ownerArtistPaymentRepository = ownerArtistPaymentRepository;
+        this.modelMapper = modelMapper;
     }
 
     public ResponseEntity<String> acceptPayment(@NotNull final Long ownerId,
@@ -90,19 +94,18 @@ public class OwnerService {
                     model.getStartTime(),
                     model.getEndTime(),
                     model.getTicketPrice());
-            final Expo addedExpo = expoRepository.save(newExpo);
             for (final Artwork artwork : artist.getArtworks()) {
-                artwork.setExpo(addedExpo);
+                artwork.setExpo(newExpo);
                 artworkRepository.save(artwork);
             }
-            addedExpo.setArtist(artistRepository.save(artist));
-            expoRepository.save(addedExpo);
+            expoRepository.save(newExpo);
             return new ResponseEntity<>("", HttpStatus.OK);
         } else {
             return new ResponseEntity<>("Expo with name " + existedExpo.getName() + " already created", HttpStatus.ALREADY_REPORTED);
         }
     }
 
+    @Transactional
     public ResponseEntity<String> editExpo(@NotNull final Long ownerId,
                                            @NotNull final EditExpoModel model){
         final Owner owner = ownerRepository.findById(ownerId).orElse(null);
@@ -125,14 +128,16 @@ public class OwnerService {
             case "StartTime":
                 newDateTime = LocalDateTime.parse(data, Constants.formatter);
                 if (newDateTime.isBefore(curExpo.getStartTime()) && LocalDateTime.now().isBefore(newDateTime)
-                        || newDateTime.isAfter(curExpo.getStartTime()) && newDateTime.isBefore(curExpo.getEndTime()))
+                        || newDateTime.isAfter(curExpo.getStartTime()) && newDateTime.isBefore(curExpo.getEndTime())) {
                     curExpo.setStartTime(newDateTime);
+                }
                 break;
             case "EndTime":
                 newDateTime = LocalDateTime.parse(data, Constants.formatter);
                 if (newDateTime.isBefore(curExpo.getEndTime()) && newDateTime.isAfter(curExpo.getStartTime())
-                        || newDateTime.isAfter(curExpo.getEndTime()))
+                        || newDateTime.isAfter(curExpo.getEndTime())) {
                     curExpo.setEndTime(newDateTime);
+                }
                 break;
             default:
                 return new ResponseEntity<>("Wrong data", HttpStatus.BAD_REQUEST);
@@ -141,6 +146,7 @@ public class OwnerService {
         return new ResponseEntity<>("", HttpStatus.OK);
     }
 
+    @Transactional
     public ResponseEntity<String> startExpo(@NotNull final Long ownerId,
                                             @NotNull final ExpoModel model){
         final Owner owner = ownerRepository.findById(ownerId).orElse(null);
@@ -160,6 +166,7 @@ public class OwnerService {
         }
     }
 
+    @Transactional
     public ResponseEntity<String> closeExpo(@NotNull final Long ownerId,
                                             @NotNull final ExpoModel model){
         final Owner owner = ownerRepository.findById(ownerId).orElse(null);

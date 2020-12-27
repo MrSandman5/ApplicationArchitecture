@@ -1,23 +1,22 @@
-package com.safonov.galleryservice.ArtGalleryApplication.model.gallery;
+package com.safonov.galleryservice.ArtGalleryApplication.model.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 
 @Data
+@EqualsAndHashCode(callSuper=false)
 @NoArgsConstructor
-public class CredentialsModel {
+public class LoginModel {
+
     @NotBlank
     @JsonProperty("login")
-    protected String login;
+    private String login;
 
     @NotBlank
     @JsonProperty("password")
-    protected String password;
-
-    @NotBlank
-    @JsonProperty("email")
-    protected String email;
+    private String password;
 }

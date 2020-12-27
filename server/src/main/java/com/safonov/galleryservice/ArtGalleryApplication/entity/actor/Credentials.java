@@ -6,6 +6,8 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -25,17 +27,25 @@ public final class Credentials extends AbstractEntity {
     @Column(unique = true, name = "email", nullable = false)
     private String email;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "role_id", nullable = false)
-    private Role role;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles = new HashSet<>();
 
     public Credentials(@NotNull final String email,
-                       @NotNull final String password,
-                       @NotNull final Role role) {
+                       @NotNull final String password) {
         this.email = email;
         this.password = password;
         this.login = email.split("@")[0];
-        this.role = role;
+    }
+
+    public Credentials(@NotNull final String login,
+                       @NotNull final String password,
+                       @NotNull final String email) {
+        this.login = login;
+        this.email = email;
+        this.password = password;
     }
 
 }

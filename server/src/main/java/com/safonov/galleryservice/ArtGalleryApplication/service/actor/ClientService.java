@@ -39,7 +39,7 @@ public class ClientService {
     private final ReservationRepository reservationRepository;
     private final ExpoRepository expoRepository;
     private final ClientOwnerPaymentRepository clientOwnerPaymentRepository;
-    private final ModelMapper modelMapper = new ModelMapper();
+    private final ModelMapper modelMapper;
 
     @Autowired
     public ClientService(@NotNull final ClientRepository clientRepository,
@@ -47,24 +47,26 @@ public class ClientService {
                          @NotNull final TicketRepository ticketRepository,
                          @NotNull final ReservationRepository reservationRepository,
                          @NotNull final ExpoRepository expoRepository,
-                         @NotNull final ClientOwnerPaymentRepository clientOwnerPaymentRepository) {
+                         @NotNull final ClientOwnerPaymentRepository clientOwnerPaymentRepository,
+                         @NotNull final ModelMapper modelMapper) {
         this.clientRepository = clientRepository;
         this.ownerRepository = ownerRepository;
         this.ticketRepository = ticketRepository;
         this.reservationRepository = reservationRepository;
         this.expoRepository = expoRepository;
         this.clientOwnerPaymentRepository = clientOwnerPaymentRepository;
+        this.modelMapper = modelMapper;
     }
 
     @Transactional
     public ResponseEntity<String> addTicket(@NotNull final Long clientId,
-                                            @NotNull final ExpoModel model){
+                                            @NotNull final ExpoModel model) {
         final Expo ticketExpo = expoRepository.findExpoByName(model.getName()).orElse(null);
         if (ticketExpo == null){
             return new ResponseEntity<>("Expo doesnt exist", HttpStatus.NOT_FOUND);
         }
         else if (ticketExpo.isClosed()){
-            return new ResponseEntity<>("Expo with name " + ticketExpo.getName() + " already closed", HttpStatus.ALREADY_REPORTED);
+            return new ResponseEntity<>("Expo with name " + ticketExpo.getName() + " already closed", HttpStatus.BAD_REQUEST);
         }
         final Client client = clientRepository.findById(clientId).orElse(null);
         if (client == null) {
@@ -78,14 +80,12 @@ public class ClientService {
                 }
             }
         }
-        final Ticket newTicket = new Ticket(client, ticketExpo, ticketExpo.getTicketPrice());
-        tickets.add(ticketRepository.save(newTicket));
-        clientRepository.save(client);
+        ticketRepository.save(new Ticket(client, ticketExpo, ticketExpo.getTicketPrice()));
         return new ResponseEntity<>("", HttpStatus.OK);
     }
 
     @Transactional
-    public ResponseEntity<String> createReservation(@NotNull final Long clientId){
+    public ResponseEntity<String> createReservation(@NotNull final Long clientId) {
         final Client client = clientRepository.findById(clientId).orElse(null);
         if (client == null) {
             return new ResponseEntity<>("Client doesnt exist", HttpStatus.NOT_FOUND);
@@ -96,24 +96,21 @@ public class ClientService {
             return new ResponseEntity<>("Expo doesnt exist", HttpStatus.NOT_FOUND);
         }
         else if (expo.isClosed()){
-            return new ResponseEntity<>("Expo with name " + expo.getName() + " already closed", HttpStatus.ALREADY_REPORTED);
+            return new ResponseEntity<>("Expo with name " + expo.getName() + " already closed", HttpStatus.BAD_REQUEST);
         }
-        final Reservation reservation = new Reservation(client, expo.getStartTime());
-        client.getReservations().add(reservationRepository.save(reservation));
-        client.getTickets().clear();
-        clientRepository.save(client);
+        reservationRepository.save(new Reservation(client, expo.getStartTime()));
         return new ResponseEntity<>("", HttpStatus.OK);
     }
 
     @Transactional
     public ResponseEntity<String> payForReservation(@NotNull final Long clientId,
-                                                    @NotNull final PayForReservationModel model){
+                                                    @NotNull final PayForReservationModel model) {
         final Reservation clientReservation = reservationRepository.findById(model.getReservation().getReservationId()).orElse(null);
         if (clientReservation == null){
             return new ResponseEntity<>("Reservation doesnt exist", HttpStatus.NOT_FOUND);
         }
         if (clientReservation.isClosed()){
-            return new ResponseEntity<>("Reservation is already closed", HttpStatus.ALREADY_REPORTED);
+            return new ResponseEntity<>("Reservation is already closed", HttpStatus.BAD_REQUEST);
         }
 
         final Expo ticketExpo = expoRepository.findById(
@@ -121,7 +118,7 @@ public class ClientService {
         if (ticketExpo == null){
             return new ResponseEntity<>("Expo doesnt exist", HttpStatus.NOT_FOUND);
         } else if (ticketExpo.isClosed()){
-            return new ResponseEntity<>("Expo with name " + ticketExpo.getName() + " already closed", HttpStatus.ALREADY_REPORTED);
+            return new ResponseEntity<>("Expo with name " + ticketExpo.getName() + " already closed", HttpStatus.BAD_REQUEST);
         }
         final Client client = clientRepository.findById(clientId).orElse(null);
         if (client == null) {
@@ -130,7 +127,7 @@ public class ClientService {
         if (LocalDateTime.now().isAfter(ticketExpo.getStartTime())){
             client.getReservations().remove(clientReservation);
             clientRepository.save(client);
-            return new ResponseEntity<>("Expo with name" + ticketExpo.getName() + " already started", HttpStatus.ALREADY_REPORTED);
+            return new ResponseEntity<>("Expo with name" + ticketExpo.getName() + " already started", HttpStatus.BAD_REQUEST);
         }
         clientReservation.setStatus(Constants.ReservationStatus.Payed);
         reservationRepository.save(clientReservation);
@@ -138,10 +135,7 @@ public class ClientService {
         if (owner == null) {
             return new ResponseEntity<>("Owner doesnt exist", HttpStatus.NOT_FOUND);
         }
-        final ClientOwnerPayment ticketPayment = new ClientOwnerPayment(clientReservation, client, owner);
-        client.getReservations().remove(clientReservation);
-        clientRepository.save(client);
-        clientOwnerPaymentRepository.save(ticketPayment);
+        clientOwnerPaymentRepository.save(new ClientOwnerPayment(clientReservation, client, owner));
         return new ResponseEntity<>("", HttpStatus.OK);
     }
 

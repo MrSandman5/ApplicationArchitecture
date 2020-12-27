@@ -14,6 +14,11 @@ import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
 
+import java.util.Objects;
+import java.util.Set;
+
+import static com.safonov.galleryservice.ArtGalleryApplication.configuration.Constants.Roles.*;
+
 @Service
 public class DataGenerator {
     private static final Logger log = LoggerFactory.getLogger(DataGenerator.class);
@@ -54,8 +59,8 @@ public class DataGenerator {
             try {
                 final Client client = new Client(faker.name().firstName(), faker.name().lastName());
                 final Credentials credentials = new Credentials(faker.book().title().replaceAll(" ", "") + "@mail.ru",
-                        bCryptPasswordEncoder.encode(client.getFirstName() + " " + client.getLastName()),
-                        roleRepository.findRoleByName("ROLE_CLIENT").orElse(null));
+                        bCryptPasswordEncoder.encode(client.getFirstName() + " " + client.getLastName()));
+                credentials.setRoles(Set.of(Objects.requireNonNull(roleRepository.findRoleByName(ROLE_CLIENT).orElse(null))));
                 client.setCredentials(credentialsRepository.save(credentials));
                 clientRepository.save(client);
                 clientsCount++;
@@ -73,8 +78,8 @@ public class DataGenerator {
             try {
                 final Owner owner = new Owner(faker.name().firstName(), faker.name().lastName());
                 final Credentials credentials = new Credentials(faker.harryPotter().spell().replaceAll(" ", "") + "@mail.ru",
-                        bCryptPasswordEncoder.encode(owner.getFirstName() + " " + owner.getLastName()),
-                        roleRepository.findRoleByName("ROLE_OWNER").orElse(null));
+                        bCryptPasswordEncoder.encode(owner.getFirstName() + " " + owner.getLastName()));
+                credentials.setRoles(Set.of(Objects.requireNonNull(roleRepository.findRoleByName(ROLE_OWNER).orElse(null))));
                 owner.setCredentials(credentialsRepository.save(credentials));
                 ownerRepository.save(owner);
                 ownersCount++;
@@ -92,8 +97,8 @@ public class DataGenerator {
             try {
                 final Artist artist = new Artist(faker.name().firstName(), faker.name().lastName());
                 final Credentials credentials = new Credentials(faker.zelda().character().replaceAll(" ", "") + "@mail.ru",
-                        bCryptPasswordEncoder.encode(artist.getFirstName() + " " + artist.getLastName()),
-                        roleRepository.findRoleByName("ROLE_ARTIST").orElse(null));
+                        bCryptPasswordEncoder.encode(artist.getFirstName() + " " + artist.getLastName()));
+                credentials.setRoles(Set.of(Objects.requireNonNull(roleRepository.findRoleByName(ROLE_ARTIST).orElse(null))));
                 artist.setCredentials(credentialsRepository.save(credentials));
                 artistRepository.save(artist);
                 artistsCount++;

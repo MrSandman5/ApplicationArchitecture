@@ -12,6 +12,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -48,7 +49,7 @@ public class Expo extends AbstractEntity {
     private Constants.ExpoStatus status;
 
     @OneToMany(mappedBy = "expo", fetch = FetchType.LAZY, orphanRemoval = true)
-    private Set<Artwork> artworks;
+    private Set<Artwork> artworks = new HashSet<>();
 
     public Expo(@NotNull final String name,
                 @NotNull final String info,

@@ -27,17 +27,19 @@ public class ArtistService {
     private final ArtworkRepository artworkRepository;
     private final ExpoRepository expoRepository;
     private final OwnerArtistPaymentRepository ownerArtistPaymentRepository;
-    private final ModelMapper modelMapper = new ModelMapper();
+    private final ModelMapper modelMapper;
 
     @Autowired
     public ArtistService(@NotNull final ArtistRepository artistRepository,
                          @NotNull final ArtworkRepository artworkRepository,
                          @NotNull final ExpoRepository expoRepository,
-                         @NotNull final OwnerArtistPaymentRepository ownerArtistPaymentRepository) {
+                         @NotNull final OwnerArtistPaymentRepository ownerArtistPaymentRepository,
+                         @NotNull final ModelMapper modelMapper) {
         this.artistRepository = artistRepository;
         this.artworkRepository = artworkRepository;
         this.expoRepository = expoRepository;
         this.ownerArtistPaymentRepository = ownerArtistPaymentRepository;
+        this.modelMapper = modelMapper;
     }
 
     @Transactional
@@ -50,17 +52,13 @@ public class ArtistService {
         final Artwork artwork = artworkRepository.findArtworkByName(model.getName()).orElse(null);
         final Set<Artwork> artworks = artist.getArtworks();
         if (artwork == null) {
-            final Artwork newArtwork = new Artwork(model.getName(), model.getInfo(), artist, null);
-            artworks.add(artworkRepository.save(newArtwork));
-            artistRepository.save(artist);
+            artworkRepository.save(new Artwork(model.getName(), model.getInfo(), artist, null));
             return new ResponseEntity<>("New artwork from artist " + artist.getCredentials().getLogin() + "added for expo", HttpStatus.OK);
         } else if (artist.equals(artwork.getArtist())) {
             return new ResponseEntity<>("Artwork " + artwork.getName() + "belongs to another artist", HttpStatus.BAD_GATEWAY);
         } else if (artworks.contains(artwork)) {
             return new ResponseEntity<>("Artwork already existed for this artist", HttpStatus.ALREADY_REPORTED);
         } else {
-            artworks.add(artworkRepository.save(artwork));
-            artistRepository.save(artist);
             return new ResponseEntity<>("Existed artwork from artist " + artist.getCredentials().getLogin() + "added for expo", HttpStatus.OK);
         }
     }
@@ -81,8 +79,6 @@ public class ArtistService {
         if (payment == null){
             return new ResponseEntity<>("Payment for expo " + closedExpo.getName() + " doesnt exist", HttpStatus.NOT_FOUND);
         }
-        artist.getArtworks().clear();
-        artistRepository.save(artist);
         return new ResponseEntity<>("", HttpStatus.OK);
     }
 
@@ -92,21 +88,6 @@ public class ArtistService {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
         final List<Artwork> artworks = artworkRepository.findArtworksByArtist(artist);
-        if (artworks == null) {
-            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
-        } else {
-            return new ResponseEntity<>(artworks.stream()
-                    .map(artwork -> modelMapper.map(artwork, ArtworkModel.class))
-                    .collect(Collectors.toList()), HttpStatus.OK);
-        }
-    }
-
-    public ResponseEntity<Object> getExpoArtworks(@NotNull final Long artistId) {
-        final Artist artist = artistRepository.findById(artistId).orElse(null);
-        if (artist == null) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        }
-        final Set<Artwork> artworks = artist.getArtworks();
         if (artworks == null) {
             return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
         } else {

@@ -5,14 +5,15 @@ import com.safonov.galleryservice.ArtGalleryApplication.model.gallery.ExpoModel;
 import com.safonov.galleryservice.ArtGalleryApplication.service.actor.ArtistService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("/artist")
+@RequestMapping("/api/artist")
 public class ArtistController {
 
     private final ArtistService service;
@@ -22,29 +23,23 @@ public class ArtistController {
         this.service = service;
     }
 
-    @Secured("ROLE_ARTIST")
     @PostMapping("/{artistId}/add-artwork")
+    @PreAuthorize("hasRole('ARTIST')")
     public ResponseEntity<String> addArtwork(@PathVariable final Long artistId,
                                              @Valid @RequestBody final ArtworkModel model) {
         return service.addArtwork(artistId, model);
     }
 
-    @Secured("ROLE_ARTIST")
     @PostMapping("/{artistId}/accept-royalties")
+    @PreAuthorize("hasRole('ARTIST')")
     public ResponseEntity<String> acceptRoyalties(@PathVariable final Long artistId,
                                                   @Valid @RequestBody final ExpoModel model) {
         return service.acceptRoyalties(artistId, model);
     }
 
-    @Secured("ROLE_ARTIST")
     @GetMapping("/{artistId}/artworks")
+    @PreAuthorize("hasRole('ARTIST')")
     public ResponseEntity<Object> getAllArtworks(@PathVariable final Long artistId) {
         return service.getAllArtworks(artistId);
-    }
-
-    @Secured("ROLE_ARTIST")
-    @GetMapping("/{artistId}/expo-artworks")
-    public ResponseEntity<Object> getExpoArtworks(@PathVariable final Long artistId) {
-        return service.getExpoArtworks(artistId);
     }
 }

@@ -1,9 +1,6 @@
 buildscript {
     repositories {
         mavenCentral()
-        maven {
-            url = uri('https://plugins.gradle.org/m2/')
-        }
     }
 }
 
@@ -26,9 +23,8 @@ frontend {
     assembleScript.set('run build')
 }
 
-task jarFrontend(type: Zip) {
+task jarFrontend(type: Jar) {
     dependsOn('assembleFrontend')
-    extension('jar')
     from('$buildDir/dist')
     into('static')
 }
