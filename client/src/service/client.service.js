@@ -5,6 +5,10 @@ const API_URL = 'http://localhost:8080/api/client/';
 
 class ClientService {
 
+    getMe(clientId) {
+        return axios.get(API_URL + clientId, {headers: authHeader()});
+    }
+
     addTicket(clientId, expo) {
         return axios.post(API_URL + `${clientId}/add-ticket`, {expo}, { headers: authHeader() });
     }

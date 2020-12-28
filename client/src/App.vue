@@ -99,6 +99,7 @@ export default {
             name: 'Upcoming interviews',
             url: '/upcoming-interviews'
           }];*/
+          break
         case 'CLIENT':
           /*return [{
             name: 'Open positions',
@@ -110,6 +111,7 @@ export default {
             name: 'My interviews',
             url: '/my-interviews'
           }];*/
+          break
         case 'OWNER':
           /*return [{
             name: 'Positions',
@@ -121,6 +123,7 @@ export default {
             name: 'External applications',
             url: '/external-applications'
           }];*/
+          break
         default:
           return []
       }

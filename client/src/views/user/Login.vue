@@ -8,19 +8,19 @@
       />
       <form name="form" @submit.prevent="handleLogin">
         <div class="form-group">
-          <label for="username">Username</label>
+          <label for="login">Login</label>
           <input
-              v-model="user.username"
+              v-model="user.login"
               v-validate="'required'"
               type="text"
               class="form-control"
-              name="username"
+              name="login"
           />
           <div
-              v-if="errors.has('username')"
+              v-if="errors.has('login')"
               class="alert alert-danger"
               role="alert"
-          >Username is required!</div>
+          >Login is required!</div>
         </div>
         <div class="form-group">
           <label for="password">Password</label>
@@ -52,7 +52,7 @@
 </template>
 
 <script>
-import User from '../models/user';
+import User from '../../models/user';
 
 export default {
   name: 'Login',
@@ -68,11 +68,11 @@ export default {
       return this.$store.state.auth.status.loggedIn;
     }
   },
-  /*created() {
+  created() {
     if (this.loggedIn) {
       this.$router.push('/profile');
     }
-  },*/
+  },
   methods: {
     handleLogin() {
       this.loading = true;
@@ -82,7 +82,7 @@ export default {
           return;
         }
 
-        if (this.user.username && this.user.password) {
+        if (this.user.login && this.user.password) {
           this.$store.dispatch('auth/login', this.user).then(
               () => {
                 this.$router.push('/profile');

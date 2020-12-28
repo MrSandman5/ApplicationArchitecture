@@ -9,18 +9,18 @@
       <form name="form" @submit.prevent="handleRegister">
         <div v-if="!successful">
           <div class="form-group">
-            <label for="username">Username</label>
+            <label for="login">Login</label>
             <input
-                v-model="user.username"
+                v-model="user.login"
                 v-validate="'required|min:3|max:20'"
                 type="text"
                 class="form-control"
-                name="username"
+                name="login"
             />
             <div
-                v-if="submitted && errors.has('username')"
+                v-if="submitted && errors.has('login')"
                 class="alert-danger"
-            >{{errors.first('username')}}</div>
+            >{{errors.first('login')}}</div>
           </div>
           <div class="form-group">
             <label for="email">Email</label>
@@ -54,9 +54,9 @@
             <label for="role">Role</label>
             <select v-model="user.role">
               <option disabled value="">Please select one</option>
-              <option value="candidate">candidate</option>
-              <option value="hr">hr</option>
-              <option value="interviewer">interviewer</option>
+              <option value="client">client</option>
+              <option value="owner">owner</option>
+              <option value="artist">artist</option>
             </select>
           </div>
           <div class="form-group">
@@ -75,7 +75,7 @@
 </template>
 
 <script>
-import User from '../models/user';
+import User from '../../models/user';
 
 export default {
   name: 'Register',
@@ -92,11 +92,11 @@ export default {
       return this.$store.state.auth.status.loggedIn;
     }
   },
-  /*mounted() {
+  mounted() {
     if (this.loggedIn) {
       this.$router.push('/profile');
     }
-  },*/
+  },
   methods: {
     handleRegister() {
       this.message = '';

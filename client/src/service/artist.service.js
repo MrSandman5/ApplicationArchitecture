@@ -5,6 +5,10 @@ const API_URL = 'http://localhost:8080/api/artist/';
 
 class ArtistService {
 
+    getMe(artistId) {
+        return axios.get(API_URL + artistId, {headers: authHeader()});
+    }
+
     addArtwork(artistId, artwork) {
         return axios.post(API_URL + `${artistId}/add-artwork`, {artwork}, { headers: authHeader() });
     }

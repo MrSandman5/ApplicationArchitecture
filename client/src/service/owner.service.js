@@ -5,6 +5,10 @@ const API_URL = 'http://localhost:8080/api/owner/';
 
 class OwnerService {
 
+    getMe(ownerId) {
+        return axios.get(API_URL + ownerId, {headers: authHeader()});
+    }
+
     acceptPayment(ownerId, reservation) {
         return axios.post(API_URL + `${ownerId}/accept-payment`, {reservation}, { headers: authHeader() });
     }
