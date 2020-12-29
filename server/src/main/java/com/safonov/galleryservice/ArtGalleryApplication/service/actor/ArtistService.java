@@ -1,8 +1,10 @@
 package com.safonov.galleryservice.ArtGalleryApplication.service.actor;
 
 import com.safonov.galleryservice.ArtGalleryApplication.data.actor.ArtistRepository;
+import com.safonov.galleryservice.ArtGalleryApplication.data.actor.CredentialsRepository;
 import com.safonov.galleryservice.ArtGalleryApplication.data.gallery.*;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.actor.Artist;
+import com.safonov.galleryservice.ArtGalleryApplication.entity.actor.Credentials;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.gallery.Artwork;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.gallery.Expo;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.gallery.OwnerArtistPayment;
@@ -23,6 +25,7 @@ import java.util.stream.Collectors;
 @Service
 public class ArtistService {
 
+    private final CredentialsRepository credentialsRepository;
     private final ArtistRepository artistRepository;
     private final ArtworkRepository artworkRepository;
     private final ExpoRepository expoRepository;
@@ -30,11 +33,13 @@ public class ArtistService {
     private final ModelMapper modelMapper;
 
     @Autowired
-    public ArtistService(@NotNull final ArtistRepository artistRepository,
+    public ArtistService(@NotNull final CredentialsRepository credentialsRepository,
+                         @NotNull final ArtistRepository artistRepository,
                          @NotNull final ArtworkRepository artworkRepository,
                          @NotNull final ExpoRepository expoRepository,
                          @NotNull final OwnerArtistPaymentRepository ownerArtistPaymentRepository,
                          @NotNull final ModelMapper modelMapper) {
+        this.credentialsRepository = credentialsRepository;
         this.artistRepository = artistRepository;
         this.artworkRepository = artworkRepository;
         this.expoRepository = expoRepository;
@@ -95,5 +100,17 @@ public class ArtistService {
                     .map(artwork -> modelMapper.map(artwork, ArtworkModel.class))
                     .collect(Collectors.toList()), HttpStatus.OK);
         }
+    }
+
+    public ResponseEntity<Artist> getArtist(@NotNull final Long artistId) {
+        final Credentials credentials = credentialsRepository.findById(artistId).orElse(null);
+        if (credentials == null) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+        final Artist artist = artistRepository.findByCredentials(credentials).orElse(null);
+        if (artist == null) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+        return ResponseEntity.ok(artist);
     }
 }

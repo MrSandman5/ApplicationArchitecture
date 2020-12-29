@@ -1,5 +1,6 @@
 package com.safonov.galleryservice.ArtGalleryApplication.controller.actor;
 
+import com.safonov.galleryservice.ArtGalleryApplication.entity.actor.Artist;
 import com.safonov.galleryservice.ArtGalleryApplication.model.gallery.ArtworkModel;
 import com.safonov.galleryservice.ArtGalleryApplication.model.gallery.ExpoModel;
 import com.safonov.galleryservice.ArtGalleryApplication.service.actor.ArtistService;
@@ -39,5 +40,10 @@ public class ArtistController {
     @GetMapping("/{artistId}/artworks")
     public ResponseEntity<Object> getAllArtworks(@PathVariable final Long artistId) {
         return service.getAllArtworks(artistId);
+    }
+
+    @GetMapping("/{artistId}")
+    public ResponseEntity<Artist> getArtist(@PathVariable final Long artistId) {
+        return service.getArtist(artistId);
     }
 }

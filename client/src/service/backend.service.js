@@ -5,6 +5,10 @@ const API_URL = 'http://localhost:8080/api/';
 
 class BackendService {
 
+    getMe(userId) {
+        return axios.get(API_URL + userId, {headers: authHeader()});
+    }
+
     getRoles() {
         return axios.get(API_URL + `roles`, { headers: authHeader() });
     }

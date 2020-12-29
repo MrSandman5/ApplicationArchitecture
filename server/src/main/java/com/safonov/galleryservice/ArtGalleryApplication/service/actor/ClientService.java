@@ -2,12 +2,14 @@ package com.safonov.galleryservice.ArtGalleryApplication.service.actor;
 
 import com.safonov.galleryservice.ArtGalleryApplication.configuration.Constants;
 import com.safonov.galleryservice.ArtGalleryApplication.data.actor.ClientRepository;
+import com.safonov.galleryservice.ArtGalleryApplication.data.actor.CredentialsRepository;
 import com.safonov.galleryservice.ArtGalleryApplication.data.actor.OwnerRepository;
 import com.safonov.galleryservice.ArtGalleryApplication.data.gallery.ClientOwnerPaymentRepository;
 import com.safonov.galleryservice.ArtGalleryApplication.data.gallery.ExpoRepository;
 import com.safonov.galleryservice.ArtGalleryApplication.data.gallery.ReservationRepository;
 import com.safonov.galleryservice.ArtGalleryApplication.data.gallery.TicketRepository;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.actor.Client;
+import com.safonov.galleryservice.ArtGalleryApplication.entity.actor.Credentials;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.actor.Owner;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.gallery.ClientOwnerPayment;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.gallery.Expo;
@@ -27,12 +29,12 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 public class ClientService {
 
+    private final CredentialsRepository credentialsRepository;
     private final ClientRepository clientRepository;
     private final OwnerRepository ownerRepository;
     private final TicketRepository ticketRepository;
@@ -42,13 +44,15 @@ public class ClientService {
     private final ModelMapper modelMapper;
 
     @Autowired
-    public ClientService(@NotNull final ClientRepository clientRepository,
+    public ClientService(@NotNull final CredentialsRepository credentialsRepository,
+                         @NotNull final ClientRepository clientRepository,
                          @NotNull final OwnerRepository ownerRepository,
                          @NotNull final TicketRepository ticketRepository,
                          @NotNull final ReservationRepository reservationRepository,
                          @NotNull final ExpoRepository expoRepository,
                          @NotNull final ClientOwnerPaymentRepository clientOwnerPaymentRepository,
                          @NotNull final ModelMapper modelMapper) {
+        this.credentialsRepository = credentialsRepository;
         this.clientRepository = clientRepository;
         this.ownerRepository = ownerRepository;
         this.ticketRepository = ticketRepository;
@@ -200,6 +204,18 @@ public class ClientService {
                     .map(expo -> modelMapper.map(expo, ExpoModel.class))
                     .collect(Collectors.toList()), HttpStatus.OK);
         }
+    }
+
+    public ResponseEntity<Client> getClient(@NotNull final Long clientId) {
+        final Credentials credentials = credentialsRepository.findById(clientId).orElse(null);
+        if (credentials == null) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+        final Client client = clientRepository.findByCredentials(credentials).orElse(null);
+        if (client == null) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+        return ResponseEntity.ok(client);
     }
 
 }

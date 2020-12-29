@@ -29,7 +29,7 @@
         <li class="nav-item">
           <router-link to="/profile" class="nav-link">
             <font-awesome-icon icon="user"/>
-            {{ currentUser.username }}
+            {{ currentUser.login }}
           </router-link>
         </li>
         <li class="nav-item">
@@ -69,23 +69,8 @@ export default {
       if (roles.includes('ROLE_ARTIST')) {
         return 'ARTIST'
       }
-
       return 'CLIENT'
     },
-    showAdminBoard() {
-      if (this.currentUser && this.currentUser.roles) {
-        return this.currentUser.roles.includes('ROLE_ADMIN');
-      }
-
-      return false;
-    },
-    showOwnerBoard() {
-      if (this.currentUser && this.currentUser.roles) {
-        return this.currentUser.roles.includes('ROLE_OWNER');
-      }
-
-      return false;
-    }
   },
   methods: {
     logOut() {
@@ -95,23 +80,25 @@ export default {
     getLinks() {
       switch (this.getRole) {
         case 'ARTIST':
-          /*return [{
-            name: 'Upcoming interviews',
-            url: '/upcoming-interviews'
-          }];*/
+          return [{
+            name: 'Artworks',
+            url: '/artworks'
+          }];
           break
         case 'CLIENT':
-          /*return [{
-            name: 'Open positions',
-            url: '/open-positions'
-          }, {
-            name: 'My applications',
-            url: '/my-applications'
-          }, {
-            name: 'My interviews',
-            url: '/my-interviews'
-          }];*/
-          break
+          return [
+            {
+            name : 'Tickets',
+            url : '/tickets'
+            },
+            {
+              name : 'Reservations',
+              url : '/reservations'
+            },
+            {
+              name : 'Available Expos',
+              url : '/expos'
+            }]
         case 'OWNER':
           /*return [{
             name: 'Positions',

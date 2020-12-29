@@ -10,11 +10,11 @@ class ArtistService {
     }
 
     addArtwork(artistId, artwork) {
-        return axios.post(API_URL + `${artistId}/add-artwork`, {artwork}, { headers: authHeader() });
+        return axios.post(API_URL + `${artistId}/add-artwork`, artwork, { headers: authHeader() });
     }
 
     acceptRoyalties(artistId, expo) {
-        return axios.post(API_URL + `${artistId}/accept-royalties`, {expo}, { headers: authHeader() });
+        return axios.post(API_URL + `${artistId}/accept-royalties`, expo, { headers: authHeader() });
     }
 
     getAllArtworks(artistId) {

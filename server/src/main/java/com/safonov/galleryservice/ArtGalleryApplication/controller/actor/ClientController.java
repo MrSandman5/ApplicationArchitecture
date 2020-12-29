@@ -1,5 +1,6 @@
 package com.safonov.galleryservice.ArtGalleryApplication.controller.actor;
 
+import com.safonov.galleryservice.ArtGalleryApplication.entity.actor.Client;
 import com.safonov.galleryservice.ArtGalleryApplication.model.logic.PayForReservationModel;
 import com.safonov.galleryservice.ArtGalleryApplication.model.gallery.ExpoModel;
 import com.safonov.galleryservice.ArtGalleryApplication.service.actor.ClientService;
@@ -59,6 +60,11 @@ public class ClientController {
     @GetMapping("/{clientId}/expos")
     public ResponseEntity<Object> getExpos() {
         return service.getNewExpos();
+    }
+
+    @GetMapping("/{clientId}")
+    public ResponseEntity<Client> getClient(@PathVariable final Long clientId) {
+        return service.getClient(clientId);
     }
 
 }

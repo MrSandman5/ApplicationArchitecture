@@ -48,15 +48,15 @@ export default {
       const roles = this.currentUser.roles;
 
       if (roles.includes('ROLE_CLIENT')) {
-        ClientService.getMe(this.currentUser.username).then(({data}) => {
+        ClientService.getMe(this.currentUser.id).then(({data}) => {
           this.userData = data;
         })
       } else if (roles.includes('ROLE_OWNER')) {
-        OwnerService.getMe(this.currentUser.username).then(({data}) => {
+        OwnerService.getMe(this.currentUser.id).then(({data}) => {
           this.userData = data;
         })
       } else if (roles.includes('ROLE_ARTIST')) {
-        ArtistService.getMe(this.currentUser.username).then(({data}) => {
+        ArtistService.getMe(this.currentUser.id).then(({data}) => {
           this.userData = data;
         })
       }

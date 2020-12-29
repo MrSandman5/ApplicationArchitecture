@@ -10,27 +10,31 @@ class OwnerService {
     }
 
     acceptPayment(ownerId, reservation) {
-        return axios.post(API_URL + `${ownerId}/accept-payment`, {reservation}, { headers: authHeader() });
+        return axios.post(API_URL + `${ownerId}/accept-payment`, reservation, { headers: authHeader() });
     }
 
     createExpo(ownerId, expo) {
-        return axios.post(API_URL + `${ownerId}/create-expo`, {expo}, { headers: authHeader() });
+        return axios.post(API_URL + `${ownerId}/create-expo`, expo, { headers: authHeader() });
     }
 
     editExpo(ownerId, edit) {
-        return axios.post(API_URL + `${ownerId}/edit-expo`, {edit}, { headers: authHeader() });
+        return axios.post(API_URL + `${ownerId}/edit-expo`, edit, { headers: authHeader() });
     }
 
     startExpo(ownerId, expo) {
-        return axios.post(API_URL + `${ownerId}/start-expo`, {expo}, { headers: authHeader() });
+        return axios.post(API_URL + `${ownerId}/start-expo`, expo, { headers: authHeader() });
     }
 
     closeExpo(ownerId, expo) {
-        return axios.post(API_URL + `${ownerId}/close-expo`, {expo}, { headers: authHeader() });
+        return axios.post(API_URL + `${ownerId}/close-expo`, expo, { headers: authHeader() });
     }
 
     payForExpo(ownerId, expo) {
-        return axios.post(API_URL + `${ownerId}/pay-for-expo`, {expo}, { headers: authHeader() });
+        return axios.post(API_URL + `${ownerId}/pay-for-expo`, expo, { headers: authHeader() });
+    }
+
+    getAllExpos(ownerId) {
+        return axios.get(API_URL + `${ownerId}/all-expos`, { headers: authHeader() });
     }
 
     getNewExpos(ownerId) {

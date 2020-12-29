@@ -1,5 +1,6 @@
 package com.safonov.galleryservice.ArtGalleryApplication.controller.actor;
 
+import com.safonov.galleryservice.ArtGalleryApplication.entity.actor.Owner;
 import com.safonov.galleryservice.ArtGalleryApplication.model.logic.*;
 import com.safonov.galleryservice.ArtGalleryApplication.model.gallery.ExpoModel;
 import com.safonov.galleryservice.ArtGalleryApplication.model.gallery.ReservationModel;
@@ -61,6 +62,11 @@ public class OwnerController {
         return service.payForExpo(ownerId, model);
     }
 
+    @GetMapping("/{ownerId}/all-expos")
+    public ResponseEntity<Object> getAllExpos() {
+        return service.getAllExpos();
+    }
+
     @GetMapping("/{ownerId}/new-expos")
     public ResponseEntity<Object> getNewExpos() {
         return service.getNewExpos();
@@ -74,5 +80,10 @@ public class OwnerController {
     @GetMapping("/{ownerId}/closed-expos")
     public ResponseEntity<Object> getClosedExpos() {
         return service.getClosedExpos();
+    }
+
+    @GetMapping("/{ownerId}")
+    public ResponseEntity<Owner> getOwner(@PathVariable final Long ownerId) {
+        return service.getOwner(ownerId);
     }
 }

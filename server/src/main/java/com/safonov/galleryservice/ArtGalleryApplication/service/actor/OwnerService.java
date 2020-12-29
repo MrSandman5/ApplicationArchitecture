@@ -2,9 +2,11 @@ package com.safonov.galleryservice.ArtGalleryApplication.service.actor;
 
 import com.safonov.galleryservice.ArtGalleryApplication.configuration.Constants;
 import com.safonov.galleryservice.ArtGalleryApplication.data.actor.ArtistRepository;
+import com.safonov.galleryservice.ArtGalleryApplication.data.actor.CredentialsRepository;
 import com.safonov.galleryservice.ArtGalleryApplication.data.actor.OwnerRepository;
 import com.safonov.galleryservice.ArtGalleryApplication.data.gallery.*;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.actor.Artist;
+import com.safonov.galleryservice.ArtGalleryApplication.entity.actor.Credentials;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.actor.Owner;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.gallery.*;
 import com.safonov.galleryservice.ArtGalleryApplication.model.logic.*;
@@ -24,6 +26,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class OwnerService {
+
+    private final CredentialsRepository credentialsRepository;
     private final OwnerRepository ownerRepository;
     private final ArtistRepository artistRepository;
     private final ReservationRepository reservationRepository;
@@ -34,7 +38,8 @@ public class OwnerService {
     private final ModelMapper modelMapper;
 
     @Autowired
-    public OwnerService(@NotNull final OwnerRepository ownerRepository,
+    public OwnerService(@NotNull final CredentialsRepository credentialsRepository,
+                        @NotNull final OwnerRepository ownerRepository,
                         @NotNull final ArtistRepository artistRepository,
                         @NotNull final ReservationRepository reservationRepository,
                         @NotNull final ExpoRepository expoRepository,
@@ -42,6 +47,7 @@ public class OwnerService {
                         @NotNull final ClientOwnerPaymentRepository clientOwnerPaymentRepository,
                         @NotNull final OwnerArtistPaymentRepository ownerArtistPaymentRepository,
                         @NotNull final ModelMapper modelMapper) {
+        this.credentialsRepository = credentialsRepository;
         this.ownerRepository = ownerRepository;
         this.artistRepository = artistRepository;
         this.reservationRepository = reservationRepository;
@@ -158,8 +164,9 @@ public class OwnerService {
         final Expo expo = expoRepository.findExpoByName(model.getName()).orElse(null);
         if (expo == null) {
             return new ResponseEntity<>("Expo doesnt exist", HttpStatus.NOT_FOUND);
-        } else if ((LocalDateTime.now().isAfter(expo.getStartTime()))
+        } else if (LocalDateTime.now().isAfter(expo.getStartTime())
                 && LocalDateTime.now().isBefore(expo.getEndTime())) {
+            expo.setStartTime(LocalDateTime.now());
             expo.setStatus(Constants.ExpoStatus.Opened);
             expoRepository.save(expo);
             return new ResponseEntity<>("", HttpStatus.OK);
@@ -183,6 +190,7 @@ public class OwnerService {
         } else if (LocalDateTime.now().isAfter(openedExpo.getStartTime())
                 && LocalDateTime.now().isBefore(openedExpo.getEndTime())
                 || LocalDateTime.now().isAfter(openedExpo.getEndTime())) {
+            openedExpo.setEndTime(LocalDateTime.now());
             openedExpo.setStatus(Constants.ExpoStatus.Closed);
             expoRepository.save(openedExpo);
             return new ResponseEntity<>("", HttpStatus.OK);
@@ -220,6 +228,12 @@ public class OwnerService {
         return new ResponseEntity<>("", HttpStatus.CREATED);
     }
 
+    public ResponseEntity<Object> getAllExpos() {
+        return new ResponseEntity<>(expoRepository.findAll().stream()
+                    .map(expo -> modelMapper.map(expo, ExpoModel.class))
+                    .collect(Collectors.toList()), HttpStatus.OK);
+    }
+
     public ResponseEntity<Object> getNewExpos() {
         final List<Expo> expos = expoRepository.findExposByStatus(Constants.ExpoStatus.New);
         if (expos == null) {
@@ -251,6 +265,18 @@ public class OwnerService {
                     .map(expo -> modelMapper.map(expo, ExpoModel.class))
                     .collect(Collectors.toList()), HttpStatus.OK);
         }
+    }
+
+    public ResponseEntity<Owner> getOwner(@NotNull final Long ownerId) {
+        final Credentials credentials = credentialsRepository.findById(ownerId).orElse(null);
+        if (credentials == null) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+        final Owner owner = ownerRepository.findByCredentials(credentials).orElse(null);
+        if (owner == null) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+        return ResponseEntity.ok(owner);
     }
 
 }
