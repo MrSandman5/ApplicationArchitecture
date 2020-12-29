@@ -115,6 +115,7 @@ public class ClientService {
         return new ResponseEntity<>("", HttpStatus.CREATED);
     }
 
+    @Transactional
     public ResponseEntity<String> payForReservation(@NotNull final Long clientId,
                                                     @NotNull final PayForReservationModel model) {
         final Reservation clientReservation = reservationRepository.findById(model.getReservation().getReservationId()).orElse(null);
@@ -124,7 +125,6 @@ public class ClientService {
         if (clientReservation.isClosed()){
             return new ResponseEntity<>("Reservation is already closed", HttpStatus.BAD_REQUEST);
         }
-
         final Expo ticketExpo = expoRepository.findById(
                 ticketRepository.findTicketsByReservation(clientReservation)
                         .stream().findFirst().get().getExpo().getId()).orElse(null);
@@ -143,12 +143,12 @@ public class ClientService {
             return new ResponseEntity<>("Expo with name" + ticketExpo.getName() + " already started", HttpStatus.BAD_REQUEST);
         }
         clientReservation.setStatus(Constants.ReservationStatus.Payed);
-        reservationRepository.save(clientReservation);
+        final Reservation payedReservation = reservationRepository.save(clientReservation);
         final Owner owner = ownerRepository.findById(model.getOwnerId()).orElse(null);
         if (owner == null) {
             return new ResponseEntity<>("Owner doesnt exist", HttpStatus.NOT_FOUND);
         }
-        clientOwnerPaymentRepository.save(new ClientOwnerPayment(clientReservation, client, owner));
+        clientOwnerPaymentRepository.save(new ClientOwnerPayment(payedReservation, client, owner));
         return new ResponseEntity<>("", HttpStatus.CREATED);
     }
 

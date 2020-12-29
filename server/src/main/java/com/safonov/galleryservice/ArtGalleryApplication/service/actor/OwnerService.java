@@ -30,6 +30,7 @@ public class OwnerService {
     private final CredentialsRepository credentialsRepository;
     private final OwnerRepository ownerRepository;
     private final ArtistRepository artistRepository;
+    private final TicketRepository ticketRepository;
     private final ReservationRepository reservationRepository;
     private final ExpoRepository expoRepository;
     private final ArtworkRepository artworkRepository;
@@ -41,6 +42,7 @@ public class OwnerService {
     public OwnerService(@NotNull final CredentialsRepository credentialsRepository,
                         @NotNull final OwnerRepository ownerRepository,
                         @NotNull final ArtistRepository artistRepository,
+                        @NotNull final TicketRepository ticketRepository,
                         @NotNull final ReservationRepository reservationRepository,
                         @NotNull final ExpoRepository expoRepository,
                         @NotNull final ArtworkRepository artworkRepository,
@@ -50,6 +52,7 @@ public class OwnerService {
         this.credentialsRepository = credentialsRepository;
         this.ownerRepository = ownerRepository;
         this.artistRepository = artistRepository;
+        this.ticketRepository = ticketRepository;
         this.reservationRepository = reservationRepository;
         this.expoRepository = expoRepository;
         this.artworkRepository = artworkRepository;
@@ -209,7 +212,8 @@ public class OwnerService {
             return new ResponseEntity<>("Expo with name " + closedExpo.getName() + " hasn't closed!", HttpStatus.NOT_ACCEPTABLE);
         }
         final List<Reservation> expoReservations = reservationRepository.findReservationsByStatus(Constants.ReservationStatus.Closed)
-                .stream().filter(reservation -> reservation.getTickets().stream().findFirst().get().getExpo().equals(closedExpo))
+                .stream().filter(reservation -> ticketRepository.findTicketsByReservation(reservation)
+                        .stream().findFirst().get().getExpo().equals(closedExpo))
                 .collect(Collectors.toList());
         double payment = 0;
         for (final Reservation entry : expoReservations){
