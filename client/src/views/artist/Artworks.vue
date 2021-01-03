@@ -56,10 +56,10 @@ export default {
   },
   methods: {
     fetchArtworks() {
-      BackendService.getMe(this.currentUser.id).then(({data}) => {
-        console.error(data.id)
-        ArtistService.getAllArtworks(data.id).then(({result}) => {
-          this.tickets = result;
+      ArtistService.getMe(this.currentUser.id).then(({data}) => {
+        console.error(data.id);
+        ArtistService.getAllArtworks(data.id).then(({data}) => {
+          this.artworks = data;
         }).catch(() => {
           console.error('Error loading artworks')
         })
@@ -72,7 +72,7 @@ export default {
     },
     saveArtwork() {
       if (!this.currentArtwork.id) {
-        BackendService.getMe(this.currentUser.id).then(({data}) => {
+        ArtistService.getMe(this.currentUser.id).then(({data}) => {
           ArtistService.addArtwork(data.id,
               {
                 name: this.currentArtwork.name,

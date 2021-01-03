@@ -56,8 +56,8 @@ export default {
   methods: {
     fetchTickets() {
       ClientService.getMe(this.currentUser.id).then(({data}) => {
-        ClientService.getTickets(data.id).then(({result}) => {
-          this.tickets = result;
+        ClientService.getTickets(data.id).then(({data}) => {
+          this.tickets = data;
         }).catch(() => {
           console.error('Error loading tickets')
         })

@@ -3,7 +3,7 @@
     <br>
     <h1>Available expos</h1>
     <div v-if="!expos.length">
-      There are no open positions
+      There are no available expos
     </div>
     <div v-else class="expo" v-for="(item, index) in expos" :key="index">
       <b>{{item.name}}</b><br>

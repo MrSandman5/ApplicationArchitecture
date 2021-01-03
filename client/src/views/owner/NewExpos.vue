@@ -3,21 +3,16 @@
     <div v-if="modalIsOpen" class="overlay"></div>
     <br>
     <h1>
-      Positions
+      New Expositions
       <button @click="createExpo">Create new</button>
     </h1>
     <div v-if="!expos.length">
       There are no new expos yet. Create one?
     </div>
     <div v-else class="expo" v-for="(item, index) in expos" :key="index">
-      <span class="expo-start" @click="() => startExpo(item)">Start</span>
-      <span class="expo-edit" @click="() => editExpo(item)">Edit</span>
+      {{item.name}} <span class="expo-start badge badge-info" @click="() => startExpo(item)">Start</span>
+<!--       / <span class="expo-edit" @click="() => editExpo(item)">Edit</span>-->
       <b>{{item.title}}</b><br>
-      Team: {{getTeamTitle(item.teamId)}}<br>
-      Requirements: {{item.requirements}}
-<!--      <b>{{item.title}}</b><br>-->
-<!--      Team: {{getTeamTitle(item.teamId)}}<br>-->
-<!--      Requirements: {{item.requirements}}-->
     </div>
     <div class="modal-wrapper" v-if="modalIsOpen">
       <span class="close" @click="modalIsOpen = false">Close</span>
@@ -67,7 +62,7 @@ const EXPO_TEMPLATE = {
 };
 
 export default {
-  name: "Expos",
+  name: "NewExpos",
   data() {
     return {
       selected: '',
@@ -87,8 +82,8 @@ export default {
   methods: {
     fetchExpos() {
       OwnerService.getMe(this.currentUser.id).then(({data}) => {
-        OwnerService.getAllExpos(data.id).then(({result}) => {
-          this.positions = result;
+        OwnerService.getNewExpos(data.id).then(({data}) => {
+          this.expos = data;
         }).catch(() => {
           console.error('Error loading positions')
         })
@@ -99,26 +94,28 @@ export default {
       this.selected = '';
       Object.assign(this.currentExpo, EXPO_TEMPLATE);
     },
-    editExpo(expo) {
-      /*OwnerService.getMe(this.currentUser.id).then(({data}) => {
-        OwnerService.editExpo(data.id, {
-          expo : {name : expo.name},
-          settings : expo.settings,
-          data : expo.data
-        }).then((result) => {
-          console.log(result);
-        })
-      })*/
-
-      this.fetchExpos();
-    },
+    // Что здесь происходит?
+    // editExpo(expo) {
+    //   OwnerService.getMe(this.currentUser.id).then(({data}) => {
+    //     console.log(expo);
+    //     OwnerService.editExpo(data.id, {
+    //       expo : {name : expo.name},
+    //       settings : expo.settings,
+    //       data : expo.data
+    //     }).then((result) => {
+    //       console.log(result);
+    //     })
+    //   });
+    //
+    //   this.fetchExpos();
+    // },
     saveExpo() {
       if (!this.currentExpo.id) {
         OwnerService.getMe(this.currentUser.id).then(({data}) => {
           OwnerService.createExpo(data.id, {
             name: this.currentExpo.name,
             info: this.currentExpo.info,
-            artist: this.currentExpo.artist,
+            artist: Number(this.currentExpo.artist),
             startTime: this.currentExpo.startTime,
             endTime: this.currentExpo.endTime,
             ticketPrice: this.currentExpo.ticketPrice
@@ -136,11 +133,11 @@ export default {
     startExpo(expo) {
       OwnerService.getMe(this.currentUser.id).then(({data}) => {
         OwnerService.startExpo(data.id, {
-          expo : {name : expo.name}
+          ...expo
         }).then((result) => {
           console.log(result);
         })
-      })
+      });
 
       this.fetchExpos();
     },

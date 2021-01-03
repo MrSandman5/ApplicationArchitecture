@@ -84,7 +84,6 @@ export default {
             name: 'Artworks',
             url: '/artworks'
           }];
-          break
         case 'CLIENT':
           return [
             {
@@ -94,23 +93,18 @@ export default {
             {
               name : 'Reservations',
               url : '/reservations'
-            },
-            {
-              name : 'Available Expos',
-              url : '/expos'
-            }]
+            }];
         case 'OWNER':
-          /*return [{
-            name: 'Positions',
-            url: '/positions'
-          }, {
-            name: 'Rotation applications',
-            url: '/rotation-applications'
-          },  {
-            name: 'External applications',
-            url: '/external-applications'
-          }];*/
-          break
+          return [{
+            name: 'New Expos',
+            url: '/new-expos'
+          },{
+            name: 'Opened Expos',
+            url: '/opened-expos'
+          },{
+            name: 'Closed Expos',
+            url: '/closed-expos'
+          }];
         default:
           return []
       }
