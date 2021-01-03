@@ -1,5 +1,7 @@
 package com.safonov.galleryservice.ArtGalleryApplication.entity.gallery;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.safonov.galleryservice.ArtGalleryApplication.configuration.Constants;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.AbstractEntity;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.actor.Client;
@@ -22,6 +24,7 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 public class Reservation extends AbstractEntity {
 
+    @JsonManagedReference
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "client_id", nullable = false)
     private Client client;
@@ -38,6 +41,7 @@ public class Reservation extends AbstractEntity {
     @Column(name = "dateTime", nullable = false)
     private LocalDateTime dateTime;
 
+    @JsonBackReference
     @OneToMany(mappedBy = "reservation",fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<Ticket> tickets = new HashSet<>();
 

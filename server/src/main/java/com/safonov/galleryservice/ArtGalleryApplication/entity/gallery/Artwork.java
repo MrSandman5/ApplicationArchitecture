@@ -1,5 +1,6 @@
 package com.safonov.galleryservice.ArtGalleryApplication.entity.gallery;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.AbstractEntity;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.actor.Artist;
 import lombok.AllArgsConstructor;
@@ -23,10 +24,12 @@ public class Artwork extends AbstractEntity {
     @Column(name = "info")
     private String info;
 
+    @JsonManagedReference
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "artist_id", nullable = false)
     private Artist artist;
 
+    @JsonManagedReference
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "expo_id")
     private Expo expo;
