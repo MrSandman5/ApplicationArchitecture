@@ -1,5 +1,6 @@
 package com.safonov.galleryservice.ArtGalleryApplication.entity.gallery;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.actor.Client;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.actor.Owner;
 import lombok.Data;
@@ -20,10 +21,12 @@ public class ClientOwnerPayment extends Payment{
     @JoinColumn(name = "reservation_id", nullable = false)
     private Reservation reservation;
 
+    @JsonManagedReference
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "client_id", nullable = false)
     private Client client;
 
+    @JsonManagedReference
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "owner_id", nullable = false)
     private Owner owner;

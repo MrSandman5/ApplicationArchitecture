@@ -1,11 +1,13 @@
 package com.safonov.galleryservice.ArtGalleryApplication.entity.actor;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.AbstractEntity;
 import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -23,10 +25,11 @@ public final class Credentials extends AbstractEntity {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Email(message = "Invalid email! Please enter valid email")
     @Column(unique = true, name = "email", nullable = false)
+    @Pattern(regexp = "^([^ @])+@([^ \\.@]+\\.)+([^ \\.@])+$")
     private String email;
 
+    @JsonBackReference
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),

@@ -1,5 +1,7 @@
 package com.safonov.galleryservice.ArtGalleryApplication.entity.gallery;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.safonov.galleryservice.ArtGalleryApplication.configuration.Constants;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.AbstractEntity;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.actor.Artist;
@@ -28,6 +30,7 @@ public class Expo extends AbstractEntity {
     @Column(name = "info")
     private String info;
 
+    @JsonManagedReference
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "artist_id", nullable = false)
     private Artist artist;
@@ -48,6 +51,7 @@ public class Expo extends AbstractEntity {
     @Column(name = "status", nullable = false)
     private Constants.ExpoStatus status;
 
+    @JsonBackReference
     @OneToMany(mappedBy = "expo", fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<Artwork> artworks = new HashSet<>();
 
