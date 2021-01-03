@@ -93,6 +93,9 @@ export default {
             {
               name : 'Reservations',
               url : '/reservations'
+            }, {
+              name : 'Expos',
+              url : '/expos'
             }];
         case 'OWNER':
           return [{
