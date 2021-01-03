@@ -9,6 +9,10 @@
     <div v-if="!artworks.length">
       There are no artworks yet. Add one?
     </div>
+    <div v-else class="expo" v-for="(item, index) in artworks" :key="index">
+      <b>{{item.name}}</b><br>
+      {{item.info}}<br>
+    </div>
     <div class="modal-wrapper" v-if="modalIsOpen">
       <span class="close" @click="modalIsOpen = false">Close</span>
       <form>
@@ -57,7 +61,6 @@ export default {
   methods: {
     fetchArtworks() {
       ArtistService.getMe(this.currentUser.id).then(({data}) => {
-        console.error(data.id);
         ArtistService.getAllArtworks(data.id).then(({data}) => {
           this.artworks = data;
         }).catch(() => {
