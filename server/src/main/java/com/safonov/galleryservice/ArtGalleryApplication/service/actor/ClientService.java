@@ -148,7 +148,8 @@ public class ClientService {
         if (owner == null) {
             return new ResponseEntity<>("Owner doesnt exist", HttpStatus.NOT_FOUND);
         }
-        clientOwnerPaymentRepository.save(new ClientOwnerPayment(payedReservation, client, owner));
+        payedReservation.setStatus(Constants.ReservationStatus.Closed);
+        clientOwnerPaymentRepository.save(new ClientOwnerPayment(reservationRepository.save(payedReservation), client, owner));
         return new ResponseEntity<>("", HttpStatus.CREATED);
     }
 

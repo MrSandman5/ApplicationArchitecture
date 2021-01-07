@@ -78,8 +78,6 @@ public class OwnerService {
         if (payment == null){
             return new ResponseEntity<>("Payment for reservation doesnt exist", HttpStatus.NOT_FOUND);
         }
-        payedReservation.setStatus(Constants.ReservationStatus.Closed);
-        reservationRepository.save(payedReservation);
         return new ResponseEntity<>("", HttpStatus.OK);
     }
 
@@ -227,7 +225,7 @@ public class OwnerService {
         if (artist == null) {
             return new ResponseEntity<>("Artist doesnt exist", HttpStatus.NOT_FOUND);
         }
-        final OwnerArtistPayment expoPayment = new OwnerArtistPayment(closedExpo, owner, artist, payment * 0.5);
+        final OwnerArtistPayment expoPayment = new OwnerArtistPayment(closedExpo, owner, artist, payment * 0.25);
         ownerArtistPaymentRepository.save(expoPayment);
         return new ResponseEntity<>("", HttpStatus.CREATED);
     }

@@ -1,5 +1,6 @@
 package com.safonov.galleryservice.ArtGalleryApplication.service.actor;
 
+import com.safonov.galleryservice.ArtGalleryApplication.configuration.Constants;
 import com.safonov.galleryservice.ArtGalleryApplication.data.actor.ArtistRepository;
 import com.safonov.galleryservice.ArtGalleryApplication.data.actor.CredentialsRepository;
 import com.safonov.galleryservice.ArtGalleryApplication.data.gallery.*;
@@ -100,6 +101,18 @@ public class ArtistService {
                     .map(artwork -> modelMapper.map(artwork, ArtworkModel.class))
                     .collect(Collectors.toList()), HttpStatus.OK);
         }
+    }
+
+    public ResponseEntity<Expo> getCurrentExpo(@NotNull final Long artistId) {
+        final Artist artist = artistRepository.findById(artistId).orElse(null);
+        if (artist == null) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+        final Expo expo = expoRepository.findExpoByArtistAndStatus(artist, Constants.ExpoStatus.New).orElse(null);
+        if (expo == null) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+        return ResponseEntity.ok(expo);
     }
 
     public ResponseEntity<Artist> getArtist(@NotNull final Long artistId) {

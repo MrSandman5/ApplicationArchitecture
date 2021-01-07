@@ -18,4 +18,7 @@ public interface ExpoRepository extends BaseRepository<Expo> {
     List<Expo> findExposByArtist(@NotNull final Artist artist);
 
     List<Expo> findExposByStatus(@NotNull final Constants.ExpoStatus status);
+
+    Optional<Expo> findExpoByArtistAndStatus(@NotNull final Artist artist,
+                                             @NotNull final Constants.ExpoStatus status);
 }
