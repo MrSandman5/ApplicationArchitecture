@@ -1,5 +1,6 @@
 package com.safonov.galleryservice.ArtGalleryApplication.response;
 
+import com.safonov.galleryservice.ArtGalleryApplication.entity.actor.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
