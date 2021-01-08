@@ -1,5 +1,6 @@
 package com.safonov.galleryservice.ArtGalleryApplication.entity.actor;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.gallery.ClientOwnerPayment;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.gallery.OwnerArtistPayment;
 import lombok.AllArgsConstructor;
@@ -20,9 +21,11 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 public class Owner extends User {
 
+    @JsonBackReference
     @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<ClientOwnerPayment> clientOwnerPayments = new HashSet<>();
 
+    @JsonBackReference
     @OneToMany(mappedBy = "artist", fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<OwnerArtistPayment> ownerArtistPayments = new HashSet<>();
 

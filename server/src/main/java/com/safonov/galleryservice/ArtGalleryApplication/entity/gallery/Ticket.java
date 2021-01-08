@@ -1,5 +1,6 @@
 package com.safonov.galleryservice.ArtGalleryApplication.entity.gallery;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.AbstractEntity;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.actor.Client;
 import lombok.AllArgsConstructor;
@@ -18,14 +19,17 @@ import javax.validation.constraints.NotNull;
 @EqualsAndHashCode(callSuper = true)
 public class Ticket extends AbstractEntity {
 
+    @JsonManagedReference
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "reservation_id")
     private Reservation reservation;
 
+    @JsonManagedReference
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "client_id", nullable = false)
     private Client client;
 
+    @JsonManagedReference
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "expo_id", nullable = false)
     private Expo expo;

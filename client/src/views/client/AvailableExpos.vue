@@ -33,8 +33,8 @@ export default {
   methods: {
     fetchExpos() {
       ClientService.getMe(this.currentUser.id).then(({data}) => {
-        ClientService.getExpos(data.id).then(({result}) => {
-          this.expos = result;
+        ClientService.getExpos(data.id).then(({data}) => {
+          this.expos = data;
         }).catch(() => {
           console.error('Error loading expos')
         })

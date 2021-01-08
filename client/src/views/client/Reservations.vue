@@ -9,6 +9,12 @@
     <div v-if="!reservations.length">
       There are no reservations yet. Create one?
     </div>
+      <div v-else class="expo" v-for="(item, index) in reservations" :key="index">
+          artist: {{item.artist}}<br>
+          expo: {{item.expo}}<br>
+          reservation: {{item.reservation}}<br>
+          <br>
+      </div>
     <div class="modal-wrapper" v-if="modalIsOpen">
       <span class="close" @click="modalIsOpen = false">Close</span>
       <form>
@@ -26,7 +32,6 @@
           <input type="text" v-model="currentReservation.status" class="form-control" id="Status">
         </div>
         <button type="button" class="btn btn-primary" @click="saveReservation">Save</button>
-        <button type="button" class="btn btn-primary" @click="payForReservation">Pay</button>
       </form>
     </div>
   </div>
@@ -63,8 +68,8 @@ export default {
   methods: {
     fetchReservations() {
       ClientService.getMe(this.currentUser.id).then(({data}) => {
-        ClientService.getNewReservations(data.id).then(({result}) => {
-          this.reservations = result;
+        ClientService.getNewReservations(data.id).then(({data}) => {
+          this.reservations = data;
         }).catch(() => {
           console.error('Error loading tickets')
         })

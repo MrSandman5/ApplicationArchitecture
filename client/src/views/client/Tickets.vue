@@ -9,6 +9,12 @@
     <div v-if="!tickets.length">
       There are no tickets yet. Add one?
     </div>
+    <div v-else class="expo" v-for="(item, index) in tickets" :key="index">
+        artist: {{item.artist}}<br>
+        expo: {{item.expo}}<br>
+        reservation: {{item.reservation}}<br>
+        <br>
+    </div>
     <div class="modal-wrapper" v-if="modalIsOpen">
       <span class="close" @click="modalIsOpen = false">Close</span>
       <form>
