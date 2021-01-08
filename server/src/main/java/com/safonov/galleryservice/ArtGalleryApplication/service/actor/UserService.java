@@ -79,9 +79,21 @@ public class UserService {
         final List<String> roles = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
+        long id;
+        if ("ROLE_CLIENT".equals(roles.get(0))) {
+            id = clientRepository.findById(userDetails.getId()).orElse(null).getId();
+        } else if ("ROLE_OWNER".equals(roles.get(0))) {
+            id = clientRepository.findById(userDetails.getId()).orElse(null).getId();
+        } else if ("ROLE_ARTIST".equals(roles.get(0))) {
+            id = clientRepository.findById(userDetails.getId()).orElse(null).getId();
+        } else {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("Error: No such user!"));
+        }
 
         return ResponseEntity.ok(new JwtResponse(jwt,
-                userDetails.getId(),
+                id,
                 userDetails.getUsername(),
                 userDetails.getEmail(),
                 roles));
