@@ -12,7 +12,7 @@
     <div v-else class="expo" v-for="(item, index) in expos" :key="index">
       {{item.name}} <span class="expo-start badge badge-info" @click="() => startExpo(item)">Start</span>
 <!--       / <span class="expo-edit" @click="() => editExpo(item)">Edit</span>-->
-      <b>{{item.title}}</b><br>
+      <b>{{item.info}}</b><br>
     </div>
     <div class="modal-wrapper" v-if="modalIsOpen">
       <span class="close" @click="modalIsOpen = false">Close</span>

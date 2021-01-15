@@ -55,7 +55,7 @@ export default {
         })
       });
     },
-    createExpo() {
+    /*createExpo() {
       this.modalIsOpen = true;
       this.selected = '';
       Object.assign(this.currentExpo, EXPO_TEMPLATE);
@@ -80,7 +80,7 @@ export default {
       this.selected = '';
       this.modalIsOpen = false;
       this.fetchExpos();
-    },
+    },*/
     closeExpo(expo) {
       OwnerService.getMe(this.currentUser.id).then(({data}) => {
         OwnerService.closeExpo(data.id, {

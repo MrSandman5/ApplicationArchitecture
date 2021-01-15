@@ -23,5 +23,5 @@ public class ReservationModel {
     private String status;
 
     @JsonProperty("tickets")
-    private List<Ticket> tickets;
+    private List<TicketModel> tickets;
 }
