@@ -11,8 +11,7 @@
     </div>
     <div v-else class="expo" v-for="(item, index) in expos" :key="index">
       {{item.name}} <span class="expo-start badge badge-info" @click="() => startExpo(item)">Start</span>
-<!--       / <span class="expo-edit" @click="() => editExpo(item)">Edit</span>-->
-      <b>{{item.info}}</b><br>
+       / <span class="expo-edit badge badge-dark" @click="() => editExpo(item)">Edit</span>
     </div>
     <div class="modal-wrapper" v-if="modalIsOpen">
       <span class="close" @click="modalIsOpen = false">Close</span>
@@ -95,20 +94,20 @@ export default {
       Object.assign(this.currentExpo, EXPO_TEMPLATE);
     },
     // Что здесь происходит?
-    // editExpo(expo) {
-    //   OwnerService.getMe(this.currentUser.id).then(({data}) => {
-    //     console.log(expo);
-    //     OwnerService.editExpo(data.id, {
-    //       expo : {name : expo.name},
-    //       settings : expo.settings,
-    //       data : expo.data
-    //     }).then((result) => {
-    //       console.log(result);
-    //     })
-    //   });
-    //
-    //   this.fetchExpos();
-    // },
+    editExpo(expo) {
+      OwnerService.getMe(this.currentUser.id).then(({data}) => {
+        console.log(expo);
+        OwnerService.editExpo(data.id, {
+          expo : {name : expo.name},
+          settings : expo.settings,
+          data : expo.data
+        }).then((result) => {
+          console.log(result);
+        })
+      });
+
+      this.fetchExpos();
+    },
     saveExpo() {
       if (!this.currentExpo.id) {
         OwnerService.getMe(this.currentUser.id).then(({data}) => {

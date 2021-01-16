@@ -78,8 +78,10 @@ export default {
     },
     saveReservation() {
       if (!this.currentReservation.id) {
-        ClientService.createReservation(this.currentUser.id).then((data) => {
-          console.log(data);
+        ClientService.getMe(this.currentUser.id).then(({data}) => {
+          ClientService.createReservation(data.id).then((data) => {
+            console.log(data);
+          })
         })
       }
       Object.assign(this.currentReservation, RESERVATION_TEMPLATE);
