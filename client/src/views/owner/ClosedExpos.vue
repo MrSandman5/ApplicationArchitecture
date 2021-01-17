@@ -9,7 +9,8 @@
       There are no closed expos at the moment.
     </div>
     <div v-else class="expo" v-for="(item, index) in expos" :key="index">
-        {{item.name}} <span class="expo-start badge badge-warning" @click="() => payForExpo(item)">Pay for expo</span>
+        {{item.name}}
+        {{item.info}} <span class="expo-start badge badge-warning" @click="() => payForExpo(item)">Pay for expo</span>
     </div>
   </div>
 </template>

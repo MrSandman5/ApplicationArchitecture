@@ -10,7 +10,9 @@
       There are no new expos yet. Create one?
     </div>
     <div v-else class="expo" v-for="(item, index) in expos" :key="index">
-      {{item.name}} <span class="expo-start badge badge-info" @click="() => startExpo(item)">Start</span>
+      {{item.name}}
+      {{item.info}}
+      {{item.startTime}} <span class="expo-start badge badge-info" @click="() => startExpo(item)">Start</span>
        / <span class="expo-edit badge badge-dark" @click="() => editExpo(item)">Edit</span>
     </div>
     <div class="modal-wrapper" v-if="modalIsOpen">
