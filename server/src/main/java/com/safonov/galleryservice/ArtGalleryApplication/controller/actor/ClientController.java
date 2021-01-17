@@ -38,7 +38,7 @@ public class ClientController {
 
     @PostMapping("/{clientId}/pay")
     public ResponseEntity<String> payForReservation(@PathVariable final Long clientId,
-                                                    @Valid  @RequestBody final PayForReservationModel model) {
+                                                    @Valid @RequestBody final PayForReservationModel model) {
         return service.payForReservation(clientId, model);
     }
 

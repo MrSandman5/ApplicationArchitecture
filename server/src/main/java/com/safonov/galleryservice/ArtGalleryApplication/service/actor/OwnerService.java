@@ -204,8 +204,8 @@ public class OwnerService {
 
     @Transactional
     public ResponseEntity<String> payForExpo(@NotNull final Long ownerId,
-                                             @NotNull final ExpoModel model){
-        final Expo closedExpo = expoRepository.findExpoByName(model.getName()).orElse(null);
+                                             @NotNull final PayForExpoModel model){
+        final Expo closedExpo = expoRepository.findExpoByName(model.getExpo()).orElse(null);
         if (closedExpo == null) {
             return new ResponseEntity<>("Expo doesnt exist", HttpStatus.NOT_FOUND);
         } else if (!closedExpo.isClosed()) {

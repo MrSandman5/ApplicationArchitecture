@@ -58,7 +58,7 @@ public class OwnerController {
 
     @PostMapping("/{ownerId}/pay-for-expo")
     public ResponseEntity<String> payForExpo(@PathVariable final Long ownerId,
-                                             @Valid @RequestBody final ExpoModel model) {
+                                             @Valid @RequestBody final PayForExpoModel model) {
         return service.payForExpo(ownerId, model);
     }
 
