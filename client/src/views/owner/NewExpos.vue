@@ -12,10 +12,12 @@
     <div v-else class="expo" v-for="(item, index) in expos" :key="index">
       {{item.name}}
       {{item.info}}
-      {{item.startTime}} <span class="expo-start badge badge-info" @click="() => startExpo(item)">Start</span>
-       / <span class="expo-edit badge badge-dark" @click="() => editExpo(item)">Edit</span>
+      {{item.startTime}}
+      {{item.endTime}}
+      {{item.ticketPrice}} <span class="expo-start badge badge-info" @click="() => startExpo(item)">Start</span>
+       / <span class="expo-edit badge badge-dark" @click="() => edit">Edit</span>
     </div>
-    <div class="modal-wrapper" v-if="modalIsOpen">
+    <div class="modal-wrapper-1" v-if="modalIsOpen">
       <span class="close" @click="modalIsOpen = false">Close</span>
       <form>
         <input type="hidden" :value="currentExpo.id">
@@ -46,6 +48,21 @@
         <button type="button" class="btn btn-primary" @click="saveExpo">Save</button>
       </form>
     </div>
+    <div class="modal-wrapper-2" v-if="modalIsOpen">
+      <span class="position-edit" @click="modalIsOpen = false">Close</span>
+      <form>
+        <input type="hidden" :value="currentExpo.id">
+        <div class="form-group">
+          <label for="settings" class="col-form-label">Settings</label>
+          <input type="text" v-model="currentEdit.settings" class="form-control" id="settings">
+        </div>
+        <div class="form-group">
+          <label for="data" class="col-form-label">Data</label>
+          <input type="text" v-model="currentEdit.data" class="form-control" id="data">
+        </div>
+        <button type="button" class="btn btn-primary" @click="editExpo">Save</button>
+      </form>
+    </div>
   </div>
 </template>
 
@@ -62,6 +79,11 @@ const EXPO_TEMPLATE = {
   id: '',
 };
 
+const EDIT_TEMPLATE = {
+  settings: '',
+  data: ''
+}
+
 export default {
   name: "NewExpos",
   data() {
@@ -69,7 +91,8 @@ export default {
       selected: '',
       expos: [],
       modalIsOpen: false,
-      currentExpo: EXPO_TEMPLATE
+      currentExpo: EXPO_TEMPLATE,
+      currentEdit : EDIT_TEMPLATE
     };
   },
   computed: {
@@ -95,7 +118,11 @@ export default {
       this.selected = '';
       Object.assign(this.currentExpo, EXPO_TEMPLATE);
     },
-    // Что здесь происходит?
+    edit() {
+      this.modalIsOpen = true;
+      this.selected = '';
+      Object.assign(this.currentEdit, EDIT_TEMPLATE);
+    },
     editExpo(expo) {
       OwnerService.getMe(this.currentUser.id).then(({data}) => {
         console.log(expo);
@@ -108,6 +135,10 @@ export default {
         })
       });
 
+      Object.assign(this.currentExpo, EXPO_TEMPLATE);
+      Object.assign(this.currentEdit, EDIT_TEMPLATE);
+      this.selected = '';
+      this.modalIsOpen = false;
       this.fetchExpos();
     },
     saveExpo() {
@@ -147,13 +178,13 @@ export default {
 </script>
 
 <style>
-.position {
-  border: 1px solid;
-  padding: 20px;
-  border-radius: 4px;
-  margin: 20px 0;
-  position: relative;
-}
+/*.position {*/
+/*  border: 1px solid;*/
+/*  padding: 20px;*/
+/*  border-radius: 4px;*/
+/*  margin: 20px 0;*/
+/*  position: relative;*/
+/*}*/
 
 .position-edit {
   position: absolute;
@@ -173,7 +204,19 @@ export default {
   overflow: hidden;
 }
 
-.modal-wrapper {
+.modal-wrapper-1 {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 1px solid beige;
+  border-radius: 3px;
+  background: white;
+  padding: 20px;
+  min-width: 600px;
+}
+
+.modal-wrapper-2 {
   position: fixed;
   top: 50%;
   left: 50%;

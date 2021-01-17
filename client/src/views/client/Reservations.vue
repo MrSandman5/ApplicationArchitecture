@@ -12,28 +12,19 @@
       <div v-else class="reservation" v-for="(item, index) in reservations" :key="index">
           id: {{item.id}}<br>
           status: {{item.status}}<br>
-          cost: {{item.cost}}<br>
-        <span class="expo-start badge badge-danger" @click="() => payForReservation(item)">Close</span><br>
+          cost: {{item.cost}} <span class="expo-start badge badge-danger" @click="() => pay">Pay</span><br>
       </div>
-<!--    <div class="modal-wrapper" v-if="modalIsOpen">-->
-<!--      <span class="close" @click="modalIsOpen = false">Close</span>-->
-<!--      <form>-->
-<!--        <input type="hidden" :value="currentReservation.id">-->
-<!--        <div class="form-group">-->
-<!--          <label for="cost" class="col-form-label">Cost</label>-->
-<!--          <input type="number" step="0.1" v-model="currentReservation.cost" class="form-control" id="cost">-->
-<!--        </div>-->
-<!--        <div class="form-group">-->
-<!--          <label for="Time" class="col-form-label">Time</label>-->
-<!--          <input type="datetime-local" v-model="currentReservation.time" class="form-control" id="Time">-->
-<!--        </div>-->
-<!--        <div class="form-group">-->
-<!--          <label for="Status" class="col-form-label">Status</label>-->
-<!--          <input type="text" v-model="currentReservation.status" class="form-control" id="Status">-->
-<!--        </div>-->
-<!--        <button type="button" class="btn btn-primary" @click="saveReservation">Save</button>-->
-<!--      </form>-->
-<!--    </div>-->
+    <div class="modal-wrapper" v-if="modalIsOpen">-->
+      <span class="pay" @click="modalIsOpen = false">Close</span>
+      <form>
+        <input type="hidden" :value="currentReservation.id">
+        <div class="form-group">
+          <label for="owner" class="col-form-label">Owner</label>
+          <input type="number" step="0.1" v-model="currentPayment.owner" class="form-control" id="owner">
+        </div>
+        <button type="button" class="btn btn-primary" @click="payForReservation">Pay</button>
+      </form>
+    </div>
   </div>
 </template>
 
@@ -46,6 +37,10 @@ const RESERVATION_TEMPLATE = {
   id: ''
 };
 
+const PAYMENT_TEMPLATE = {
+  owner: ''
+}
+
 export default {
   name: "Reservations",
   data() {
@@ -53,7 +48,8 @@ export default {
       selected: '',
       reservations: [],
       modalIsOpen: false,
-      currentReservation: RESERVATION_TEMPLATE
+      currentReservation: RESERVATION_TEMPLATE,
+      currentPayment : PAYMENT_TEMPLATE
     };
   },
   computed: {
@@ -87,19 +83,22 @@ export default {
       this.modalIsOpen = false;
       this.fetchReservations();
     },
+    pay() {
+      this.modalIsOpen = true;
+      this.selected = '';
+      Object.assign(this.currentPayment, PAYMENT_TEMPLATE);
+    },
     payForReservation() {
       if (!this.currentReservation.id) {
         ClientService.getMe(this.currentUser.id).then(({data}) => {
           ClientService.payForReservation(data.id,
-              {
-                owner: 1,
-                reservation: {reservationId: this.currentReservation.id}
-              }).then((result) => {
+              {owner: this.currentPayment.owner}).then((result) => {
             console.log(result);
           })
         })
       }
       Object.assign(this.currentReservation, RESERVATION_TEMPLATE);
+      Object.assign(this.currentPayment, PAYMENT_TEMPLATE);
       this.selected = '';
       this.modalIsOpen = false;
       this.fetchReservations();
@@ -119,23 +118,23 @@ export default {
   overflow: hidden;
 }
 
-/*.modal-wrapper {*/
-/*  position: fixed;*/
-/*  top: 50%;*/
-/*  left: 50%;*/
-/*  transform: translate(-50%, -50%);*/
-/*  border: 1px solid beige;*/
-/*  border-radius: 3px;*/
-/*  background: white;*/
-/*  padding: 20px;*/
-/*  min-width: 600px;*/
-/*}*/
+.modal-wrapper {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 1px solid beige;
+  border-radius: 3px;
+  background: white;
+  padding: 20px;
+  min-width: 600px;
+}
 
-/*.close {*/
-/*  position: absolute;*/
-/*  top: 20px;*/
-/*  right: 20px;*/
-/*  font-size: 20px;*/
-/*  cursor: pointer;*/
-/*}*/
+.pay {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 20px;
+  cursor: pointer;
+}
 </style>
