@@ -83,19 +83,21 @@ export default {
       this.modalIsOpen = false;
       this.fetchReservations();
     },
-    pay() {
+    pay(item) {
       console.log("PAY")
       this.modalIsOpen = true;
       this.selected = '';
-      Object.assign(this.currentReservation, RESERVATION_TEMPLATE);
+      Object.assign(this.currentReservation, item);
       Object.assign(this.currentPayment, PAYMENT_TEMPLATE);
     },
     payForReservation() {
       console.log("PAYFORRESERVATION")
-      if (!this.currentReservation.id) {
+      if (!isNaN(this.currentReservation.id)) {
         ClientService.getMe(this.currentUser.id).then(({data}) => {
-          ClientService.payForReservation(data.id,
-              {owner: this.currentPayment.owner}).then((result) => {
+          ClientService.payForReservation(data.id, {
+            owner: this.currentPayment.owner,
+            reservation: this.currentReservation.id
+          }).then((result) => {
             console.log(result);
           })
         })
