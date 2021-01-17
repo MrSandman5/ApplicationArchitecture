@@ -10,12 +10,12 @@
       There are no new expos yet. Create one?
     </div>
     <div v-else class="expo" v-for="(item, index) in expos" :key="index">
-      {{item.name}}
-      {{item.info}}
-      {{item.startTime}}
-      {{item.endTime}}
-      {{item.ticketPrice}} <span class="expo-start badge badge-info" @click="() => startExpo(item)">Start</span>
-       / <span class="expo-edit badge badge-dark" @click="() => edit">Edit</span>
+      name: {{item.name}}<br>
+      info: {{item.info}}<br>
+      startTime: {{item.startTime}}<br>
+      endTime: {{item.endTime}}<br>
+      ticketPrice: {{item.ticketPrice}} <button type="button" class="btn btn-primary" @click="() => startExpo(item)">Start</button>
+      / <button type="button" class="btn btn-primary" @click="() => edit">Edit</button>
     </div>
     <div class="modal-wrapper-1" v-if="modalIsOpen">
       <span class="close" @click="modalIsOpen = false">Close</span>
@@ -48,8 +48,8 @@
         <button type="button" class="btn btn-primary" @click="saveExpo">Save</button>
       </form>
     </div>
-    <div class="modal-wrapper-2" v-if="modalIsOpen">
-      <span class="position-edit" @click="modalIsOpen = false">Close</span>
+    <div class="modal-wrapper-2" v-if="modalIsEdit">
+      <span class="position-edit" @click="modalIsEdit = false">Close</span>
       <form>
         <input type="hidden" :value="currentExpo.id">
         <div class="form-group">
@@ -91,6 +91,7 @@ export default {
       selected: '',
       expos: [],
       modalIsOpen: false,
+      modalIsEdit: false,
       currentExpo: EXPO_TEMPLATE,
       currentEdit : EDIT_TEMPLATE
     };
@@ -119,17 +120,18 @@ export default {
       Object.assign(this.currentExpo, EXPO_TEMPLATE);
     },
     edit() {
-      this.modalIsOpen = true;
+      console.log("EDIT")
+      this.modalIsEdit = true;
       this.selected = '';
       Object.assign(this.currentEdit, EDIT_TEMPLATE);
     },
-    editExpo(expo) {
+    editExpo() {
+      console.log("EDITEXPO")
       OwnerService.getMe(this.currentUser.id).then(({data}) => {
-        console.log(expo);
         OwnerService.editExpo(data.id, {
-          expo : {name : expo.name},
-          settings : expo.settings,
-          data : expo.data
+          expo : this.currentExpo.id,
+          settings : this.currentEdit.settings,
+          data : this.currentEdit.data
         }).then((result) => {
           console.log(result);
         })
@@ -138,7 +140,7 @@ export default {
       Object.assign(this.currentExpo, EXPO_TEMPLATE);
       Object.assign(this.currentEdit, EDIT_TEMPLATE);
       this.selected = '';
-      this.modalIsOpen = false;
+      this.modalIsEdit = false;
       this.fetchExpos();
     },
     saveExpo() {

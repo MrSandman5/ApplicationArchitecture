@@ -13,7 +13,7 @@
       {{item.info}}
       {{item.startTime}}
       {{item.endTime}}
-      {{item.ticketPrice}} <span class="expo-start badge badge-warning" @click="() => payForExpo(item)">Pay for expo</span>
+      {{item.ticketPrice}} <button type="button" class="btn btn-primary" @click="() => payForExpo(item)">Pay for expo</button>
     </div>
   </div>
 </template>

@@ -12,7 +12,7 @@
       <div v-else class="reservation" v-for="(item, index) in reservations" :key="index">
           id: {{item.id}}<br>
           status: {{item.status}}<br>
-          cost: {{item.cost}} <span class="expo-start badge badge-danger" @click="() => pay">Pay</span><br>
+        cost: {{item.cost}} <button type="button" class="btn btn-primary" @click="() => pay">Pay</button><br>
       </div>
     <div class="modal-wrapper" v-if="modalIsOpen">-->
       <span class="pay" @click="modalIsOpen = false">Close</span>
@@ -84,11 +84,13 @@ export default {
       this.fetchReservations();
     },
     pay() {
+      console.log("PAY")
       this.modalIsOpen = true;
       this.selected = '';
       Object.assign(this.currentPayment, PAYMENT_TEMPLATE);
     },
     payForReservation() {
+      console.log("PAYFORRESERVATION")
       if (!this.currentReservation.id) {
         ClientService.getMe(this.currentUser.id).then(({data}) => {
           ClientService.payForReservation(data.id,
