@@ -12,9 +12,9 @@
       <div v-else class="reservation" v-for="(item, index) in reservations" :key="index">
           id: {{item.id}}<br>
           status: {{item.status}}<br>
-        cost: {{item.cost}} <button type="button" class="btn btn-primary" @click="() => pay">Pay</button><br>
+        cost: {{item.cost}} <button type="button" class="btn btn-primary" @click="() => pay(item)">Pay</button><br>
       </div>
-    <div class="modal-wrapper" v-if="modalIsOpen">-->
+    <div class="modal-wrapper" v-if="modalIsOpen">
       <span class="pay" @click="modalIsOpen = false">Close</span>
       <form>
         <input type="hidden" :value="currentReservation.id">

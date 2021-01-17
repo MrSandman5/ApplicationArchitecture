@@ -15,7 +15,7 @@
       startTime: {{item.startTime}}<br>
       endTime: {{item.endTime}}<br>
       ticketPrice: {{item.ticketPrice}} <button type="button" class="btn btn-primary" @click="() => startExpo(item)">Start</button>
-      / <button type="button" class="btn btn-primary" @click="() => edit">Edit</button>
+      / <button type="button" class="btn btn-primary" @click="() => edit(item)">Edit</button>
     </div>
     <div class="modal-wrapper-1" v-if="modalIsOpen">
       <span class="close" @click="modalIsOpen = false">Close</span>
@@ -120,13 +120,11 @@ export default {
       Object.assign(this.currentExpo, EXPO_TEMPLATE);
     },
     edit() {
-      console.log("EDIT")
       this.modalIsEdit = true;
       this.selected = '';
       Object.assign(this.currentEdit, EDIT_TEMPLATE);
     },
     editExpo() {
-      console.log("EDITEXPO")
       OwnerService.getMe(this.currentUser.id).then(({data}) => {
         OwnerService.editExpo(data.id, {
           expo : this.currentExpo.id,
