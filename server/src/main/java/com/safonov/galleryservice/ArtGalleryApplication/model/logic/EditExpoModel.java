@@ -5,13 +5,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 @Data
 @NoArgsConstructor
 public class EditExpoModel {
 
-    @NotNull
     @JsonProperty("expo")
     private Long expo;
 

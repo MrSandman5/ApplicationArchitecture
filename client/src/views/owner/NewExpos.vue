@@ -48,7 +48,7 @@
         <button type="button" class="btn btn-primary" @click="saveExpo">Save</button>
       </form>
     </div>
-    <div class="modal-wrapper-2" v-if="modalIsEdit">
+    <div class="modal-wrapper-2" v-if="modalIsEdit && modalIsOpen">
       <span class="position-edit" @click="modalIsEdit = false">Close</span>
       <form>
         <input type="hidden" :value="currentExpo.id">
@@ -119,28 +119,6 @@ export default {
       this.selected = '';
       Object.assign(this.currentExpo, EXPO_TEMPLATE);
     },
-    edit() {
-      this.modalIsEdit = true;
-      this.selected = '';
-      Object.assign(this.currentEdit, EDIT_TEMPLATE);
-    },
-    editExpo() {
-      OwnerService.getMe(this.currentUser.id).then(({data}) => {
-        OwnerService.editExpo(data.id, {
-          expo : this.currentExpo.id,
-          settings : this.currentEdit.settings,
-          data : this.currentEdit.data
-        }).then((result) => {
-          console.log(result);
-        })
-      });
-
-      Object.assign(this.currentExpo, EXPO_TEMPLATE);
-      Object.assign(this.currentEdit, EDIT_TEMPLATE);
-      this.selected = '';
-      this.modalIsEdit = false;
-      this.fetchExpos();
-    },
     saveExpo() {
       if (!this.currentExpo.id) {
         OwnerService.getMe(this.currentUser.id).then(({data}) => {
@@ -159,6 +137,31 @@ export default {
 
       Object.assign(this.currentExpo, EXPO_TEMPLATE);
       this.selected = '';
+      this.modalIsOpen = false;
+      this.fetchExpos();
+    },
+    edit() {
+      this.modalIsOpen = true;
+      this.modalIsEdit = true;
+      this.selected = '';
+      Object.assign(this.currentEdit, EDIT_TEMPLATE);
+      Object.assign(this.currentExpo, EXPO_TEMPLATE);
+    },
+    editExpo() {
+      OwnerService.getMe(this.currentUser.id).then(({data}) => {
+        OwnerService.editExpo(data.id, {
+          expo : this.currentExpo.id,
+          settings : this.currentEdit.settings,
+          data : this.currentEdit.data
+        }).then((result) => {
+          console.log(result);
+        })
+      });
+
+      Object.assign(this.currentExpo, EXPO_TEMPLATE);
+      Object.assign(this.currentEdit, EDIT_TEMPLATE);
+      this.selected = '';
+      this.modalIsEdit = false;
       this.modalIsOpen = false;
       this.fetchExpos();
     },
