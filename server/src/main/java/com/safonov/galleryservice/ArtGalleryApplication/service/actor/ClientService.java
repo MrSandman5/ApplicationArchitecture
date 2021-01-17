@@ -118,7 +118,7 @@ public class ClientService {
     @Transactional
     public ResponseEntity<String> payForReservation(@NotNull final Long clientId,
                                                     @NotNull final PayForReservationModel model) {
-        final Reservation clientReservation = reservationRepository.findById(model.getReservation().getReservationId()).orElse(null);
+        final Reservation clientReservation = reservationRepository.findById(model.getReservation()).orElse(null);
         if (clientReservation == null){
             return new ResponseEntity<>("Reservation doesnt exist", HttpStatus.NOT_FOUND);
         }

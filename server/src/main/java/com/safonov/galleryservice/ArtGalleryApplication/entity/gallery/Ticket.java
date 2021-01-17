@@ -3,20 +3,17 @@ package com.safonov.galleryservice.ArtGalleryApplication.entity.gallery;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.AbstractEntity;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.actor.Client;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
-@Data
 @Entity
+@Getter
+@Setter
 @NoArgsConstructor
 @Table(name = "ticket")
-@EqualsAndHashCode(callSuper = true)
 public class Ticket extends AbstractEntity {
 
     @JsonManagedReference

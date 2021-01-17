@@ -4,20 +4,18 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.gallery.ClientOwnerPayment;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.gallery.Reservation;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.gallery.Ticket;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 
-@Data
 @Entity
+@Getter
+@Setter
 @NoArgsConstructor
 @Table(name = "client")
-@EqualsAndHashCode(callSuper = true)
 public class Client extends User{
 
     @JsonBackReference

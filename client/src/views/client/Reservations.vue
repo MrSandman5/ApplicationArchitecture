@@ -13,7 +13,6 @@
           id: {{item.id}}<br>
           status: {{item.status}}<br>
           cost: {{item.cost}}<br>
-          tickets: {{item.tickets}}<br>
         <span class="expo-start badge badge-danger" @click="() => payForReservation(item)">Close</span><br>
       </div>
 <!--    <div class="modal-wrapper" v-if="modalIsOpen">-->
@@ -44,7 +43,6 @@ import ClientService from '../../service/client.service';
 const RESERVATION_TEMPLATE = {
   status: '',
   cost: '',
-  tickets: '',
   id: ''
 };
 

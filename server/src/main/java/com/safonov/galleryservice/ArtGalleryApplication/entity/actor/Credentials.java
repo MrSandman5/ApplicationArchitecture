@@ -1,11 +1,9 @@
 package com.safonov.galleryservice.ArtGalleryApplication.entity.actor;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.AbstractEntity;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.util.HashSet;
@@ -16,7 +14,6 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @Table(name = "credentials")
-@EqualsAndHashCode(callSuper = true)
 public final class Credentials extends AbstractEntity {
 
     @Column(unique = true, name = "login", nullable = false)

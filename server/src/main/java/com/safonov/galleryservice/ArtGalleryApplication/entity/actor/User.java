@@ -10,7 +10,6 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @MappedSuperclass
-@EqualsAndHashCode(callSuper = true)
 public abstract class User extends AbstractEntity {
 
     @Column(name = "first_name", nullable = false)

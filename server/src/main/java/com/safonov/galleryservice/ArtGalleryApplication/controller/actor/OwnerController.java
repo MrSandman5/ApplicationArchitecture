@@ -34,13 +34,13 @@ public class OwnerController {
 
     @PostMapping("/{ownerId}/create-expo")
     public ResponseEntity<String> createExpo(@PathVariable final Long ownerId,
-                                             @Valid @RequestBody final ExpoModel model) {
+                                             @Valid @RequestBody final AddExpoModel model) {
         return service.createExpo(ownerId, model);
     }
 
     @PostMapping("/{ownerId}/edit-expo")
     public ResponseEntity<String> editExpo(@PathVariable final Long ownerId,
-                                           @Valid @RequestBody EditExpoModel model) {
+                                           @Valid @RequestBody final EditExpoModel model) {
         return service.editExpo(ownerId, model);
     }
 
