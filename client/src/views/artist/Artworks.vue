@@ -12,6 +12,7 @@
     <div v-else class="expo" v-for="(item, index) in artworks" :key="index">
       <b>Name: </b>{{item.name}}<br>
       <b>Info: </b>{{item.info}}<br>
+      <br>
     </div>
     <div class="modal-wrapper" v-if="modalIsOpen">
       <span class="close" @click="modalIsOpen = false">Close</span>

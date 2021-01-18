@@ -14,6 +14,7 @@
       <b>StartTime: </b>{{item.startTime}}<br>
       <b>EndTime: </b>{{item.endTime}}<br>
       <b>TicketPrice: </b>{{item.ticketPrice}} <button type="button" class="btn btn-primary" @click="() => closeExpo(item)">Close</button>
+      <br>
     </div>
   </div>
 </template>

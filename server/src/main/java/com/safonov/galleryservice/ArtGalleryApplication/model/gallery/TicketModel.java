@@ -12,7 +12,7 @@ public class TicketModel {
     private Long reservation;
 
     @JsonProperty("expo")
-    private Long expo;
+    private String expo;
 
     @JsonProperty("artist")
     private Double cost;

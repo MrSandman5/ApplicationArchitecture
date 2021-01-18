@@ -10,6 +10,10 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 public class ExpoModel {
+
+    @JsonProperty("id")
+    private Long id;
+
     @JsonProperty("name")
     private String name;
 

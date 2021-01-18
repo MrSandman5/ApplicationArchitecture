@@ -8,6 +8,7 @@
     <div v-else class="expo" v-for="(item, index) in expos" :key="index">
       <b>Name: </b>{{item.name}}<br>
       <b>Info: </b>{{item.info}}<br>
+      <br>
     </div>
   </div>
 </template>

@@ -15,9 +15,10 @@
       <b>StartTime: </b>{{item.startTime}}<br>
       <b>EndTime: </b>{{item.endTime}}<br>
       <b>TicketPrice: </b>{{item.ticketPrice}} <button type="button" class="btn btn-primary" @click="() => startExpo(item)">Start</button>
-      / <button type="button" class="btn btn-primary" @click="() => edit()">Edit</button>
+      / <button type="button" class="btn btn-primary" @click="() => edit(item)">Edit</button>
+      <br>
     </div>
-    <div class="modal-wrapper-1" v-if="modalIsOpen && !modalIsOpen">
+    <div class="modal-wrapper-1" v-if="modalIsOpen && !modalIsEdit">
       <span class="close" @click="modalIsOpen = false">Close</span>
       <form>
         <input type="hidden" :value="currentExpo.id">
@@ -116,6 +117,7 @@ export default {
     },
     createExpo() {
       this.modalIsOpen = true;
+      this.modalIsEdit = false;
       this.selected = '';
       Object.assign(this.currentExpo, EXPO_TEMPLATE);
     },
@@ -138,17 +140,19 @@ export default {
       Object.assign(this.currentExpo, EXPO_TEMPLATE);
       this.selected = '';
       this.modalIsOpen = false;
+      this.modalIsEdit = false;
       this.fetchExpos();
     },
-    edit() {
+    edit(item) {
       this.modalIsOpen = true;
       this.modalIsEdit = true;
       this.selected = '';
+      Object.assign(this.currentExpo, item);
       Object.assign(this.currentEdit, EDIT_TEMPLATE);
-      Object.assign(this.currentExpo, EXPO_TEMPLATE);
     },
     editExpo() {
       OwnerService.getMe(this.currentUser.id).then(({data}) => {
+        console.log(this.currentExpo.id)
         OwnerService.editExpo(data.id, {
           expo : this.currentExpo.id,
           settings : this.currentEdit.settings,

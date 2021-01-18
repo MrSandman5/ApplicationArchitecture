@@ -13,6 +13,7 @@
         <b>Id: </b>>{{item.id}}<br>
         <b>Status: </b>{{item.status}}<br>
         <b>Cost: </b>{{item.cost}} <button type="button" class="btn btn-primary" @click="() => pay(item)">Pay</button><br>
+        <br>
       </div>
     <div class="modal-wrapper" v-if="modalIsOpen">
       <span class="pay" @click="modalIsOpen = false">Close</span>

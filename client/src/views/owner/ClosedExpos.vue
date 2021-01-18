@@ -14,6 +14,7 @@
       <b>StartTime: </b>{{item.startTime}}<br>
       <b>EndTime: </b>{{item.endTime}}<br>
       <b>TicketPrice: </b>{{item.ticketPrice}} <button type="button" class="btn btn-primary" @click="() => payForExpo(item)">Pay for expo</button>
+      <br>
     </div>
   </div>
 </template>
@@ -88,7 +89,7 @@ export default {
     payForExpo(expo) {
       OwnerService.getMe(this.currentUser.id).then(({data}) => {
         OwnerService.payForExpo(data.id, {
-          ...expo
+          expo : expo.name
         }).then((result) => {
           console.log(result);
         })
