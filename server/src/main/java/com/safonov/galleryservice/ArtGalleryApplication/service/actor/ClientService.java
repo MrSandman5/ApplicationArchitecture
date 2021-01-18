@@ -144,7 +144,7 @@ public class ClientService {
         }
         clientReservation.setStatus(Constants.ReservationStatus.Payed);
         final Reservation payedReservation = reservationRepository.save(clientReservation);
-        final Owner owner = ownerRepository.findById(model.getOwnerId()).orElse(null);
+        final Owner owner = ownerRepository.findById(model.getOwner()).orElse(null);
         if (owner == null) {
             return new ResponseEntity<>("Owner doesnt exist", HttpStatus.NOT_FOUND);
         }

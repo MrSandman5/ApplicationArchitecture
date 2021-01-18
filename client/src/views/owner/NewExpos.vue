@@ -10,14 +10,14 @@
       There are no new expos yet. Create one?
     </div>
     <div v-else class="expo" v-for="(item, index) in expos" :key="index">
-      name: {{item.name}}<br>
-      info: {{item.info}}<br>
-      startTime: {{item.startTime}}<br>
-      endTime: {{item.endTime}}<br>
-      ticketPrice: {{item.ticketPrice}} <button type="button" class="btn btn-primary" @click="() => startExpo(item)">Start</button>
-      / <button type="button" class="btn btn-primary" @click="() => edit(item)">Edit</button>
+      <b>Name: </b>{{item.name}}<br>
+      <b>Info: </b>{{item.info}}<br>
+      <b>StartTime: </b>{{item.startTime}}<br>
+      <b>EndTime: </b>{{item.endTime}}<br>
+      <b>TicketPrice: </b>{{item.ticketPrice}} <button type="button" class="btn btn-primary" @click="() => startExpo(item)">Start</button>
+      / <button type="button" class="btn btn-primary" @click="() => edit()">Edit</button>
     </div>
-    <div class="modal-wrapper-1" v-if="modalIsOpen">
+    <div class="modal-wrapper-1" v-if="modalIsOpen && !modalIsOpen">
       <span class="close" @click="modalIsOpen = false">Close</span>
       <form>
         <input type="hidden" :value="currentExpo.id">

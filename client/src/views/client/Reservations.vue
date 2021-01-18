@@ -10,9 +10,9 @@
       There are no reservations yet. Create one?
     </div>
       <div v-else class="reservation" v-for="(item, index) in reservations" :key="index">
-          id: {{item.id}}<br>
-          status: {{item.status}}<br>
-          cost: {{item.cost}} <button type="button" class="btn btn-primary" @click="() => pay(item)">Pay</button><br>
+        <b>Id: </b>>{{item.id}}<br>
+        <b>Status: </b>{{item.status}}<br>
+        <b>Cost: </b>{{item.cost}} <button type="button" class="btn btn-primary" @click="() => pay(item)">Pay</button><br>
       </div>
     <div class="modal-wrapper" v-if="modalIsOpen">
       <span class="pay" @click="modalIsOpen = false">Close</span>

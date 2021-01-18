@@ -64,7 +64,7 @@ public class OwnerService {
     @Transactional
     public ResponseEntity<String> acceptPayment(@NotNull final Long ownerId,
                                                 @NotNull final ReservationModel model){
-        final Reservation payedReservation = reservationRepository.findById(model.getReservationId()).orElse(null);
+        final Reservation payedReservation = reservationRepository.findById(model.getId()).orElse(null);
         if (payedReservation == null){
             return new ResponseEntity<>("Reservation doesnt exist", HttpStatus.NOT_FOUND);
         } else if (!payedReservation.isPayed()){

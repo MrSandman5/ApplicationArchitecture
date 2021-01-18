@@ -10,8 +10,8 @@
       There are no artworks yet. Add one?
     </div>
     <div v-else class="expo" v-for="(item, index) in artworks" :key="index">
-      <b>{{item.name}}</b><br>
-      {{item.info}}<br>
+      <b>Name: </b>{{item.name}}<br>
+      <b>Info: </b>{{item.info}}<br>
     </div>
     <div class="modal-wrapper" v-if="modalIsOpen">
       <span class="close" @click="modalIsOpen = false">Close</span>

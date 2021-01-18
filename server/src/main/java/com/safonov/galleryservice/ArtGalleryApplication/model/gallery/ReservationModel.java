@@ -1,7 +1,6 @@
 package com.safonov.galleryservice.ArtGalleryApplication.model.gallery;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.sun.istack.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,9 +8,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ReservationModel {
 
-    @NotNull
     @JsonProperty("id")
-    private Long reservationId;
+    private Long id;
 
     @JsonProperty("status")
     private String status;

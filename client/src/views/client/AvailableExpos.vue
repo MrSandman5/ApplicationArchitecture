@@ -6,8 +6,8 @@
       There are no available expos
     </div>
     <div v-else class="expo" v-for="(item, index) in expos" :key="index">
-      <b>{{item.name}}</b><br>
-      Info: {{item.info}}<br>
+      <b>Name: </b>{{item.name}}<br>
+      <b>Info: </b>{{item.info}}<br>
     </div>
   </div>
 </template>

@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 public class PayForReservationModel {
 
     @JsonProperty("owner")
-    private Long ownerId;
+    private Long owner;
 
     @JsonProperty("reservation")
     private Long reservation;

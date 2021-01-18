@@ -9,11 +9,11 @@
       There are no closed expos at the moment.
     </div>
     <div v-else class="expo" v-for="(item, index) in expos" :key="index">
-      {{item.name}}
-      {{item.info}}
-      {{item.startTime}}
-      {{item.endTime}}
-      {{item.ticketPrice}} <button type="button" class="btn btn-primary" @click="() => payForExpo(item)">Pay for expo</button>
+      <b>Name: </b>{{item.name}}<br>
+      <b>Info: </b>{{item.info}}<br>
+      <b>StartTime: </b>{{item.startTime}}<br>
+      <b>EndTime: </b>{{item.endTime}}<br>
+      <b>TicketPrice: </b>{{item.ticketPrice}} <button type="button" class="btn btn-primary" @click="() => payForExpo(item)">Pay for expo</button>
     </div>
   </div>
 </template>
