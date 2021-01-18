@@ -4,6 +4,7 @@ import com.safonov.galleryservice.ArtGalleryApplication.entity.AbstractEntity;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.util.HashSet;
@@ -23,7 +24,8 @@ public final class Credentials extends AbstractEntity {
     private String password;
 
     @Column(unique = true, name = "email", nullable = false)
-    @Pattern(regexp = "^([^ @])+@([^ \\.@]+\\.)+([^ \\.@])+$")
+    //@Email(regexp = "[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}")
+    //@Pattern(regexp = "[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}")
     private String email;
 
     @ManyToMany(fetch = FetchType.LAZY)

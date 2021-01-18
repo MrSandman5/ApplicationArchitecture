@@ -18,7 +18,7 @@ public class RegistrationModel extends CredentialsModel {
     protected String firstName;
 
     @NotBlank
-    @JsonProperty("lastname")
+    @JsonProperty("lastName")
     protected String lastName;
 
     @JsonProperty("roles")
