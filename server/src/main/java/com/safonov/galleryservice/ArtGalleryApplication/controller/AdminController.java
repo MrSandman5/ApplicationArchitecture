@@ -29,7 +29,7 @@ public class AdminController {
     @DeleteMapping("/deleteUser/{userId}/{userType}")
     public ResponseEntity<String> deleteUser(@PathVariable final Long userId,
                                              @PathVariable final String userType) {
-        return service.deletePerson(userId, userType);
+        return service.deleteUser(userId, userType);
     }
 
     @GetMapping("/generate/{count}")

@@ -4,9 +4,7 @@ import com.safonov.galleryservice.ArtGalleryApplication.entity.AbstractEntity;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import java.util.HashSet;
 import java.util.Set;
 

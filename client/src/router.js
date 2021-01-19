@@ -7,10 +7,6 @@ import Tickets from "@/views/client/Tickets";
 import Reservations from "@/views/client/Reservations";
 import AvailableExpos from "@/views/client/AvailableExpos";
 import Artworks from "@/views/artist/Artworks";
-/*import AdminPage from "@/components/AdminPage";
-import ClientPage from "@/components/ClientPage";
-import OwnerPage from "@/components/OwnerPage";
-import ArtistPage from "@/components/ArtistPage";*/
 
 Vue.use(Router)
 
@@ -81,33 +77,5 @@ export const router = new Router({
       name: 'Artworks',
       component: Artworks
     }
-    /*,
-    {
-        path: '/client',
-        name: 'ClientPage',
-        component: ClientPage
-    },
-    {
-        path: '/owner',
-        name: 'OwnerPage',
-        component: OwnerPage
-    },
-    {
-        path: '/artist',
-        name: 'ArtistPage',
-        component: ArtistPage
-    },*/
   ]
 });
-
-/*router.beforeEach((to, from, next) => {
-    const publicPages = ['/login', '/register', '/home'];
-    const authRequired = !publicPages.includes(to.path);
-    const loggedIn = localStorage.getItem('user');
-
-    if (authRequired && !loggedIn) {
-        next('/login');
-    } else {
-        next();
-    }
-});*/
