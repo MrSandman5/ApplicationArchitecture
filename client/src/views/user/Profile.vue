@@ -14,6 +14,14 @@
       {{currentUser.email}}
     </p>
     <p>
+      <strong>First name:</strong>
+      {{currentUser.firstName}}
+    </p>
+    <p>
+      <strong>Last name:</strong>
+      {{currentUser.lastName}}
+    </p>
+    <p>
       <strong>Authority:</strong>
       {{currentUser.roles[0]}}
     </p>

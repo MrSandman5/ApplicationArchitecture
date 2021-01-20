@@ -10,8 +10,8 @@
       There are no tickets yet. Add one?
     </div>
     <div v-else class="ticket" v-for="(item, index) in tickets" :key="index">
-        <b>Expo: </b>{{item.expo}}<br>
-        <b>Cost: </b>{{item.artist}}<br>
+        <b>Expo: </b>{{item.expo.name}}<br>
+        <b>Cost: </b>{{item.cost}}<br>
         <br>
     </div>
     <div class="modal-wrapper" v-if="modalIsOpen">

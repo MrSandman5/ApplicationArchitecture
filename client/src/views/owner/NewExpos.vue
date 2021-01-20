@@ -185,14 +185,6 @@ export default {
 </script>
 
 <style>
-/*.position {*/
-/*  border: 1px solid;*/
-/*  padding: 20px;*/
-/*  border-radius: 4px;*/
-/*  margin: 20px 0;*/
-/*  position: relative;*/
-/*}*/
-
 .position-edit {
   position: absolute;
   top: 10px;

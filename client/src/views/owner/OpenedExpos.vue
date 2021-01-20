@@ -60,32 +60,6 @@ export default {
         })
       });
     },
-    /*createExpo() {
-      this.modalIsOpen = true;
-      this.selected = '';
-      Object.assign(this.currentExpo, EXPO_TEMPLATE);
-    },
-    saveExpo() {
-      if (!this.currentExpo.id) {
-        OwnerService.getMe(this.currentUser.id).then(({data}) => {
-          OwnerService.createExpo(data.id, {
-            name: this.currentExpo.name,
-            info: this.currentExpo.info,
-            artist: this.currentExpo.artist,
-            startTime: this.currentExpo.startTime,
-            endTime: this.currentExpo.endTime,
-            ticketPrice: this.currentExpo.ticketPrice
-          }).then((result) => {
-             console.log(result);
-          })
-        })
-      }
-
-      Object.assign(this.currentExpo, EXPO_TEMPLATE);
-      this.selected = '';
-      this.modalIsOpen = false;
-      this.fetchExpos();
-    },*/
     closeExpo(expo) {
       OwnerService.getMe(this.currentUser.id).then(({data}) => {
         OwnerService.closeExpo(data.id, {
