@@ -3,23 +3,22 @@
     <div v-if="modalIsOpen" class="overlay"></div>
     <br>
     <h1>
-      Positions
+      New Expositions
       <button @click="createExpo">Create new</button>
     </h1>
     <div v-if="!expos.length">
       There are no new expos yet. Create one?
     </div>
     <div v-else class="expo" v-for="(item, index) in expos" :key="index">
-      <span class="expo-start" @click="() => startExpo(item)">Start</span>
-      <span class="expo-edit" @click="() => editExpo(item)">Edit</span>
-      <b>{{item.title}}</b><br>
-      Team: {{getTeamTitle(item.teamId)}}<br>
-      Requirements: {{item.requirements}}
-<!--      <b>{{item.title}}</b><br>-->
-<!--      Team: {{getTeamTitle(item.teamId)}}<br>-->
-<!--      Requirements: {{item.requirements}}-->
+      <b>Name: </b>{{item.name}}<br>
+      <b>Info: </b>{{item.info}}<br>
+      <b>StartTime: </b>{{item.startTime}}<br>
+      <b>EndTime: </b>{{item.endTime}}<br>
+      <b>TicketPrice: </b>{{item.ticketPrice}} <button type="button" class="btn btn-primary" @click="() => startExpo(item)">Start</button>
+      / <button type="button" class="btn btn-primary" @click="() => edit(item)">Edit</button>
+      <br>
     </div>
-    <div class="modal-wrapper" v-if="modalIsOpen">
+    <div class="modal-wrapper-1" v-if="modalIsOpen && !modalIsEdit">
       <span class="close" @click="modalIsOpen = false">Close</span>
       <form>
         <input type="hidden" :value="currentExpo.id">
@@ -50,6 +49,21 @@
         <button type="button" class="btn btn-primary" @click="saveExpo">Save</button>
       </form>
     </div>
+    <div class="modal-wrapper-2" v-if="modalIsEdit && modalIsOpen">
+      <span class="position-edit" @click="modalIsEdit = false">Close</span>
+      <form>
+        <input type="hidden" :value="currentExpo.id">
+        <div class="form-group">
+          <label for="settings" class="col-form-label">Settings</label>
+          <input type="text" v-model="currentEdit.settings" class="form-control" id="settings">
+        </div>
+        <div class="form-group">
+          <label for="data" class="col-form-label">Data</label>
+          <input type="text" v-model="currentEdit.data" class="form-control" id="data">
+        </div>
+        <button type="button" class="btn btn-primary" @click="editExpo">Save</button>
+      </form>
+    </div>
   </div>
 </template>
 
@@ -66,14 +80,21 @@ const EXPO_TEMPLATE = {
   id: '',
 };
 
+const EDIT_TEMPLATE = {
+  settings: '',
+  data: ''
+}
+
 export default {
-  name: "Expos",
+  name: "NewExpos",
   data() {
     return {
       selected: '',
       expos: [],
       modalIsOpen: false,
-      currentExpo: EXPO_TEMPLATE
+      modalIsEdit: false,
+      currentExpo: EXPO_TEMPLATE,
+      currentEdit : EDIT_TEMPLATE
     };
   },
   computed: {
@@ -87,8 +108,8 @@ export default {
   methods: {
     fetchExpos() {
       OwnerService.getMe(this.currentUser.id).then(({data}) => {
-        OwnerService.getAllExpos(data.id).then(({result}) => {
-          this.positions = result;
+        OwnerService.getNewExpos(data.id).then(({data}) => {
+          this.expos = data;
         }).catch(() => {
           console.error('Error loading positions')
         })
@@ -96,21 +117,9 @@ export default {
     },
     createExpo() {
       this.modalIsOpen = true;
+      this.modalIsEdit = false;
       this.selected = '';
       Object.assign(this.currentExpo, EXPO_TEMPLATE);
-    },
-    editExpo(expo) {
-      /*OwnerService.getMe(this.currentUser.id).then(({data}) => {
-        OwnerService.editExpo(data.id, {
-          expo : {name : expo.name},
-          settings : expo.settings,
-          data : expo.data
-        }).then((result) => {
-          console.log(result);
-        })
-      })*/
-
-      this.fetchExpos();
     },
     saveExpo() {
       if (!this.currentExpo.id) {
@@ -118,7 +127,7 @@ export default {
           OwnerService.createExpo(data.id, {
             name: this.currentExpo.name,
             info: this.currentExpo.info,
-            artist: this.currentExpo.artist,
+            artist: Number(this.currentExpo.artist),
             startTime: this.currentExpo.startTime,
             endTime: this.currentExpo.endTime,
             ticketPrice: this.currentExpo.ticketPrice
@@ -131,16 +140,43 @@ export default {
       Object.assign(this.currentExpo, EXPO_TEMPLATE);
       this.selected = '';
       this.modalIsOpen = false;
+      this.modalIsEdit = false;
+      this.fetchExpos();
+    },
+    edit(item) {
+      this.modalIsOpen = true;
+      this.modalIsEdit = true;
+      this.selected = '';
+      Object.assign(this.currentExpo, item);
+      Object.assign(this.currentEdit, EDIT_TEMPLATE);
+    },
+    editExpo() {
+      OwnerService.getMe(this.currentUser.id).then(({data}) => {
+        console.log(this.currentExpo.id)
+        OwnerService.editExpo(data.id, {
+          expo : this.currentExpo.id,
+          settings : this.currentEdit.settings,
+          data : this.currentEdit.data
+        }).then((result) => {
+          console.log(result);
+        })
+      });
+
+      Object.assign(this.currentExpo, EXPO_TEMPLATE);
+      Object.assign(this.currentEdit, EDIT_TEMPLATE);
+      this.selected = '';
+      this.modalIsEdit = false;
+      this.modalIsOpen = false;
       this.fetchExpos();
     },
     startExpo(expo) {
       OwnerService.getMe(this.currentUser.id).then(({data}) => {
         OwnerService.startExpo(data.id, {
-          expo : {name : expo.name}
+          ...expo
         }).then((result) => {
           console.log(result);
         })
-      })
+      });
 
       this.fetchExpos();
     },
@@ -149,14 +185,6 @@ export default {
 </script>
 
 <style>
-.position {
-  border: 1px solid;
-  padding: 20px;
-  border-radius: 4px;
-  margin: 20px 0;
-  position: relative;
-}
-
 .position-edit {
   position: absolute;
   top: 10px;
@@ -175,7 +203,19 @@ export default {
   overflow: hidden;
 }
 
-.modal-wrapper {
+.modal-wrapper-1 {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 1px solid beige;
+  border-radius: 3px;
+  background: white;
+  padding: 20px;
+  min-width: 600px;
+}
+
+.modal-wrapper-2 {
   position: fixed;
   top: 50%;
   left: 50%;

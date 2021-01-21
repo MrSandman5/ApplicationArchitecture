@@ -14,7 +14,7 @@ class ClientService {
     }
 
     createReservation(clientId) {
-        return axios.post(API_URL + `${clientId}/createReservation`, null, { headers: authHeader() });
+        return axios.post(API_URL + `${clientId}/create-reservation`, null, { headers: authHeader() });
     }
 
     payForReservation(clientId, payment) {

@@ -99,8 +99,9 @@ public class UserService {
                     .body(new MessageResponse("Error: Email is already in use!"));
         }
         final Credentials user = new Credentials(model.getLogin(),
-                model.getEmail(),
-                bCryptPasswordEncoder.encode(model.getPassword()));
+                bCryptPasswordEncoder.encode(model.getPassword()),
+                model.getEmail()
+        );
 
         final Set<String> strRoles = model.getRoles();
         final Set<Role> roles = new HashSet<>();

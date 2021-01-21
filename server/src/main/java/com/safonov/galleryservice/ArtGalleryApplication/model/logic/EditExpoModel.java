@@ -1,22 +1,17 @@
 package com.safonov.galleryservice.ArtGalleryApplication.model.logic;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.safonov.galleryservice.ArtGalleryApplication.model.gallery.ExpoModel;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 @Data
-@EqualsAndHashCode(callSuper=false)
 @NoArgsConstructor
 public class EditExpoModel {
 
-    @NotNull
     @JsonProperty("expo")
-    private ExpoModel expo;
+    private Long expo;
 
     @NotBlank(message = "settings is mandatory")
     @JsonProperty("settings")

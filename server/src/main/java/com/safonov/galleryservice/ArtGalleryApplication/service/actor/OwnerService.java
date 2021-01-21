@@ -64,7 +64,7 @@ public class OwnerService {
     @Transactional
     public ResponseEntity<String> acceptPayment(@NotNull final Long ownerId,
                                                 @NotNull final ReservationModel model){
-        final Reservation payedReservation = reservationRepository.findById(model.getReservationId()).orElse(null);
+        final Reservation payedReservation = reservationRepository.findById(model.getId()).orElse(null);
         if (payedReservation == null){
             return new ResponseEntity<>("Reservation doesnt exist", HttpStatus.NOT_FOUND);
         } else if (!payedReservation.isPayed()){
@@ -83,14 +83,14 @@ public class OwnerService {
 
     @Transactional
     public ResponseEntity<String> createExpo(@NotNull final Long ownerId,
-                                             @NotNull final ExpoModel model) {
+                                             @NotNull final AddExpoModel model) {
         final Owner owner = ownerRepository.findById(ownerId).orElse(null);
         if (owner == null) {
             return new ResponseEntity<>("Owner doesnt exist", HttpStatus.NOT_FOUND);
         }
         final Expo existedExpo = expoRepository.findExpoByName(model.getName()).orElse(null);
         if (existedExpo == null) {
-            final Artist artist = artistRepository.findById(model.getArtistId()).orElse(null);
+            final Artist artist = artistRepository.findById(model.getArtist()).orElse(null);
             if (artist == null) {
                 return new ResponseEntity<>("Artist doesnt exist", HttpStatus.NOT_FOUND);
             }
@@ -118,7 +118,7 @@ public class OwnerService {
         if (owner == null) {
             return new ResponseEntity<>("Owner doesnt exist", HttpStatus.NOT_FOUND);
         }
-        final Expo curExpo = expoRepository.findExpoByName(model.getExpo().getName()).orElse(null);
+        final Expo curExpo = expoRepository.findById(model.getExpo()).orElse(null);
         if (curExpo == null){
             return new ResponseEntity<>("Expo doesnt exist", HttpStatus.NOT_FOUND);
         }
@@ -202,8 +202,8 @@ public class OwnerService {
 
     @Transactional
     public ResponseEntity<String> payForExpo(@NotNull final Long ownerId,
-                                             @NotNull final ExpoModel model){
-        final Expo closedExpo = expoRepository.findExpoByName(model.getName()).orElse(null);
+                                             @NotNull final PayForExpoModel model){
+        final Expo closedExpo = expoRepository.findExpoByName(model.getExpo()).orElse(null);
         if (closedExpo == null) {
             return new ResponseEntity<>("Expo doesnt exist", HttpStatus.NOT_FOUND);
         } else if (!closedExpo.isClosed()) {
@@ -221,7 +221,7 @@ public class OwnerService {
         if (owner == null) {
             return new ResponseEntity<>("Owner doesnt exist", HttpStatus.NOT_FOUND);
         }
-        final Artist artist = artistRepository.findById(model.getArtistId()).orElse(null);
+        final Artist artist = artistRepository.findById(closedExpo.getArtist().getId()).orElse(null);
         if (artist == null) {
             return new ResponseEntity<>("Artist doesnt exist", HttpStatus.NOT_FOUND);
         }

@@ -3,18 +3,16 @@ package com.safonov.galleryservice.ArtGalleryApplication.entity.gallery;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.actor.Client;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.actor.Owner;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
-@Data
 @Entity
+@Getter
+@Setter
 @NoArgsConstructor
 @Table(name = "client_owner_payment")
-@EqualsAndHashCode(callSuper = true)
 public class ClientOwnerPayment extends Payment{
 
     @OneToOne(fetch = FetchType.EAGER)

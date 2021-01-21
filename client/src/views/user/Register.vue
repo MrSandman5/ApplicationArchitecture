@@ -51,6 +51,34 @@
             >{{errors.first('password')}}</div>
           </div>
           <div class="form-group">
+            <label for="firstName">First name</label>
+            <input
+                v-model="user.firstName"
+                v-validate="'required|min:3|max:20'"
+                type="text"
+                class="form-control"
+                name="firstName"
+            />
+            <div
+                v-if="submitted && errors.has('firstName')"
+                class="alert-danger"
+            >{{errors.first('firstName')}}</div>
+          </div>
+            <div class="form-group">
+              <label for="lastName">Last name</label>
+              <input
+                  v-model="user.lastName"
+                  v-validate="'required|min:3|max:20'"
+                  type="text"
+                  class="form-control"
+                  name="lastName"
+              />
+              <div
+                  v-if="submitted && errors.has('lastName')"
+                  class="alert-danger"
+              >{{errors.first('lastName')}}</div>
+            </div>
+          <div class="form-group">
             <label for="role">Role</label>
             <select v-model="user.role">
               <option disabled value="">Please select one</option>
@@ -81,7 +109,7 @@ export default {
   name: 'Register',
   data() {
     return {
-      user: new User('', '', '', ''),
+      user: new User('', '', '', '', '', ''),
       submitted: false,
       successful: false,
       message: ''

@@ -12,7 +12,6 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @Table(name = "role")
-@EqualsAndHashCode(callSuper = true)
 public class Role extends AbstractEntity {
 
     @Enumerated(EnumType.STRING)

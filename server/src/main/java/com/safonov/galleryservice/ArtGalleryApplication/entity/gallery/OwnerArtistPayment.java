@@ -4,19 +4,16 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.actor.Artist;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.actor.Client;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.actor.Owner;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
-@Data
 @Entity
+@Getter
+@Setter
 @NoArgsConstructor
 @Table(name = "owner_artist_payment")
-@EqualsAndHashCode(callSuper = true)
 public class OwnerArtistPayment extends Payment{
 
     @OneToOne(fetch = FetchType.EAGER)

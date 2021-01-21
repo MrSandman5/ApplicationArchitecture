@@ -3,19 +3,16 @@ package com.safonov.galleryservice.ArtGalleryApplication.entity.gallery;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.AbstractEntity;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.actor.Artist;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
-@Data
 @Entity
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "artwork")
-@EqualsAndHashCode(callSuper = true)
 public class Artwork extends AbstractEntity {
 
     @Column(unique = true, name = "name", nullable = false)

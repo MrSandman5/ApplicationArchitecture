@@ -9,6 +9,11 @@
     <div v-if="!tickets.length">
       There are no tickets yet. Add one?
     </div>
+    <div v-else class="ticket" v-for="(item, index) in tickets" :key="index">
+        <b>Expo: </b>{{item.expo.name}}<br>
+        <b>Cost: </b>{{item.cost}}<br>
+        <br>
+    </div>
     <div class="modal-wrapper" v-if="modalIsOpen">
       <span class="close" @click="modalIsOpen = false">Close</span>
       <form>
@@ -16,10 +21,6 @@
         <div class="form-group">
           <label for="expo" class="col-form-label">Expo</label>
           <input type="text" v-model="currentTicket.expo" class="form-control" id="expo">
-        </div>
-        <div class="form-group">
-          <label for="cost" class="col-form-label">Cost</label>
-          <input type="number" step="0.1" v-model="currentTicket.cost" class="form-control" id="cost">
         </div>
         <button type="button" class="btn btn-primary" @click="saveTicket">Save</button>
       </form>
@@ -32,7 +33,7 @@ import ClientService from '../../service/client.service';
 
 const TICKET_TEMPLATE = {
   expo: '',
-  cost: ''
+  id: ''
 };
 
 export default {
@@ -56,8 +57,8 @@ export default {
   methods: {
     fetchTickets() {
       ClientService.getMe(this.currentUser.id).then(({data}) => {
-        ClientService.getTickets(data.id).then(({result}) => {
-          this.tickets = result;
+        ClientService.getTickets(data.id).then(({data}) => {
+          this.tickets = data;
         }).catch(() => {
           console.error('Error loading tickets')
         })

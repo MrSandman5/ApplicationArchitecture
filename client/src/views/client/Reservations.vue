@@ -4,28 +4,25 @@
     <br>
     <h1>
       Reservations
-      <button @click="createReservation">Add</button>
+      <button @click="saveReservation">Create</button>
     </h1>
     <div v-if="!reservations.length">
       There are no reservations yet. Create one?
     </div>
+      <div v-else class="reservation" v-for="(item, index) in reservations" :key="index">
+        <b>Id: </b>>{{item.id}}<br>
+        <b>Status: </b>{{item.status}}<br>
+        <b>Cost: </b>{{item.cost}} <button type="button" class="btn btn-primary" @click="() => pay(item)">Pay</button><br>
+        <br>
+      </div>
     <div class="modal-wrapper" v-if="modalIsOpen">
-      <span class="close" @click="modalIsOpen = false">Close</span>
+      <span class="pay" @click="modalIsOpen = false">Close</span>
       <form>
         <input type="hidden" :value="currentReservation.id">
         <div class="form-group">
-          <label for="cost" class="col-form-label">Cost</label>
-          <input type="number" step="0.1" v-model="currentReservation.cost" class="form-control" id="cost">
+          <label for="owner" class="col-form-label">Owner</label>
+          <input type="number" step="0.1" v-model="currentPayment.owner" class="form-control" id="owner">
         </div>
-        <div class="form-group">
-          <label for="Time" class="col-form-label">Time</label>
-          <input type="datetime-local" v-model="currentReservation.time" class="form-control" id="Time">
-        </div>
-        <div class="form-group">
-          <label for="Status" class="col-form-label">Status</label>
-          <input type="text" v-model="currentReservation.status" class="form-control" id="Status">
-        </div>
-        <button type="button" class="btn btn-primary" @click="saveReservation">Save</button>
         <button type="button" class="btn btn-primary" @click="payForReservation">Pay</button>
       </form>
     </div>
@@ -36,11 +33,14 @@
 import ClientService from '../../service/client.service';
 
 const RESERVATION_TEMPLATE = {
-  cost: '',
   status: '',
-  time: '',
-  id: '',
+  cost: '',
+  id: ''
 };
+
+const PAYMENT_TEMPLATE = {
+  owner: ''
+}
 
 export default {
   name: "Reservations",
@@ -49,7 +49,8 @@ export default {
       selected: '',
       reservations: [],
       modalIsOpen: false,
-      currentReservation: RESERVATION_TEMPLATE
+      currentReservation: RESERVATION_TEMPLATE,
+      currentPayment : PAYMENT_TEMPLATE
     };
   },
   computed: {
@@ -63,22 +64,19 @@ export default {
   methods: {
     fetchReservations() {
       ClientService.getMe(this.currentUser.id).then(({data}) => {
-        ClientService.getNewReservations(data.id).then(({result}) => {
-          this.reservations = result;
+        ClientService.getNewReservations(data.id).then(({data}) => {
+          this.reservations = data;
         }).catch(() => {
           console.error('Error loading tickets')
         })
       })
     },
-    createReservation() {
-      this.modalIsOpen = true;
-      this.selected = '';
-      Object.assign(this.currentReservation, RESERVATION_TEMPLATE);
-    },
     saveReservation() {
       if (!this.currentReservation.id) {
-        ClientService.createReservation(this.currentUser.id).then((data) => {
-          console.log(data);
+        ClientService.getMe(this.currentUser.id).then(({data}) => {
+          ClientService.createReservation(data.id).then((data) => {
+            console.log(data);
+          })
         })
       }
       Object.assign(this.currentReservation, RESERVATION_TEMPLATE);
@@ -86,19 +84,27 @@ export default {
       this.modalIsOpen = false;
       this.fetchReservations();
     },
+    pay(item) {
+      console.log("PAY")
+      this.modalIsOpen = true;
+      this.selected = '';
+      Object.assign(this.currentReservation, item);
+      Object.assign(this.currentPayment, PAYMENT_TEMPLATE);
+    },
     payForReservation() {
-      if (!this.currentReservation.id) {
+      console.log("PAYFORRESERVATION")
+      if (!isNaN(this.currentReservation.id)) {
         ClientService.getMe(this.currentUser.id).then(({data}) => {
-          ClientService.payForReservation(data.id,
-              {
-                owner: 1,
-                reservation: {reservationId: this.currentReservation.id}
-              }).then((result) => {
+          ClientService.payForReservation(data.id, {
+            owner: this.currentPayment.owner,
+            reservation: this.currentReservation.id
+          }).then((result) => {
             console.log(result);
           })
         })
       }
       Object.assign(this.currentReservation, RESERVATION_TEMPLATE);
+      Object.assign(this.currentPayment, PAYMENT_TEMPLATE);
       this.selected = '';
       this.modalIsOpen = false;
       this.fetchReservations();
@@ -130,7 +136,7 @@ export default {
   min-width: 600px;
 }
 
-.close {
+.pay {
   position: absolute;
   top: 20px;
   right: 20px;

@@ -5,9 +5,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.safonov.galleryservice.ArtGalleryApplication.configuration.Constants;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.AbstractEntity;
 import com.safonov.galleryservice.ArtGalleryApplication.entity.actor.Artist;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -17,11 +15,11 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-@Data
 @Entity
+@Getter
+@Setter
 @NoArgsConstructor
 @Table(name = "expo")
-@EqualsAndHashCode(callSuper = true)
 public class Expo extends AbstractEntity {
 
     @Column(unique = true, name = "name", nullable = false)
